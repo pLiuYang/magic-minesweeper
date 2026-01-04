@@ -12,6 +12,8 @@ class VictoryScreen extends StatelessWidget {
   final int stars;
   final DifficultyConfig difficulty;
   final bool isNewBestTime;
+  final int spellsUsed;
+  final int manaRemaining;
 
   const VictoryScreen({
     super.key,
@@ -23,6 +25,8 @@ class VictoryScreen extends StatelessWidget {
     required this.stars,
     required this.difficulty,
     this.isNewBestTime = false,
+    this.spellsUsed = 0,
+    this.manaRemaining = 0,
   });
 
   String get _timeDisplay {
@@ -148,9 +152,19 @@ class VictoryScreen extends StatelessWidget {
           const Divider(height: 24),
           _buildStatRow(Icons.grid_view, 'Tiles Cleared', '$tilesCleared/$totalTiles'),
           const Divider(height: 24),
-          _buildStatRow(Icons.auto_fix_high, 'Spells Used', '0', isGrayed: true),
+          _buildStatRow(
+            Icons.auto_fix_high, 
+            'Spells Used', 
+            '$spellsUsed',
+            iconColor: AppColors.primaryPurple,
+          ),
           const Divider(height: 24),
-          _buildStatRow(Icons.diamond, 'Mana Remaining', '--', isGrayed: true),
+          _buildStatRow(
+            Icons.water_drop, 
+            'Mana Remaining', 
+            '$manaRemaining',
+            iconColor: AppColors.primaryBlue,
+          ),
           const Divider(height: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -179,12 +193,17 @@ class VictoryScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatRow(IconData icon, String label, String value, {bool isGrayed = false}) {
+  Widget _buildStatRow(
+    IconData icon, 
+    String label, 
+    String value, 
+    {bool isGrayed = false, Color? iconColor}
+  ) {
     return Row(
       children: [
         Icon(
           icon,
-          color: isGrayed ? Colors.grey.shade300 : Colors.grey.shade600,
+          color: isGrayed ? Colors.grey.shade300 : (iconColor ?? Colors.grey.shade600),
           size: 24,
         ),
         const SizedBox(width: 12),

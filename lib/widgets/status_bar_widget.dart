@@ -32,8 +32,8 @@ class StatusBarWidget extends StatelessWidget {
                 iconColor: AppColors.cellFlag,
                 value: '${gameProvider.remainingFlags}',
               ),
-              // Mana bar placeholder (grayed out for Phase 1)
-              _buildManaPlaceholder(),
+              // Mana bar
+              _buildManaBar(gameProvider),
               // Timer
               _buildStatusItem(
                 icon: Icons.timer,
@@ -68,7 +68,10 @@ class StatusBarWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildManaPlaceholder() {
+  Widget _buildManaBar(GameProvider gameProvider) {
+    final manaPercentage = gameProvider.manaPercentage;
+    final manaColor = _getManaColor(manaPercentage);
+    
     return Expanded(
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -78,37 +81,77 @@ class StatusBarWidget extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Icon(
+                  Icons.water_drop,
+                  size: 14,
+                  color: manaColor,
+                ),
+                const SizedBox(width: 4),
                 Text(
                   'MANA',
                   style: TextStyle(
                     fontSize: 10,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey.shade400,
+                    fontWeight: FontWeight.w600,
+                    color: manaColor,
                   ),
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Phase 2',
+                  '${gameProvider.mana}/${gameProvider.maxMana}',
                   style: TextStyle(
                     fontSize: 10,
-                    color: Colors.grey.shade400,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey.shade600,
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 4),
             Container(
-              height: 8,
+              height: 10,
               decoration: BoxDecoration(
                 color: Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: BorderRadius.circular(5),
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(4),
-                child: LinearProgressIndicator(
-                  value: 0,
-                  backgroundColor: Colors.grey.shade200,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.grey.shade300),
+                borderRadius: BorderRadius.circular(5),
+                child: Stack(
+                  children: [
+                    // Background
+                    Container(
+                      color: Colors.grey.shade200,
+                    ),
+                    // Mana fill with gradient
+                    FractionallySizedBox(
+                      widthFactor: manaPercentage,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              manaColor.withOpacity(0.7),
+                              manaColor,
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Shine effect
+                    FractionallySizedBox(
+                      widthFactor: manaPercentage,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.white.withOpacity(0.3),
+                              Colors.transparent,
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -116,5 +159,15 @@ class StatusBarWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Color _getManaColor(double percentage) {
+    if (percentage > 0.6) {
+      return AppColors.primaryBlue;
+    } else if (percentage > 0.3) {
+      return Colors.orange;
+    } else {
+      return Colors.red;
+    }
   }
 }

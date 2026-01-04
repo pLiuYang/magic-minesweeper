@@ -78,6 +78,8 @@ class _GameScreenState extends State<GameScreen> {
                 isNewBestTime: _gameProvider.isWon &&
                     (context.read<SettingsProvider>().getBestTime(widget.difficulty.name) ==
                         _gameProvider.elapsedSeconds),
+                spellsUsed: _gameProvider.spellsUsed,
+                manaRemaining: _gameProvider.mana,
               ),
             ),
           );
@@ -114,8 +116,9 @@ class _GameScreenState extends State<GameScreen> {
               centerTitle: true,
               actions: [
                 IconButton(
-                  icon: const Icon(Icons.settings, color: Colors.black87),
-                  onPressed: () => _showGameMenu(context),
+                  icon: const Icon(Icons.auto_stories, color: AppColors.primaryPurple),
+                  tooltip: 'Spell Book',
+                  onPressed: () => _showSpellBook(context),
                 ),
               ],
             ),
@@ -134,7 +137,7 @@ class _GameScreenState extends State<GameScreen> {
                       child: GameBoardWidget(),
                     ),
                   ),
-                  // Spell bar (placeholder)
+                  // Spell bar
                   const Padding(
                     padding: EdgeInsets.all(16),
                     child: SpellBarWidget(),
@@ -143,6 +146,18 @@ class _GameScreenState extends State<GameScreen> {
               ),
             ),
           );
+        },
+      ),
+    );
+  }
+
+  void _showSpellBook(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => SpellBookDialog(
+        currentEquipped: _gameProvider.equippedSpells,
+        onSave: (spells) {
+          _gameProvider.updateEquippedSpells(spells);
         },
       ),
     );
@@ -180,6 +195,15 @@ class _GameScreenState extends State<GameScreen> {
               },
             ),
             _buildMenuItem(
+              icon: Icons.auto_stories,
+              label: 'Spell Book',
+              color: AppColors.primaryPurple,
+              onTap: () {
+                Navigator.pop(context);
+                _showSpellBook(context);
+              },
+            ),
+            _buildMenuItem(
               icon: Icons.grid_view,
               label: 'Change Difficulty',
               onTap: () {
@@ -210,9 +234,10 @@ class _GameScreenState extends State<GameScreen> {
     required IconData icon,
     required String label,
     required VoidCallback onTap,
+    Color? color,
   }) {
     return ListTile(
-      leading: Icon(icon, color: AppColors.primaryBlue),
+      leading: Icon(icon, color: color ?? AppColors.primaryBlue),
       title: Text(
         label,
         style: const TextStyle(

@@ -28,42 +28,74 @@ class GameBoardWidget extends StatelessWidget {
           padding: const EdgeInsets.all(8),
           child: LayoutBuilder(
             builder: (context, constraints) {
-              // Calculate cell size based on available space
+              // Calculate available space
               final maxWidth = constraints.maxWidth - 16; // padding
               final maxHeight = constraints.maxHeight - 16;
 
-              final cellWidth = maxWidth / board.width;
-              final cellHeight = maxHeight / board.height;
-              final cellSize = (cellWidth < cellHeight ? cellWidth : cellHeight)
-                  .clamp(24.0, GameConstants.cellSize);
+              // Determine minimum cell size for playability
+              const double minCellSize = 32.0;
+              const double maxCellSize = 44.0;
 
-              return Center(
-                child: SizedBox(
-                  width: cellSize * board.width,
-                  height: cellSize * board.height,
-                  child: GridView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: board.width,
-                      childAspectRatio: 1,
-                    ),
-                    itemCount: board.width * board.height,
-                    itemBuilder: (context, index) {
-                      final row = index ~/ board.width;
-                      final col = index % board.width;
-                      final cell = board.getCell(row, col);
+              // Calculate cell size that fits within constraints
+              final cellWidthFit = maxWidth / board.width;
+              final cellHeightFit = maxHeight / board.height;
+              
+              // Use the smaller dimension to maintain square cells
+              double cellSize = (cellWidthFit < cellHeightFit ? cellWidthFit : cellHeightFit);
+              
+              // Clamp to reasonable bounds
+              cellSize = cellSize.clamp(minCellSize, maxCellSize);
 
-                      return CellWidget(
-                        cell: cell,
-                        gameOver: gameProvider.isGameOver,
-                        isWon: gameProvider.isWon,
-                        onTap: () => gameProvider.revealCell(row, col),
-                        onLongPress: () => gameProvider.toggleFlag(row, col),
-                      );
-                    },
+              // Calculate total board dimensions
+              final boardWidth = cellSize * board.width;
+              final boardHeight = cellSize * board.height;
+
+              // Determine if scrolling is needed
+              final needsHorizontalScroll = boardWidth > maxWidth;
+              final needsVerticalScroll = boardHeight > maxHeight;
+              final needsScroll = needsHorizontalScroll || needsVerticalScroll;
+
+              Widget boardWidget = SizedBox(
+                width: boardWidth,
+                height: boardHeight,
+                child: GridView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: board.width,
+                    childAspectRatio: 1,
                   ),
+                  itemCount: board.width * board.height,
+                  itemBuilder: (context, index) {
+                    final row = index ~/ board.width;
+                    final col = index % board.width;
+                    final cell = board.getCell(row, col);
+
+                    return CellWidget(
+                      cell: cell,
+                      cellSize: cellSize,
+                      gameOver: gameProvider.isGameOver,
+                      isWon: gameProvider.isWon,
+                      isScanned: gameProvider.isCellScanned(row, col),
+                      isSpellTarget: gameProvider.isSpellMode,
+                      onTap: () => gameProvider.revealCell(row, col),
+                      onLongPress: () => gameProvider.toggleFlag(row, col),
+                    );
+                  },
                 ),
               );
+
+              // Wrap in scrollable container if needed
+              if (needsScroll) {
+                boardWidget = InteractiveViewer(
+                  constrained: false,
+                  boundaryMargin: const EdgeInsets.all(20),
+                  minScale: 0.5,
+                  maxScale: 2.0,
+                  child: boardWidget,
+                );
+              }
+
+              return Center(child: boardWidget);
             },
           ),
         );
