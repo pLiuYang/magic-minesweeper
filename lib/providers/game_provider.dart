@@ -84,7 +84,8 @@ class GameProvider extends ChangeNotifier {
 
   void newGame() {
     _stopTimer();
-    _stopScanTimer();
+    _scanTimer?.cancel();
+    _scanTimer = null;
     _elapsedSeconds = 0;
     _board = GameBoard.fromDifficulty(_difficulty);
     _initializeMana();
@@ -126,7 +127,7 @@ class GameProvider extends ChangeNotifier {
 
     if (isGameOver) {
       _stopTimer();
-      _stopScanTimer();
+      // Keep scan effect visible even after game over
     }
 
     notifyListeners();
@@ -230,7 +231,7 @@ class GameProvider extends ChangeNotifier {
 
     if (isGameOver) {
       _stopTimer();
-      _stopScanTimer();
+      // Keep scan effect visible even after game over
     }
 
     notifyListeners();
@@ -271,7 +272,8 @@ class GameProvider extends ChangeNotifier {
   }
 
   void _startScanTimer() {
-    _stopScanTimer();
+    // Cancel any existing timer but keep the scanned cells
+    _scanTimer?.cancel();
     // Scan effect lasts for 5 seconds
     _scanTimer = Timer(const Duration(seconds: 5), () {
       _board.clearScannedCells();
@@ -282,7 +284,7 @@ class GameProvider extends ChangeNotifier {
   void _stopScanTimer() {
     _scanTimer?.cancel();
     _scanTimer = null;
-    _board.clearScannedCells();
+    // Don't clear scanned cells here - only clear when timer expires naturally
   }
 
   // Check if a cell is currently highlighted by scan
@@ -333,7 +335,8 @@ class GameProvider extends ChangeNotifier {
   @override
   void dispose() {
     _stopTimer();
-    _stopScanTimer();
+    _scanTimer?.cancel();
+    _scanTimer = null;
     super.dispose();
   }
 }
