@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'providers/settings_provider.dart';
 import 'screens/main_menu_screen.dart';
+import 'utils/constants.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,11 +14,11 @@ void main() {
     DeviceOrientation.portraitDown,
   ]);
 
-  runApp(const MagicMineSweeperApp());
+  runApp(const MagicSweeperApp());
 }
 
-class MagicMineSweeperApp extends StatelessWidget {
-  const MagicMineSweeperApp({super.key});
+class MagicSweeperApp extends StatelessWidget {
+  const MagicSweeperApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -30,20 +31,20 @@ class MagicMineSweeperApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color(0xFF4A90E2),
+            seedColor: AppColors.magicPurple,
             brightness: Brightness.light,
           ),
           useMaterial3: true,
           fontFamily: 'Roboto',
         ),
-        home: const MagicMineSweeperHome(),
+        home: const MagicSweeperHome(),
       ),
     );
   }
 }
 
-class MagicMineSweeperHome extends StatelessWidget {
-  const MagicMineSweeperHome({super.key});
+class MagicSweeperHome extends StatelessWidget {
+  const MagicSweeperHome({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -51,9 +52,16 @@ class MagicMineSweeperHome extends StatelessWidget {
       builder: (context, settingsProvider, child) {
         // Show loading indicator while settings are loading
         if (!settingsProvider.isLoaded) {
-          return const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
+          return Scaffold(
+            body: Container(
+              decoration: const BoxDecoration(
+                gradient: AppColors.menuGradient,
+              ),
+              child: Center(
+                child: CircularProgressIndicator(
+                  color: AppColors.magicPurple,
+                ),
+              ),
             ),
           );
         }
