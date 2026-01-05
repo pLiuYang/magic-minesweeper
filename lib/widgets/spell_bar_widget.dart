@@ -12,96 +12,31 @@ class SpellBarWidget extends StatelessWidget {
     return Consumer<GameProvider>(
       builder: (context, gameProvider, child) {
         return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
+            color: Colors.white.withOpacity(0.9),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: AppColors.primaryPurple.withOpacity(0.15),
+              width: 1.5,
+            ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 10,
-                offset: const Offset(0, -2),
+                color: AppColors.primaryPurple.withOpacity(0.1),
+                blurRadius: 15,
+                offset: const Offset(0, -4),
               ),
             ],
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Spell mode indicator
-              if (gameProvider.isSpellMode)
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  margin: const EdgeInsets.only(bottom: 8),
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryPurple.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: AppColors.primaryPurple.withOpacity(0.3),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.touch_app,
-                        size: 16,
-                        color: AppColors.primaryPurple,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        'Tap a cell to cast ${Spell.getSpell(gameProvider.selectedSpell!).name}',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.primaryPurple,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      GestureDetector(
-                        onTap: () => gameProvider.cancelSpellMode(),
-                        child: Icon(
-                          Icons.close,
-                          size: 16,
-                          color: AppColors.primaryPurple,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              
-              // Shield indicator
-              if (gameProvider.hasShield)
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  margin: const EdgeInsets.only(bottom: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.purple.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Colors.purple.withOpacity(0.3),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.shield,
-                        size: 16,
-                        color: Colors.purple,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        'Shield Active',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.purple,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              
+              // Fixed-height status area to prevent layout shifts
+              SizedBox(
+                height: 28,
+                child: _buildStatusIndicator(gameProvider),
+              ),
+              const SizedBox(height: 8),
               // Spell buttons
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -119,6 +54,135 @@ class SpellBarWidget extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildStatusIndicator(GameProvider gameProvider) {
+    // Show spell mode indicator
+    if (gameProvider.isSpellMode && gameProvider.selectedSpell != null) {
+      final spell = Spell.getSpell(gameProvider.selectedSpell!);
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              spell.color.withOpacity(0.15),
+              AppColors.primaryPurple.withOpacity(0.1),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: spell.color.withOpacity(0.3),
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.touch_app_rounded,
+              size: 14,
+              color: spell.color,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              'Tap to cast ${spell.name}',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: spell.color,
+              ),
+            ),
+            const SizedBox(width: 8),
+            GestureDetector(
+              onTap: () => gameProvider.cancelSpellMode(),
+              child: Container(
+                padding: const EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  color: spell.color.withOpacity(0.2),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.close_rounded,
+                  size: 12,
+                  color: spell.color,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    
+    // Show shield indicator
+    if (gameProvider.hasShield) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              AppColors.magicPurple.withOpacity(0.15),
+              AppColors.primaryPink.withOpacity(0.1),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: AppColors.magicPurple.withOpacity(0.3),
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.shield_rounded,
+              size: 14,
+              color: AppColors.magicPurple,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              'Shield Active',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: AppColors.magicPurple,
+              ),
+            ),
+            const SizedBox(width: 4),
+            Icon(
+              Icons.auto_awesome,
+              size: 12,
+              color: AppColors.sparkleGold,
+            ),
+          ],
+        ),
+      );
+    }
+    
+    // Default: show hint text
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+      decoration: BoxDecoration(
+        color: AppColors.primaryPurple.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.auto_awesome_rounded,
+            size: 14,
+            color: AppColors.primaryPurple.withOpacity(0.5),
+          ),
+          const SizedBox(width: 6),
+          Text(
+            'Select a spell to cast',
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
+              color: AppColors.primaryPurple.withOpacity(0.5),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -146,32 +210,48 @@ class _SpellButton extends StatelessWidget {
       onTap: isDisabled ? null : onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        width: 72,
-        padding: const EdgeInsets.symmetric(vertical: 8),
+        width: 74,
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
         decoration: BoxDecoration(
+          gradient: isSelected
+              ? LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    spell.color.withOpacity(0.2),
+                    spell.color.withOpacity(0.1),
+                  ],
+                )
+              : null,
           color: isSelected
-              ? spell.color.withOpacity(0.2)
+              ? null
               : isDisabled
-                  ? Colors.grey.shade100
-                  : Colors.grey.shade50,
-          borderRadius: BorderRadius.circular(12),
+                  ? Colors.grey.shade50
+                  : Colors.white,
+          borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: isSelected
                 ? spell.color
                 : isDisabled
-                    ? Colors.grey.shade300
-                    : Colors.grey.shade200,
+                    ? Colors.grey.shade200
+                    : AppColors.primaryPurple.withOpacity(0.15),
             width: isSelected ? 2 : 1,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: spell.color.withOpacity(0.3),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
+                    color: spell.color.withOpacity(0.25),
+                    blurRadius: 10,
+                    offset: const Offset(0, 3),
                   ),
                 ]
-              : null,
+              : [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.03),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -181,25 +261,41 @@ class _SpellButton extends StatelessWidget {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: isDisabled
-                    ? Colors.grey.shade300
-                    : spell.color.withOpacity(0.15),
+                gradient: isDisabled
+                    ? null
+                    : LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          spell.color.withOpacity(0.2),
+                          spell.color.withOpacity(0.1),
+                        ],
+                      ),
+                color: isDisabled ? Colors.grey.shade200 : null,
                 shape: BoxShape.circle,
+                border: Border.all(
+                  color: isDisabled
+                      ? Colors.grey.shade300
+                      : spell.color.withOpacity(0.3),
+                  width: 1,
+                ),
               ),
               child: Icon(
                 spell.icon,
-                size: 20,
-                color: isDisabled ? Colors.grey.shade500 : spell.color,
+                size: 18,
+                color: isDisabled ? Colors.grey.shade400 : spell.color,
               ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 5),
             // Name
             Text(
               spell.name,
               style: TextStyle(
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
-                color: isDisabled ? Colors.grey.shade500 : Colors.black87,
+                color: isDisabled
+                    ? Colors.grey.shade400
+                    : AppColors.magicPurple,
               ),
             ),
             const SizedBox(height: 2),
@@ -208,13 +304,13 @@ class _SpellButton extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
-                  Icons.water_drop,
+                  Icons.auto_awesome,
                   size: 10,
                   color: isDisabled
-                      ? Colors.grey.shade400
+                      ? Colors.grey.shade300
                       : canCast
-                          ? AppColors.primaryBlue
-                          : Colors.orange,
+                          ? AppColors.magicPurple
+                          : AppColors.primaryPink,
                 ),
                 const SizedBox(width: 2),
                 Text(
@@ -223,10 +319,10 @@ class _SpellButton extends StatelessWidget {
                     fontSize: 10,
                     fontWeight: FontWeight.w500,
                     color: isDisabled
-                        ? Colors.grey.shade400
+                        ? Colors.grey.shade300
                         : canCast
-                            ? AppColors.primaryBlue
-                            : Colors.orange,
+                            ? AppColors.magicPurple
+                            : AppColors.primaryPink,
                   ),
                 ),
               ],
@@ -276,11 +372,22 @@ class _SpellBookDialogState extends State<SpellBookDialog> {
   Widget build(BuildContext context) {
     return Dialog(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(24),
       ),
       child: Container(
         padding: const EdgeInsets.all(20),
         constraints: const BoxConstraints(maxWidth: 400),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primaryPurple.withOpacity(0.2),
+              blurRadius: 30,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -288,25 +395,49 @@ class _SpellBookDialogState extends State<SpellBookDialog> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Spell Book',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.auto_stories_rounded,
+                      color: AppColors.magicPurple,
+                      size: 28,
+                    ),
+                    const SizedBox(width: 10),
+                    ShaderMask(
+                      shaderCallback: (bounds) => LinearGradient(
+                        colors: [AppColors.magicPurple, AppColors.primaryPink],
+                      ).createShader(bounds),
+                      child: const Text(
+                        'Spell Book',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 IconButton(
-                  icon: const Icon(Icons.close),
+                  icon: Icon(Icons.close_rounded, color: AppColors.magicPurple),
                   onPressed: () => Navigator.pop(context),
                 ),
               ],
             ),
             const SizedBox(height: 8),
-            Text(
-              'Select up to 4 spells (${_selected.length}/4)',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey.shade600,
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: AppColors.primaryPurple.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                'Select up to 4 spells (${_selected.length}/4)',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.magicPurple,
+                ),
               ),
             ),
             const SizedBox(height: 16),
@@ -318,18 +449,110 @@ class _SpellBookDialogState extends State<SpellBookDialog> {
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
                 childAspectRatio: 0.85,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
               ),
               itemCount: Spell.allSpells.length,
               itemBuilder: (context, index) {
                 final spell = Spell.allSpells[index];
                 final isSelected = _selected.contains(spell.type);
                 
-                return _SpellBookItem(
-                  spell: spell,
-                  isSelected: isSelected,
+                return GestureDetector(
                   onTap: () => _toggleSpell(spell.type),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      gradient: isSelected
+                          ? LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                spell.color.withOpacity(0.2),
+                                spell.color.withOpacity(0.1),
+                              ],
+                            )
+                          : null,
+                      color: isSelected ? null : Colors.grey.shade50,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: isSelected ? spell.color : Colors.grey.shade200,
+                        width: isSelected ? 2 : 1,
+                      ),
+                      boxShadow: isSelected
+                          ? [
+                              BoxShadow(
+                                color: spell.color.withOpacity(0.2),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ]
+                          : null,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Checkmark for selected
+                        if (isSelected)
+                          Align(
+                            alignment: Alignment.topRight,
+                            child: Container(
+                              padding: const EdgeInsets.all(2),
+                              decoration: BoxDecoration(
+                                color: spell.color,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.check,
+                                size: 12,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: spell.color.withOpacity(0.15),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            spell.icon,
+                            size: 22,
+                            color: spell.color,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          spell.name,
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.magicPurple,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.auto_awesome,
+                              size: 10,
+                              color: AppColors.magicPurple.withOpacity(0.6),
+                            ),
+                            const SizedBox(width: 2),
+                            Text(
+                              '${spell.manaCost}',
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: AppColors.magicPurple.withOpacity(0.6),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                 );
               },
             ),
@@ -347,12 +570,13 @@ class _SpellBookDialogState extends State<SpellBookDialog> {
                       }
                     : null,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryPurple,
+                  backgroundColor: AppColors.magicPurple,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(14),
                   ),
+                  elevation: 0,
                 ),
                 child: const Text(
                   'Save Selection',
@@ -362,110 +586,6 @@ class _SpellBookDialogState extends State<SpellBookDialog> {
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _SpellBookItem extends StatelessWidget {
-  final Spell spell;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _SpellBookItem({
-    required this.spell,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? spell.color.withOpacity(0.15)
-              : Colors.grey.shade50,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isSelected ? spell.color : Colors.grey.shade200,
-            width: isSelected ? 2 : 1,
-          ),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Icon with checkmark
-            Stack(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: spell.color.withOpacity(0.15),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    spell.icon,
-                    size: 22,
-                    color: spell.color,
-                  ),
-                ),
-                if (isSelected)
-                  Positioned(
-                    right: 0,
-                    bottom: 0,
-                    child: Container(
-                      width: 16,
-                      height: 16,
-                      decoration: BoxDecoration(
-                        color: spell.color,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.check,
-                        size: 10,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-            const SizedBox(height: 6),
-            // Name
-            Text(
-              spell.name,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: isSelected ? spell.color : Colors.black87,
-              ),
-            ),
-            const SizedBox(height: 2),
-            // Mana cost
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.water_drop,
-                  size: 10,
-                  color: AppColors.primaryBlue,
-                ),
-                const SizedBox(width: 2),
-                Text(
-                  '${spell.manaCost} MP',
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: Colors.grey.shade600,
-                  ),
-                ),
-              ],
             ),
           ],
         ),

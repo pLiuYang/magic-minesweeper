@@ -1,4 +1,4 @@
-# Magic MineSweeper
+# Magic Sweeper
 
 A magical twist on the classic Minesweeper game, built with Flutter for Web and Android.
 
@@ -50,8 +50,8 @@ The game features a clean, modern UI with:
 
 ```bash
 # Clone the repository
-git clone https://github.com/pLiuYang/magic-minesweeper.git
-cd magic-minesweeper
+git clone https://github.com/pLiuYang/magic-sweeper.git
+cd magic-sweeper
 
 # Install dependencies
 flutter pub get

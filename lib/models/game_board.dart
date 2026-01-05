@@ -299,13 +299,21 @@ class GameBoard {
 
   /// Scan spell - highlight mines in a 3x3 area
   List<String> castScan(int row, int col) {
+    // First, ensure mines are placed if not already
+    if (!minesPlaced) {
+      placeMines(row, col);
+      status = GameStatus.playing;
+    }
+    
     final scanned = <String>[];
     
+    // Scan a 3x3 area centered on the target cell
     for (int dr = -1; dr <= 1; dr++) {
       for (int dc = -1; dc <= 1; dc++) {
         final r = row + dr;
         final c = col + dc;
         if (r >= 0 && r < height && c >= 0 && c < width) {
+          // Show mines that are not yet revealed (flagged or covered)
           if (cells[r][c].isMine && !cells[r][c].isRevealed) {
             final key = '$r,$c';
             scanned.add(key);
@@ -406,23 +414,25 @@ class GameBoard {
       status = GameStatus.playing;
     }
 
-    bool anyRevealed = false;
-    
+    // Process all cells in the 3x3 area
     for (int dr = -1; dr <= 1; dr++) {
       for (int dc = -1; dc <= 1; dc++) {
         final r = row + dr;
         final c = col + dc;
         if (r >= 0 && r < height && c >= 0 && c < width) {
           final cell = cells[r][c];
-          if (!cell.isRevealed && !cell.isFlagged) {
-            if (cell.isMine) {
-              // Flag mines instead of revealing
+          // Skip already revealed cells
+          if (cell.isRevealed) continue;
+          
+          if (cell.isMine) {
+            // Flag mines instead of revealing (safe handling)
+            if (!cell.isFlagged) {
               cell.state = CellState.flagged;
               flagsPlaced++;
-            } else {
-              _floodReveal(r, c);
             }
-            anyRevealed = true;
+          } else if (!cell.isFlagged) {
+            // Reveal safe cells
+            _floodReveal(r, c);
           }
         }
       }
@@ -434,7 +444,8 @@ class GameBoard {
       _flagAllMines();
     }
 
-    return anyRevealed;
+    // Purify always succeeds if targeting a valid cell
+    return true;
   }
 
   void reset() {

@@ -43,58 +43,100 @@ class MainMenuScreen extends StatelessWidget {
   Widget _buildLogo() {
     return Column(
       children: [
-        // Magic icon
+        // Logo image with glow effect
         Container(
-          width: 100,
-          height: 100,
+          width: 140,
+          height: 140,
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Colors.blue.shade400,
-                Colors.purple.shade400,
-              ],
-            ),
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: Colors.blue.withOpacity(0.4),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
+                color: AppColors.primaryPurple.withOpacity(0.4),
+                blurRadius: 30,
+                spreadRadius: 5,
+              ),
+              BoxShadow(
+                color: AppColors.primaryPink.withOpacity(0.3),
+                blurRadius: 50,
+                spreadRadius: 10,
               ),
             ],
           ),
-          child: const Icon(
-            Icons.auto_awesome,
-            color: Colors.white,
-            size: 50,
+          child: ClipOval(
+            child: Image.asset(
+              'assets/images/logo.png',
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) {
+                // Fallback icon if image not found
+                return Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        AppColors.primaryPurple,
+                        AppColors.primaryPink,
+                      ],
+                    ),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.auto_awesome,
+                    color: Colors.white,
+                    size: 60,
+                  ),
+                );
+              },
+            ),
           ),
         ),
-        const SizedBox(height: 24),
-        // Title
+        const SizedBox(height: 28),
+        // Title with cute styling
         ShaderMask(
-          shaderCallback: (bounds) => const LinearGradient(
-            colors: [Colors.white, Colors.white70],
+          shaderCallback: (bounds) => LinearGradient(
+            colors: [
+              AppColors.magicPurple,
+              AppColors.primaryPink,
+            ],
           ).createShader(bounds),
           child: const Text(
             'Magic',
             style: TextStyle(
-              fontSize: 36,
+              fontSize: 38,
               fontWeight: FontWeight.w300,
               color: Colors.white,
-              letterSpacing: 4,
+              letterSpacing: 6,
             ),
           ),
         ),
-        const Text(
-          'MineSweeper',
-          style: TextStyle(
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-            letterSpacing: 2,
+        ShaderMask(
+          shaderCallback: (bounds) => LinearGradient(
+            colors: [
+              AppColors.primaryPink,
+              AppColors.magicPurple,
+            ],
+          ).createShader(bounds),
+          child: const Text(
+            'Sweeper',
+            style: TextStyle(
+              fontSize: 34,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              letterSpacing: 3,
+            ),
           ),
+        ),
+        const SizedBox(height: 8),
+        // Sparkle decoration
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.star, color: AppColors.sparkleGold, size: 14),
+            const SizedBox(width: 8),
+            Icon(Icons.auto_awesome, color: AppColors.primaryPurple.withOpacity(0.7), size: 18),
+            const SizedBox(width: 8),
+            Icon(Icons.star, color: AppColors.sparkleGold, size: 14),
+          ],
         ),
       ],
     );
@@ -105,8 +147,8 @@ class MainMenuScreen extends StatelessWidget {
       children: [
         MenuButton(
           text: 'New Game',
-          icon: Icons.play_arrow,
-          color: AppColors.buttonBlue,
+          icon: Icons.play_arrow_rounded,
+          color: AppColors.magicPurple,
           onPressed: () {
             Navigator.push(
               context,
@@ -116,29 +158,29 @@ class MainMenuScreen extends StatelessWidget {
             );
           },
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 14),
         MenuButton(
           text: 'Continue',
-          icon: Icons.replay,
-          color: AppColors.buttonGreen,
-          enabled: false, // Will be enabled when save game is implemented
+          icon: Icons.replay_rounded,
+          color: AppColors.buttonSuccess,
+          enabled: false,
           onPressed: () {
             // TODO: Load saved game
           },
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 14),
         MenuButton(
           text: 'Multiplayer',
-          icon: Icons.people,
-          color: AppColors.buttonPurple,
+          icon: Icons.people_rounded,
+          color: AppColors.primaryPink,
           badge: 'Coming Soon',
           enabled: false,
           onPressed: null,
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 14),
         MenuButton(
           text: 'Settings',
-          icon: Icons.settings,
+          icon: Icons.settings_rounded,
           color: AppColors.buttonGray,
           onPressed: () {
             Navigator.push(
@@ -159,27 +201,38 @@ class MainMenuScreen extends StatelessWidget {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(16),
+            color: Colors.white.withOpacity(0.6),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: AppColors.primaryPurple.withOpacity(0.2),
+              width: 1,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primaryPurple.withOpacity(0.1),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _buildStatItem(
-                icon: Icons.emoji_events,
-                iconColor: Colors.amber,
+                icon: Icons.emoji_events_rounded,
+                iconColor: AppColors.sparkleGold,
                 label: 'Best Time',
                 value: settingsProvider.formatBestTime('Beginner'),
               ),
               _buildStatItem(
-                icon: Icons.star,
-                iconColor: Colors.yellow,
+                icon: Icons.favorite_rounded,
+                iconColor: AppColors.primaryPink,
                 label: 'Games Won',
                 value: '${settingsProvider.gamesWon}',
               ),
               _buildStatItem(
-                icon: Icons.diamond,
-                iconColor: Colors.cyan,
+                icon: Icons.auto_awesome_rounded,
+                iconColor: AppColors.magicPurple,
                 label: 'Win Rate',
                 value: '${(settingsProvider.winRate * 100).toStringAsFixed(0)}%',
               ),
@@ -198,22 +251,23 @@ class MainMenuScreen extends StatelessWidget {
   }) {
     return Column(
       children: [
-        Icon(icon, color: iconColor, size: 28),
+        Icon(icon, color: iconColor, size: 26),
         const SizedBox(height: 4),
         Text(
           label,
           style: TextStyle(
             fontSize: 11,
-            color: Colors.white.withOpacity(0.7),
+            color: AppColors.magicPurple.withOpacity(0.7),
+            fontWeight: FontWeight.w500,
           ),
         ),
         const SizedBox(height: 2),
         Text(
           value,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: AppColors.magicPurple,
           ),
         ),
       ],

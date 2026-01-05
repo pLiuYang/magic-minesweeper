@@ -98,55 +98,122 @@ class _GameScreenState extends State<GameScreen> {
           WidgetsBinding.instance.addPostFrameCallback((_) => _checkGameEnd());
 
           return Scaffold(
-            backgroundColor: AppColors.backgroundLight,
-            appBar: AppBar(
-              backgroundColor: Colors.white,
-              elevation: 0,
-              leading: IconButton(
-                icon: const Icon(Icons.menu, color: Colors.black87),
-                onPressed: () => _showGameMenu(context),
+            body: Container(
+              decoration: const BoxDecoration(
+                gradient: AppColors.gameGradient,
               ),
-              title: const Text(
-                'Magic MineSweeper',
-                style: TextStyle(
-                  color: Colors.black87,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              centerTitle: true,
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.auto_stories, color: AppColors.primaryPurple),
-                  tooltip: 'Spell Book',
-                  onPressed: () => _showSpellBook(context),
-                ),
-              ],
-            ),
-            body: SafeArea(
-              child: Column(
-                children: [
-                  // Status bar
-                  const Padding(
-                    padding: EdgeInsets.all(16),
-                    child: StatusBarWidget(),
-                  ),
-                  // Game board
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: GameBoardWidget(),
+              child: SafeArea(
+                child: Column(
+                  children: [
+                    // Custom app bar
+                    _buildAppBar(context),
+                    // Status bar
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      child: StatusBarWidget(),
                     ),
-                  ),
-                  // Spell bar
-                  const Padding(
-                    padding: EdgeInsets.all(16),
-                    child: SpellBarWidget(),
-                  ),
-                ],
+                    // Game board
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: GameBoardWidget(),
+                      ),
+                    ),
+                    // Spell bar
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                      child: SpellBarWidget(),
+                    ),
+                  ],
+                ),
               ),
             ),
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildAppBar(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      child: Row(
+        children: [
+          // Menu button
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.8),
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primaryPurple.withOpacity(0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: IconButton(
+              icon: Icon(Icons.menu_rounded, color: AppColors.magicPurple),
+              onPressed: () => _showGameMenu(context),
+            ),
+          ),
+          const Spacer(),
+          // Title
+          Column(
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.auto_awesome, color: AppColors.sparkleGold, size: 18),
+                  const SizedBox(width: 6),
+                  ShaderMask(
+                    shaderCallback: (bounds) => LinearGradient(
+                      colors: [AppColors.magicPurple, AppColors.primaryPink],
+                    ).createShader(bounds),
+                    child: const Text(
+                      'Magic Sweeper',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Icon(Icons.auto_awesome, color: AppColors.sparkleGold, size: 18),
+                ],
+              ),
+              Text(
+                widget.difficulty.name,
+                style: TextStyle(
+                  color: AppColors.magicPurple.withOpacity(0.6),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+          const Spacer(),
+          // Spell book button
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.8),
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primaryPurple.withOpacity(0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: IconButton(
+              icon: Icon(Icons.auto_stories_rounded, color: AppColors.magicPurple),
+              tooltip: 'Spell Book',
+              onPressed: () => _showSpellBook(context),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -166,10 +233,19 @@ class _GameScreenState extends State<GameScreen> {
   void _showGameMenu(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
+      backgroundColor: Colors.transparent,
       builder: (context) => Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primaryPurple.withOpacity(0.1),
+              blurRadius: 20,
+              offset: const Offset(0, -5),
+            ),
+          ],
+        ),
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -178,14 +254,15 @@ class _GameScreenState extends State<GameScreen> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey.shade300,
+                color: AppColors.primaryPurple.withOpacity(0.3),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
             const SizedBox(height: 24),
             _buildMenuItem(
-              icon: Icons.refresh,
+              icon: Icons.refresh_rounded,
               label: 'New Game',
+              color: AppColors.magicPurple,
               onTap: () {
                 Navigator.pop(context);
                 setState(() {
@@ -195,25 +272,27 @@ class _GameScreenState extends State<GameScreen> {
               },
             ),
             _buildMenuItem(
-              icon: Icons.auto_stories,
+              icon: Icons.auto_stories_rounded,
               label: 'Spell Book',
-              color: AppColors.primaryPurple,
+              color: AppColors.primaryPink,
               onTap: () {
                 Navigator.pop(context);
                 _showSpellBook(context);
               },
             ),
             _buildMenuItem(
-              icon: Icons.grid_view,
+              icon: Icons.grid_view_rounded,
               label: 'Change Difficulty',
+              color: AppColors.crystalBlue,
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pop(context);
               },
             ),
             _buildMenuItem(
-              icon: Icons.home,
+              icon: Icons.home_rounded,
               label: 'Main Menu',
+              color: AppColors.buttonGray,
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pushAndRemoveUntil(
@@ -236,18 +315,36 @@ class _GameScreenState extends State<GameScreen> {
     required VoidCallback onTap,
     Color? color,
   }) {
-    return ListTile(
-      leading: Icon(icon, color: color ?? AppColors.primaryBlue),
-      title: Text(
-        label,
-        style: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: ListTile(
+        leading: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: (color ?? AppColors.magicPurple).withOpacity(0.15),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(icon, color: color ?? AppColors.magicPurple, size: 22),
         ),
-      ),
-      onTap: onTap,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        title: Text(
+          label,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: AppColors.magicPurple,
+          ),
+        ),
+        trailing: Icon(
+          Icons.chevron_right_rounded,
+          color: (color ?? AppColors.magicPurple).withOpacity(0.5),
+        ),
+        onTap: onTap,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        tileColor: Colors.transparent,
+        hoverColor: (color ?? AppColors.magicPurple).withOpacity(0.05),
       ),
     );
   }

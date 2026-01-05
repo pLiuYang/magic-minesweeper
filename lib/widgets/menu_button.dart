@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../utils/constants.dart';
 
 class MenuButton extends StatelessWidget {
   final String text;
@@ -21,21 +22,35 @@ class MenuButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Opacity(
-      opacity: enabled ? 1.0 : 0.6,
+      opacity: enabled ? 1.0 : 0.5,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
           Container(
             width: double.infinity,
-            height: 56,
+            height: 58,
             decoration: BoxDecoration(
-              color: enabled ? color : Colors.grey.shade400,
-              borderRadius: BorderRadius.circular(16),
+              gradient: enabled
+                  ? LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        color,
+                        color.withOpacity(0.8),
+                      ],
+                    )
+                  : null,
+              color: enabled ? null : Colors.grey.shade300,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.3),
+                width: 1.5,
+              ),
               boxShadow: [
                 BoxShadow(
-                  color: (enabled ? color : Colors.grey).withOpacity(0.3),
-                  blurRadius: 8,
-                  offset: const Offset(0, 4),
+                  color: (enabled ? color : Colors.grey).withOpacity(0.25),
+                  blurRadius: 12,
+                  offset: const Offset(0, 6),
                 ),
               ],
             ),
@@ -43,17 +58,17 @@ class MenuButton extends StatelessWidget {
               color: Colors.transparent,
               child: InkWell(
                 onTap: enabled ? onPressed : null,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(20),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Row(
                     children: [
                       Container(
-                        width: 36,
-                        height: 36,
+                        width: 38,
+                        height: 38,
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.white.withOpacity(0.25),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         child: Icon(
                           icon,
@@ -68,7 +83,14 @@ class MenuButton extends StatelessWidget {
                           color: Colors.white,
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
+                          letterSpacing: 0.5,
                         ),
+                      ),
+                      const Spacer(),
+                      Icon(
+                        Icons.chevron_right_rounded,
+                        color: Colors.white.withOpacity(0.7),
+                        size: 24,
                       ),
                     ],
                   ),
@@ -79,27 +101,43 @@ class MenuButton extends StatelessWidget {
           if (badge != null)
             Positioned(
               top: -8,
-              right: 12,
+              right: 16,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.amber,
-                  borderRadius: BorderRadius.circular(8),
+                  gradient: LinearGradient(
+                    colors: [
+                      AppColors.sparkleGold,
+                      AppColors.accentGold,
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(10),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.amber.withOpacity(0.4),
-                      blurRadius: 4,
+                      color: AppColors.sparkleGold.withOpacity(0.4),
+                      blurRadius: 6,
                       offset: const Offset(0, 2),
                     ),
                   ],
                 ),
-                child: Text(
-                  badge!,
-                  style: const TextStyle(
-                    color: Colors.black87,
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                  ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.star_rounded,
+                      color: Colors.white,
+                      size: 12,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      badge!,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),

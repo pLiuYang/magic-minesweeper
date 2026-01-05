@@ -1,5 +1,5 @@
-name: magic_minesweeper
-description: "Magic MineSweeper - A modern Minesweeper game with magical powers"
+name: magic_sweeper
+description: "Magic Sweeper - A modern Minesweeper game with magical powers"
 publish_to: 'none'
 
 version: 1.0.0+1
@@ -22,7 +22,5 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
-  # Assets will be added in future phases
-  # assets:
-  #   - assets/images/
-  #   - assets/fonts/
+  assets:
+    - assets/images/

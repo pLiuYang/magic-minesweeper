@@ -11,15 +11,19 @@ class StatusBarWidget extends StatelessWidget {
     return Consumer<GameProvider>(
       builder: (context, gameProvider, child) {
         return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
+            color: Colors.white.withOpacity(0.9),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: AppColors.primaryPurple.withOpacity(0.1),
+              width: 1,
+            ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 2),
+                color: AppColors.primaryPurple.withOpacity(0.08),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
@@ -28,17 +32,19 @@ class StatusBarWidget extends StatelessWidget {
             children: [
               // Flag counter
               _buildStatusItem(
-                icon: Icons.flag,
-                iconColor: AppColors.cellFlag,
+                icon: Icons.flag_rounded,
+                iconColor: AppColors.primaryPink,
                 value: '${gameProvider.remainingFlags}',
+                label: 'Flags',
               ),
               // Mana bar
               _buildManaBar(gameProvider),
               // Timer
               _buildStatusItem(
-                icon: Icons.timer,
-                iconColor: AppColors.primaryBlue,
+                icon: Icons.timer_rounded,
+                iconColor: AppColors.crystalBlue,
                 value: gameProvider.timerDisplay,
+                label: 'Time',
               ),
             ],
           ),
@@ -51,20 +57,34 @@ class StatusBarWidget extends StatelessWidget {
     required IconData icon,
     required Color iconColor,
     required String value,
+    required String label,
   }) {
-    return Row(
-      children: [
-        Icon(icon, color: iconColor, size: 24),
-        const SizedBox(width: 8),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: iconColor.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: iconColor, size: 20),
+          const SizedBox(width: 6),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.magicPurple,
+                ),
+              ),
+            ],
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -74,7 +94,12 @@ class StatusBarWidget extends StatelessWidget {
     
     return Expanded(
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16),
+        margin: const EdgeInsets.symmetric(horizontal: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: manaColor.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -82,7 +107,7 @@ class StatusBarWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
-                  Icons.water_drop,
+                  Icons.auto_awesome_rounded,
                   size: 14,
                   color: manaColor,
                 ),
@@ -93,6 +118,7 @@ class StatusBarWidget extends StatelessWidget {
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     color: manaColor,
+                    letterSpacing: 1,
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -101,26 +127,22 @@ class StatusBarWidget extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.w500,
-                    color: Colors.grey.shade600,
+                    color: AppColors.magicPurple.withOpacity(0.7),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 4),
             Container(
-              height: 10,
+              height: 8,
               decoration: BoxDecoration(
-                color: Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(5),
+                color: manaColor.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(4),
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(5),
+                borderRadius: BorderRadius.circular(4),
                 child: Stack(
                   children: [
-                    // Background
-                    Container(
-                      color: Colors.grey.shade200,
-                    ),
                     // Mana fill with gradient
                     FractionallySizedBox(
                       widthFactor: manaPercentage,
@@ -128,10 +150,11 @@ class StatusBarWidget extends StatelessWidget {
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
-                              manaColor.withOpacity(0.7),
+                              manaColor.withOpacity(0.8),
                               manaColor,
                             ],
                           ),
+                          borderRadius: BorderRadius.circular(4),
                         ),
                       ),
                     ),
@@ -144,7 +167,7 @@ class StatusBarWidget extends StatelessWidget {
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
                             colors: [
-                              Colors.white.withOpacity(0.3),
+                              Colors.white.withOpacity(0.4),
                               Colors.transparent,
                             ],
                           ),
@@ -163,11 +186,11 @@ class StatusBarWidget extends StatelessWidget {
 
   Color _getManaColor(double percentage) {
     if (percentage > 0.6) {
-      return AppColors.primaryBlue;
+      return AppColors.magicPurple;
     } else if (percentage > 0.3) {
-      return Colors.orange;
+      return AppColors.sparkleGold;
     } else {
-      return Colors.red;
+      return AppColors.primaryPink;
     }
   }
 }

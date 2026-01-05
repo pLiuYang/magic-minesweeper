@@ -15,22 +15,31 @@ class GameBoardWidget extends StatelessWidget {
 
         return Container(
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
+            color: Colors.white.withOpacity(0.9),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: AppColors.primaryPurple.withOpacity(0.15),
+              width: 2,
+            ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
+                color: AppColors.primaryPurple.withOpacity(0.1),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+              ),
+              BoxShadow(
+                color: AppColors.primaryPink.withOpacity(0.05),
+                blurRadius: 40,
+                spreadRadius: 5,
               ),
             ],
           ),
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(10),
           child: LayoutBuilder(
             builder: (context, constraints) {
               // Calculate available space
-              final maxWidth = constraints.maxWidth - 16; // padding
-              final maxHeight = constraints.maxHeight - 16;
+              final maxWidth = constraints.maxWidth - 20; // padding
+              final maxHeight = constraints.maxHeight - 20;
 
               // Determine minimum cell size for playability
               const double minCellSize = 32.0;

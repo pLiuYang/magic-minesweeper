@@ -1,6 +1,6 @@
 {
-    "name": "magic_minesweeper",
-    "short_name": "magic_minesweeper",
+    "name": "magic_sweeper",
+    "short_name": "magic_sweeper",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

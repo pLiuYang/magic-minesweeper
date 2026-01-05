@@ -26,7 +26,7 @@ class MagicMineSweeperApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => SettingsProvider()..loadSettings()),
       ],
       child: MaterialApp(
-        title: 'Magic MineSweeper',
+        title: 'Magic Sweeper',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(

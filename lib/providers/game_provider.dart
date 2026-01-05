@@ -195,11 +195,11 @@ class GameProvider extends ChangeNotifier {
         success = _board.castReveal(row, col);
         break;
       case SpellType.scan:
-        final scanned = _board.castScan(row, col);
-        success = scanned.isNotEmpty;
-        if (success) {
-          _startScanTimer();
-        }
+        // Scan always succeeds - it shows the area was scanned
+        // Even if no mines are found, the spell is cast
+        _board.castScan(row, col);
+        _startScanTimer();
+        success = true;
         break;
       case SpellType.disarm:
         success = _board.castDisarm(row, col);
