@@ -288,7 +288,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
           itemCount: entries.length,
           itemBuilder: (context, index) {
             final entry = entries[index];
-            final isCurrentPlayer = entry.oderId == provider.currentPlayer.id;
+            final isCurrentPlayer = entry.playerId == provider.currentPlayer.id;
             return _buildLeaderboardEntry(entry, isCurrentPlayer);
           },
         );

@@ -422,7 +422,7 @@ class MultiplayerProvider extends ChangeNotifier {
     final score = _currentMatch!.getPlayerScore(_currentPlayer.id);
     final entry = LeaderboardEntry(
       id: 'entry_${DateTime.now().millisecondsSinceEpoch}',
-      oderId: _currentPlayer.id,
+      playerId: _currentPlayer.id,
       playerName: _currentPlayer.name,
       avatarAsset: _currentPlayer.avatarAsset,
       score: score,
@@ -506,10 +506,10 @@ class MultiplayerProvider extends ChangeNotifier {
   /// Get player's rank in leaderboard
   int? getPlayerRank() {
     final entry = _leaderboardEntries.firstWhere(
-      (e) => e.oderId == _currentPlayer.id,
+      (e) => e.playerId == _currentPlayer.id,
       orElse: () => LeaderboardEntry(
         id: '',
-        oderId: '',
+        playerId: '',
         playerName: '',
         score: 0,
         rank: -1,

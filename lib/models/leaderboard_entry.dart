@@ -19,7 +19,7 @@ enum LeaderboardGameMode {
 /// Represents a single leaderboard entry
 class LeaderboardEntry {
   final String id;
-  final String oderId;
+  final String playerId;
   final String playerName;
   final String? avatarAsset;
   final int score;
@@ -33,7 +33,7 @@ class LeaderboardEntry {
 
   const LeaderboardEntry({
     required this.id,
-    required this.oderId,
+    required this.playerId,
     required this.playerName,
     this.avatarAsset,
     required this.score,
@@ -91,7 +91,7 @@ class LeaderboardEntry {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'oderId': oderId,
+      'playerId': playerId,
       'playerName': playerName,
       'avatarAsset': avatarAsset,
       'score': score,
@@ -109,7 +109,7 @@ class LeaderboardEntry {
   factory LeaderboardEntry.fromJson(Map<String, dynamic> json) {
     return LeaderboardEntry(
       id: json['id'] as String,
-      oderId: json['oderId'] as String,
+      playerId: json['playerId'] as String,
       playerName: json['playerName'] as String,
       avatarAsset: json['avatarAsset'] as String?,
       score: json['score'] as int,
@@ -127,7 +127,7 @@ class LeaderboardEntry {
   LeaderboardEntry copyWithRank(int newRank) {
     return LeaderboardEntry(
       id: id,
-      oderId: oderId,
+      playerId: playerId,
       playerName: playerName,
       avatarAsset: avatarAsset,
       score: score,
@@ -164,17 +164,17 @@ class Leaderboard {
   }
 
   /// Find player's entry
-  LeaderboardEntry? findPlayer(String oderId) {
+  LeaderboardEntry? findPlayer(String playerId) {
     try {
-      return entries.firstWhere((e) => e.oderId == oderId);
+      return entries.firstWhere((e) => e.playerId == playerId);
     } catch (_) {
       return null;
     }
   }
 
   /// Get player's rank
-  int? getPlayerRank(String oderId) {
-    final entry = findPlayer(oderId);
+  int? getPlayerRank(String playerId) {
+    final entry = findPlayer(playerId);
     return entry?.rank;
   }
 
@@ -238,7 +238,7 @@ class SampleLeaderboardData {
       
       entries.add(LeaderboardEntry(
         id: 'entry_$i',
-        oderId: 'player_$i',
+        playerId: 'player_$i',
         playerName: names[i],
         score: baseScore,
         rank: i + 1,

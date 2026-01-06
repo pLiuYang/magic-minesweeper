@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import '../models/competitive_spell.dart';
 import '../models/game_board.dart';
-import '../utils/constants.dart';
 
 class VersusBoardWidget extends StatefulWidget {
   final String playerId;
@@ -34,6 +33,8 @@ class _VersusBoardWidgetState extends State<VersusBoardWidget>
   bool _isGameOver = false;
   bool _isVictory = false;
   Timer? _aiTimer;
+  int _boardWidth = 8;
+  int _boardHeight = 8;
   
   // Effect states
   bool _isBlinded = false;
@@ -53,26 +54,26 @@ class _VersusBoardWidgetState extends State<VersusBoardWidget>
   }
 
   void _initializeBoard() {
-    int rows, cols, mines;
+    int mines;
     switch (widget.difficulty) {
       case 'easy':
-        rows = 8;
-        cols = 8;
+        _boardWidth = 8;
+        _boardHeight = 8;
         mines = 10;
         break;
       case 'hard':
-        rows = 12;
-        cols = 12;
+        _boardWidth = 12;
+        _boardHeight = 12;
         mines = 30;
         break;
       case 'medium':
       default:
-        rows = 10;
-        cols = 10;
+        _boardWidth = 10;
+        _boardHeight = 10;
         mines = 20;
     }
     
-    _board = GameBoard(rows: rows, cols: cols, mineCount: mines);
+    _board = GameBoard(width: _boardWidth, height: _boardHeight, totalMines: mines);
   }
 
   void _startAIPlay() {
@@ -92,8 +93,8 @@ class _VersusBoardWidgetState extends State<VersusBoardWidget>
     final random = Random();
     final hiddenCells = <List<int>>[];
     
-    for (int r = 0; r < _board.rows; r++) {
-      for (int c = 0; c < _board.cols; c++) {
+    for (int r = 0; r < _boardHeight; r++) {
+      for (int c = 0; c < _boardWidth; c++) {
         if (!_board.cells[r][c].isRevealed && !_board.cells[r][c].isFlagged) {
           hiddenCells.add([r, c]);
         }
@@ -112,7 +113,7 @@ class _VersusBoardWidgetState extends State<VersusBoardWidget>
           for (int dc = -1; dc <= 1; dc++) {
             final nr = cell[0] + dr;
             final nc = cell[1] + dc;
-            if (nr >= 0 && nr < _board.rows && nc >= 0 && nc < _board.cols) {
+            if (nr >= 0 && nr < _boardHeight && nc >= 0 && nc < _boardWidth) {
               if (_board.cells[nr][nc].isRevealed) {
                 isAdjacent = true;
                 break;
@@ -197,23 +198,23 @@ class _VersusBoardWidgetState extends State<VersusBoardWidget>
           child: LayoutBuilder(
             builder: (context, constraints) {
               final cellSize = min(
-                constraints.maxWidth / _board.cols,
-                constraints.maxHeight / _board.rows,
+                constraints.maxWidth / _boardWidth,
+                constraints.maxHeight / _boardHeight,
               );
               
               return Center(
                 child: SizedBox(
-                  width: cellSize * _board.cols,
-                  height: cellSize * _board.rows,
+                  width: cellSize * _boardWidth,
+                  height: cellSize * _boardHeight,
                   child: GridView.builder(
                     physics: const NeverScrollableScrollPhysics(),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: _board.cols,
+                      crossAxisCount: _boardWidth,
                     ),
-                    itemCount: _board.rows * _board.cols,
+                    itemCount: _boardHeight * _boardWidth,
                     itemBuilder: (context, index) {
-                      final row = index ~/ _board.cols;
-                      final col = index % _board.cols;
+                      final row = index ~/ _boardWidth;
+                      final col = index % _boardWidth;
                       return _buildCell(row, col, cellSize);
                     },
                   ),
@@ -351,7 +352,7 @@ class _VersusBoardWidgetState extends State<VersusBoardWidget>
     );
   }
 
-  Widget _buildCellContent(Cell cell, bool isFakeMine) {
+  Widget _buildCellContent(cell, bool isFakeMine) {
     if (cell.isFlagged) {
       return Icon(
         Icons.flag,
@@ -476,22 +477,25 @@ class _VersusBoardWidgetState extends State<VersusBoardWidget>
     }
 
     setState(() {
-      if (!_board.isInitialized) {
-        _board.initializeMines(row, col);
+      // First click - place mines
+      if (!_board.minesPlaced) {
+        _board.placeMines(row, col);
       }
 
       if (_board.cells[row][col].isMine) {
         // Game over
-        _board.revealAllMines();
+        _revealAllMines();
         _isGameOver = true;
       } else {
         // Reveal cell and calculate score
-        final revealedCount = _board.revealCell(row, col);
+        final previousRevealed = _board.revealedCount;
+        _board.revealCell(row, col);
+        final revealedCount = _board.revealedCount - previousRevealed;
         _score += revealedCount * 10;
         widget.onScoreUpdate(_score);
 
         // Check victory
-        if (_board.checkVictory()) {
+        if (_board.isWon) {
           _isVictory = true;
           _score += 500; // Bonus for completing
           widget.onScoreUpdate(_score);
@@ -501,12 +505,22 @@ class _VersusBoardWidgetState extends State<VersusBoardWidget>
     });
   }
 
+  void _revealAllMines() {
+    for (int r = 0; r < _boardHeight; r++) {
+      for (int c = 0; c < _boardWidth; c++) {
+        if (_board.cells[r][c].isMine) {
+          _board.cells[r][c].reveal();
+        }
+      }
+    }
+  }
+
   void _toggleFlag(int row, int col) {
     if (_isGameOver || _isVictory) return;
     if (_board.cells[row][col].isRevealed) return;
 
     setState(() {
-      _board.cells[row][col].isFlagged = !_board.cells[row][col].isFlagged;
+      _board.cells[row][col].toggleFlag();
     });
   }
 }
