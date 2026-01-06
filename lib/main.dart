@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'providers/settings_provider.dart';
+import 'providers/multiplayer_provider.dart';
 import 'screens/main_menu_screen.dart';
 import 'utils/constants.dart';
 
@@ -25,6 +26,7 @@ class MagicSweeperApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => SettingsProvider()..loadSettings()),
+        ChangeNotifierProvider(create: (_) => MultiplayerProvider()),
       ],
       child: MaterialApp(
         title: 'Magic Sweeper',

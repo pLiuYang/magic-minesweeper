@@ -6,6 +6,7 @@ import '../widgets/menu_button.dart';
 import 'game_screen.dart';
 import 'settings_screen.dart';
 import 'difficulty_selection_screen.dart';
+import 'multiplayer_menu_screen.dart';
 
 class MainMenuScreen extends StatelessWidget {
   const MainMenuScreen({super.key});
@@ -282,9 +283,14 @@ class MainMenuScreen extends StatelessWidget {
           text: 'Multiplayer',
           icon: Icons.people_rounded,
           color: AppColors.candyPink,
-          badge: 'Coming Soon',
-          enabled: false,
-          onPressed: null,
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const MultiplayerMenuScreen(),
+              ),
+            );
+          },
         ),
         const SizedBox(height: 14),
         MenuButton(
