@@ -1,6 +1,5 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'dart:io';
 import 'api_config.dart';
 
 /// API Service for communicating with the Magic Minesweeper backend
@@ -9,41 +8,21 @@ class ApiService {
   factory ApiService() => _instance;
   ApiService._internal();
 
-  final http.Client _client = http.Client();
-  final FlutterSecureStorage _storage = const FlutterSecureStorage();
+  final HttpClient _client = HttpClient();
   
   String? _sessionCookie;
   
   /// Get stored session cookie
-  Future<String?> get sessionCookie async {
-    _sessionCookie ??= await _storage.read(key: 'session_cookie');
-    return _sessionCookie;
-  }
+  String? get sessionCookie => _sessionCookie;
   
   /// Set session cookie
-  Future<void> setSessionCookie(String cookie) async {
+  void setSessionCookie(String cookie) {
     _sessionCookie = cookie;
-    await _storage.write(key: 'session_cookie', value: cookie);
   }
   
   /// Clear session cookie (logout)
   Future<void> clearSession() async {
     _sessionCookie = null;
-    await _storage.delete(key: 'session_cookie');
-  }
-  
-  /// Build headers with authentication
-  Future<Map<String, String>> _buildHeaders() async {
-    final headers = <String, String>{
-      'Content-Type': 'application/json',
-    };
-    
-    final cookie = await sessionCookie;
-    if (cookie != null) {
-      headers['Cookie'] = cookie;
-    }
-    
-    return headers;
   }
   
   /// Make a tRPC query (GET request)
@@ -53,17 +32,30 @@ class ApiService {
     T Function(dynamic)? fromJson,
   }) async {
     try {
-      final uri = Uri.parse('${ApiConfig.trpcBase}/$procedure');
-      final queryParams = input != null
-          ? {'input': jsonEncode({'json': input})}
-          : null;
+      var uriString = '${ApiConfig.trpcBase}/$procedure';
+      if (input != null) {
+        final encoded = Uri.encodeComponent(jsonEncode({'json': input}));
+        uriString += '?input=$encoded';
+      }
       
-      final response = await _client.get(
-        queryParams != null ? uri.replace(queryParameters: queryParams) : uri,
-        headers: await _buildHeaders(),
-      ).timeout(ApiConfig.connectionTimeout);
+      final uri = Uri.parse(uriString);
+      final request = await _client.getUrl(uri);
       
-      return _handleResponse(response, fromJson);
+      request.headers.set('Content-Type', 'application/json');
+      if (_sessionCookie != null) {
+        request.headers.set('Cookie', _sessionCookie!);
+      }
+      
+      final response = await request.close().timeout(ApiConfig.connectionTimeout);
+      final body = await response.transform(utf8.decoder).join();
+      
+      // Extract and store session cookie from response
+      final cookies = response.cookies;
+      if (cookies.isNotEmpty) {
+        _sessionCookie = cookies.map((c) => '${c.name}=${c.value}').join('; ');
+      }
+      
+      return _handleResponse(response.statusCode, body, fromJson);
     } catch (e) {
       return ApiResponse.error('Network error: $e');
     }
@@ -76,19 +68,26 @@ class ApiService {
     T Function(dynamic)? fromJson,
   }) async {
     try {
-      final response = await _client.post(
-        Uri.parse('${ApiConfig.trpcBase}/$procedure'),
-        headers: await _buildHeaders(),
-        body: jsonEncode({'json': input ?? {}}),
-      ).timeout(ApiConfig.connectionTimeout);
+      final uri = Uri.parse('${ApiConfig.trpcBase}/$procedure');
+      final request = await _client.postUrl(uri);
       
-      // Extract and store session cookie from response
-      final setCookie = response.headers['set-cookie'];
-      if (setCookie != null) {
-        await setSessionCookie(setCookie);
+      request.headers.set('Content-Type', 'application/json');
+      if (_sessionCookie != null) {
+        request.headers.set('Cookie', _sessionCookie!);
       }
       
-      return _handleResponse(response, fromJson);
+      request.write(jsonEncode({'json': input ?? {}}));
+      
+      final response = await request.close().timeout(ApiConfig.connectionTimeout);
+      final body = await response.transform(utf8.decoder).join();
+      
+      // Extract and store session cookie from response
+      final cookies = response.cookies;
+      if (cookies.isNotEmpty) {
+        _sessionCookie = cookies.map((c) => '${c.name}=${c.value}').join('; ');
+      }
+      
+      return _handleResponse(response.statusCode, body, fromJson);
     } catch (e) {
       return ApiResponse.error('Network error: $e');
     }
@@ -96,14 +95,15 @@ class ApiService {
   
   /// Handle HTTP response
   ApiResponse<T> _handleResponse<T>(
-    http.Response response,
+    int statusCode,
+    String body,
     T Function(dynamic)? fromJson,
   ) {
     try {
-      final body = jsonDecode(response.body);
+      final jsonBody = jsonDecode(body);
       
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        final result = body['result'];
+      if (statusCode >= 200 && statusCode < 300) {
+        final result = jsonBody['result'];
         if (result != null && result['data'] != null) {
           final data = fromJson != null 
               ? fromJson(result['data']) 
@@ -112,7 +112,7 @@ class ApiService {
         }
         return ApiResponse.success(null as T);
       } else {
-        final error = body['error'];
+        final error = jsonBody['error'];
         final message = error?['message'] ?? 'Unknown error';
         return ApiResponse.error(message);
       }

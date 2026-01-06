@@ -633,7 +633,7 @@ class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => VersusGameScreen(
-          mode: widget.modeConfig.mode,
+          modeConfig: widget.modeConfig,
           difficulty: _selectedDifficulty,
         ),
       ),

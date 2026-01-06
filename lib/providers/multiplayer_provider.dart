@@ -8,7 +8,7 @@ import '../models/leaderboard_entry.dart';
 import '../services/auth_service.dart';
 import '../services/match_service.dart';
 import '../services/matchmaking_service.dart';
-import '../services/leaderboard_service.dart';
+import '../services/leaderboard_service.dart' hide LeaderboardEntry;
 import '../services/socket_service.dart';
 
 /// Provider for managing multiplayer game state
@@ -178,7 +178,7 @@ class MultiplayerProvider extends ChangeNotifier {
         difficulty: difficulty,
         players: [_currentPlayer],
         timeLimit: timeLimit ?? 300,
-        boardSeed: response.data!.boardSeed,
+        seed: int.tryParse(response.data!.boardSeed) ?? DateTime.now().millisecondsSinceEpoch,
       );
 
       _currentMatch = match;
@@ -441,7 +441,7 @@ class MultiplayerProvider extends ChangeNotifier {
         casterId: int.parse(_currentPlayer.id),
         targetId: int.parse(targetId),
         spellType: spell.type.name,
-        duration: spell.duration.inMilliseconds,
+        duration: spell.duration * 1000,
       );
     }
 
@@ -456,14 +456,14 @@ class MultiplayerProvider extends ChangeNotifier {
       casterId: casterId,
       targetId: targetId,
       startTime: DateTime.now(),
-      duration: spell.duration,
+      duration: spell.duration,  // Already int in seconds
       effectData: _generateEffectData(spell),
     );
 
     _activeEffects.add(effect);
 
     // Handle instant effects
-    if (spell.duration == Duration.zero) {
+    if (spell.duration == 0) {
       _processInstantEffect(effect);
     }
 
@@ -520,7 +520,7 @@ class MultiplayerProvider extends ChangeNotifier {
 
   /// Update active effects (remove expired ones)
   void _updateActiveEffects() {
-    _activeEffects.removeWhere((effect) => !effect.isActive && effect.duration > Duration.zero);
+    _activeEffects.removeWhere((effect) => !effect.isActive && effect.duration > 0);
   }
 
   /// Check if player has active effect
@@ -850,7 +850,8 @@ class MultiplayerProvider extends ChangeNotifier {
   void _handleGameStarted(GameStartedEvent event) {
     // Start the game
     if (_currentMatch != null) {
-      _currentMatch!.boardSeed = event.boardSeed;
+      // Update match seed from server event
+      _currentMatch = _currentMatch!.copyWith(seed: int.tryParse(event.boardSeed) ?? _currentMatch!.seed);
       startMatch();
     }
     notifyListeners();
@@ -859,7 +860,7 @@ class MultiplayerProvider extends ChangeNotifier {
   void _handleProgressUpdated(ProgressUpdatedEvent event) {
     // Update opponent progress
     if (_currentMatch != null) {
-      _currentMatch!.updatePlayerScore(event.oderId.toString(), event.score);
+      _currentMatch!.updatePlayerScore(event.userId.toString(), event.score);
     }
     notifyListeners();
   }
