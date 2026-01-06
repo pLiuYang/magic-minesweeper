@@ -10,6 +10,8 @@ class GameProvider extends ChangeNotifier {
   DifficultyConfig _difficulty;
   Timer? _timer;
   Timer? _scanTimer;
+  Timer? _purifyTimer;
+  Set<String> _purifiedCells = {};
   int _elapsedSeconds = 0;
   bool _isFirstGame = true;
 
@@ -86,6 +88,9 @@ class GameProvider extends ChangeNotifier {
     _stopTimer();
     _scanTimer?.cancel();
     _scanTimer = null;
+    _purifyTimer?.cancel();
+    _purifyTimer = null;
+    _purifiedCells.clear();
     _elapsedSeconds = 0;
     _board = GameBoard.fromDifficulty(_difficulty);
     _initializeMana();
@@ -210,6 +215,9 @@ class GameProvider extends ChangeNotifier {
         break;
       case SpellType.purify:
         success = _board.castPurify(row, col);
+        if (success) {
+          _startPurifyTimer(row, col);
+        }
         break;
       case SpellType.shield:
         // Shield doesn't need a target
@@ -281,6 +289,31 @@ class GameProvider extends ChangeNotifier {
     });
   }
 
+  void _startPurifyTimer(int row, int col) {
+    // Add all cells in 3x3 area to purified set
+    for (int dr = -1; dr <= 1; dr++) {
+      for (int dc = -1; dc <= 1; dc++) {
+        final r = row + dr;
+        final c = col + dc;
+        if (r >= 0 && r < _board.height && c >= 0 && c < _board.width) {
+          _purifiedCells.add('$r,$c');
+        }
+      }
+    }
+    
+    // Cancel any existing timer
+    _purifyTimer?.cancel();
+    // Purify effect lasts for 2 seconds
+    _purifyTimer = Timer(const Duration(seconds: 2), () {
+      _purifiedCells.clear();
+      notifyListeners();
+    });
+  }
+
+  bool isCellPurified(int row, int col) {
+    return _purifiedCells.contains('$row,$col');
+  }
+
   void _stopScanTimer() {
     _scanTimer?.cancel();
     _scanTimer = null;
@@ -337,6 +370,8 @@ class GameProvider extends ChangeNotifier {
     _stopTimer();
     _scanTimer?.cancel();
     _scanTimer = null;
+    _purifyTimer?.cancel();
+    _purifyTimer = null;
     super.dispose();
   }
 }

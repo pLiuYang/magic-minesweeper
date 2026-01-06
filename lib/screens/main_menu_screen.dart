@@ -17,26 +17,94 @@ class MainMenuScreen extends StatelessWidget {
         decoration: const BoxDecoration(
           gradient: AppColors.menuGradient,
         ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32),
-            child: Column(
-              children: [
-                const Spacer(flex: 2),
-                // Logo
-                _buildLogo(),
-                const Spacer(flex: 2),
-                // Menu buttons
-                _buildMenuButtons(context),
-                const Spacer(flex: 1),
-                // Stats bar
-                _buildStatsBar(context),
-                const SizedBox(height: 24),
-              ],
+        child: Stack(
+          children: [
+            // Decorative elements - Candy Crush style background elements
+            _buildBackgroundDecorations(),
+            // Main content
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: Column(
+                  children: [
+                    const Spacer(flex: 2),
+                    // Logo
+                    _buildLogo(),
+                    const Spacer(flex: 2),
+                    // Menu buttons
+                    _buildMenuButtons(context),
+                    const Spacer(flex: 1),
+                    // Stats bar
+                    _buildStatsBar(context),
+                    const SizedBox(height: 24),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBackgroundDecorations() {
+    return Stack(
+      children: [
+        // Top left decoration
+        Positioned(
+          top: -50,
+          left: -50,
+          child: Container(
+            width: 150,
+            height: 150,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(
+                colors: [
+                  AppColors.candyPink.withOpacity(0.3),
+                  AppColors.candyPink.withOpacity(0.0),
+                ],
+              ),
             ),
           ),
         ),
-      ),
+        // Top right decoration
+        Positioned(
+          top: 100,
+          right: -30,
+          child: Container(
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(
+                colors: [
+                  AppColors.candyPurple.withOpacity(0.3),
+                  AppColors.candyPurple.withOpacity(0.0),
+                ],
+              ),
+            ),
+          ),
+        ),
+        // Bottom decoration
+        Positioned(
+          bottom: -80,
+          left: 50,
+          child: Container(
+            width: 200,
+            height: 200,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(
+                colors: [
+                  AppColors.candyYellow.withOpacity(0.2),
+                  AppColors.candyYellow.withOpacity(0.0),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -45,20 +113,25 @@ class MainMenuScreen extends StatelessWidget {
       children: [
         // Logo image with glow effect
         Container(
-          width: 140,
-          height: 140,
+          width: 160,
+          height: 160,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: AppColors.primaryPurple.withOpacity(0.4),
+                color: AppColors.candyPurple.withOpacity(0.5),
                 blurRadius: 30,
                 spreadRadius: 5,
               ),
               BoxShadow(
-                color: AppColors.primaryPink.withOpacity(0.3),
+                color: AppColors.candyPink.withOpacity(0.4),
                 blurRadius: 50,
                 spreadRadius: 10,
+              ),
+              BoxShadow(
+                color: AppColors.sparkleGold.withOpacity(0.3),
+                blurRadius: 60,
+                spreadRadius: 15,
               ),
             ],
           ),
@@ -69,13 +142,13 @@ class MainMenuScreen extends StatelessWidget {
               errorBuilder: (context, error, stackTrace) {
                 // Fallback icon if image not found
                 return Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        AppColors.primaryPurple,
-                        AppColors.primaryPink,
+                        AppColors.candyPurple,
+                        AppColors.candyPink,
                       ],
                     ),
                     shape: BoxShape.circle,
@@ -83,59 +156,95 @@ class MainMenuScreen extends StatelessWidget {
                   child: const Icon(
                     Icons.auto_awesome,
                     color: Colors.white,
-                    size: 60,
+                    size: 70,
                   ),
                 );
               },
             ),
           ),
         ),
-        const SizedBox(height: 28),
-        // Title with cute styling
-        ShaderMask(
-          shaderCallback: (bounds) => LinearGradient(
-            colors: [
-              AppColors.magicPurple,
-              AppColors.primaryPink,
-            ],
-          ).createShader(bounds),
-          child: const Text(
-            'Magic',
-            style: TextStyle(
-              fontSize: 38,
-              fontWeight: FontWeight.w300,
-              color: Colors.white,
-              letterSpacing: 6,
+        const SizedBox(height: 32),
+        // Title with Candy Crush style
+        Stack(
+          children: [
+            // Shadow text
+            Text(
+              'Magic',
+              style: TextStyle(
+                fontSize: 42,
+                fontWeight: FontWeight.w300,
+                letterSpacing: 6,
+                foreground: Paint()
+                  ..style = PaintingStyle.stroke
+                  ..strokeWidth = 6
+                  ..color = AppColors.candyPurple.withOpacity(0.3),
+              ),
             ),
-          ),
-        ),
-        ShaderMask(
-          shaderCallback: (bounds) => LinearGradient(
-            colors: [
-              AppColors.primaryPink,
-              AppColors.magicPurple,
-            ],
-          ).createShader(bounds),
-          child: const Text(
-            'Sweeper',
-            style: TextStyle(
-              fontSize: 34,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              letterSpacing: 3,
+            // Main text with gradient
+            ShaderMask(
+              shaderCallback: (bounds) => const LinearGradient(
+                colors: [
+                  AppColors.candyPurple,
+                  AppColors.candyPink,
+                ],
+              ).createShader(bounds),
+              child: const Text(
+                'Magic',
+                style: TextStyle(
+                  fontSize: 42,
+                  fontWeight: FontWeight.w300,
+                  color: Colors.white,
+                  letterSpacing: 6,
+                ),
+              ),
             ),
-          ),
+          ],
         ),
-        const SizedBox(height: 8),
+        Stack(
+          children: [
+            // Shadow text
+            Text(
+              'Sweeper',
+              style: TextStyle(
+                fontSize: 38,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 3,
+                foreground: Paint()
+                  ..style = PaintingStyle.stroke
+                  ..strokeWidth = 6
+                  ..color = AppColors.candyPink.withOpacity(0.3),
+              ),
+            ),
+            // Main text with gradient
+            ShaderMask(
+              shaderCallback: (bounds) => const LinearGradient(
+                colors: [
+                  AppColors.candyPink,
+                  AppColors.candyPurple,
+                ],
+              ).createShader(bounds),
+              child: const Text(
+                'Sweeper',
+                style: TextStyle(
+                  fontSize: 38,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  letterSpacing: 3,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
         // Sparkle decoration
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.star, color: AppColors.sparkleGold, size: 14),
+            Icon(Icons.star, color: AppColors.sparkleGold, size: 16),
             const SizedBox(width: 8),
-            Icon(Icons.auto_awesome, color: AppColors.primaryPurple.withOpacity(0.7), size: 18),
+            Icon(Icons.auto_awesome, color: AppColors.candyPurple, size: 22),
             const SizedBox(width: 8),
-            Icon(Icons.star, color: AppColors.sparkleGold, size: 14),
+            Icon(Icons.star, color: AppColors.sparkleGold, size: 16),
           ],
         ),
       ],
@@ -148,7 +257,7 @@ class MainMenuScreen extends StatelessWidget {
         MenuButton(
           text: 'New Game',
           icon: Icons.play_arrow_rounded,
-          color: AppColors.magicPurple,
+          color: AppColors.candyPurple,
           onPressed: () {
             Navigator.push(
               context,
@@ -162,7 +271,7 @@ class MainMenuScreen extends StatelessWidget {
         MenuButton(
           text: 'Continue',
           icon: Icons.replay_rounded,
-          color: AppColors.buttonSuccess,
+          color: AppColors.candyGreen,
           enabled: false,
           onPressed: () {
             // TODO: Load saved game
@@ -172,7 +281,7 @@ class MainMenuScreen extends StatelessWidget {
         MenuButton(
           text: 'Multiplayer',
           icon: Icons.people_rounded,
-          color: AppColors.primaryPink,
+          color: AppColors.candyPink,
           badge: 'Coming Soon',
           enabled: false,
           onPressed: null,
@@ -201,17 +310,24 @@ class MainMenuScreen extends StatelessWidget {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.6),
-            borderRadius: BorderRadius.circular(20),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.white.withOpacity(0.9),
+                Colors.white.withOpacity(0.7),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(24),
             border: Border.all(
-              color: AppColors.primaryPurple.withOpacity(0.2),
-              width: 1,
+              color: AppColors.sparkleGold.withOpacity(0.5),
+              width: 2,
             ),
             boxShadow: [
               BoxShadow(
-                color: AppColors.primaryPurple.withOpacity(0.1),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
+                color: AppColors.candyPurple.withOpacity(0.15),
+                blurRadius: 15,
+                offset: const Offset(0, 6),
               ),
             ],
           ),
@@ -226,13 +342,13 @@ class MainMenuScreen extends StatelessWidget {
               ),
               _buildStatItem(
                 icon: Icons.favorite_rounded,
-                iconColor: AppColors.primaryPink,
+                iconColor: AppColors.candyPink,
                 label: 'Games Won',
                 value: '${settingsProvider.gamesWon}',
               ),
               _buildStatItem(
                 icon: Icons.auto_awesome_rounded,
-                iconColor: AppColors.magicPurple,
+                iconColor: AppColors.candyPurple,
                 label: 'Win Rate',
                 value: '${(settingsProvider.winRate * 100).toStringAsFixed(0)}%',
               ),
@@ -251,13 +367,20 @@ class MainMenuScreen extends StatelessWidget {
   }) {
     return Column(
       children: [
-        Icon(icon, color: iconColor, size: 26),
-        const SizedBox(height: 4),
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: iconColor.withOpacity(0.15),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, color: iconColor, size: 26),
+        ),
+        const SizedBox(height: 6),
         Text(
           label,
           style: TextStyle(
             fontSize: 11,
-            color: AppColors.magicPurple.withOpacity(0.7),
+            color: Colors.grey.shade600,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -265,9 +388,9 @@ class MainMenuScreen extends StatelessWidget {
         Text(
           value,
           style: TextStyle(
-            fontSize: 14,
+            fontSize: 15,
             fontWeight: FontWeight.bold,
-            color: AppColors.magicPurple,
+            color: Colors.grey.shade800,
           ),
         ),
       ],

@@ -11,19 +11,32 @@ class StatusBarWidget extends StatelessWidget {
     return Consumer<GameProvider>(
       builder: (context, gameProvider, child) {
         return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.9),
-            borderRadius: BorderRadius.circular(16),
+            // Candy Crush style pink panel
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xFFFFB6C1),  // Light pink
+                Color(0xFFFF69B4),  // Hot pink
+              ],
+            ),
+            borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: AppColors.primaryPurple.withOpacity(0.1),
-              width: 1,
+              color: Colors.white.withOpacity(0.5),
+              width: 3,
             ),
             boxShadow: [
               BoxShadow(
-                color: AppColors.primaryPurple.withOpacity(0.08),
+                color: AppColors.candyPink.withOpacity(0.4),
                 blurRadius: 12,
                 offset: const Offset(0, 4),
+              ),
+              BoxShadow(
+                color: Colors.black.withOpacity(0.15),
+                blurRadius: 6,
+                offset: const Offset(0, 3),
               ),
             ],
           ),
@@ -33,7 +46,7 @@ class StatusBarWidget extends StatelessWidget {
               // Flag counter
               _buildStatusItem(
                 icon: Icons.flag_rounded,
-                iconColor: AppColors.primaryPink,
+                iconColor: AppColors.candyRed,
                 value: '${gameProvider.remainingFlags}',
                 label: 'Flags',
               ),
@@ -42,7 +55,7 @@ class StatusBarWidget extends StatelessWidget {
               // Timer
               _buildStatusItem(
                 icon: Icons.timer_rounded,
-                iconColor: AppColors.crystalBlue,
+                iconColor: AppColors.candyBlue,
                 value: gameProvider.timerDisplay,
                 label: 'Time',
               ),
@@ -60,28 +73,72 @@ class StatusBarWidget extends StatelessWidget {
     required String label,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: iconColor.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
+        color: Colors.white.withOpacity(0.9),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: iconColor.withOpacity(0.3),
+          width: 2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
-          Icon(icon, color: iconColor, size: 20),
-          const SizedBox(width: 6),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                value,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.magicPurple,
-                ),
+          Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color.lerp(iconColor, Colors.white, 0.3)!,
+                  iconColor,
+                ],
               ),
-            ],
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: iconColor.withOpacity(0.3),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Icon(
+              icon,
+              color: Colors.white,
+              size: 16,
+              shadows: const [
+                Shadow(
+                  color: Color(0x60000000),
+                  offset: Offset(1, 1),
+                  blurRadius: 2,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey.shade800,
+              shadows: const [
+                Shadow(
+                  color: Color(0x20000000),
+                  offset: Offset(1, 1),
+                  blurRadius: 2,
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -94,11 +151,22 @@ class StatusBarWidget extends StatelessWidget {
     
     return Expanded(
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 12),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        margin: const EdgeInsets.symmetric(horizontal: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: manaColor.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(12),
+          color: Colors.white.withOpacity(0.9),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: manaColor.withOpacity(0.3),
+            width: 2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -106,59 +174,68 @@ class StatusBarWidget extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.auto_awesome_rounded,
-                  size: 14,
-                  color: manaColor,
+                Container(
+                  padding: const EdgeInsets.all(3),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Color.lerp(manaColor, Colors.white, 0.3)!,
+                        manaColor,
+                      ],
+                    ),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.auto_awesome_rounded,
+                    size: 12,
+                    color: Colors.white,
+                  ),
                 ),
-                const SizedBox(width: 4),
+                const SizedBox(width: 6),
                 Text(
                   'MANA',
                   style: TextStyle(
                     fontSize: 10,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.bold,
                     color: manaColor,
                     letterSpacing: 1,
                   ),
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  '${gameProvider.mana}/${gameProvider.maxMana}',
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.magicPurple.withOpacity(0.7),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: manaColor.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    '${gameProvider.mana}/${gameProvider.maxMana}',
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: manaColor,
+                    ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 6),
+            // Candy-style progress bar
             Container(
-              height: 8,
+              height: 12,
               decoration: BoxDecoration(
                 color: manaColor.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(
+                  color: manaColor.withOpacity(0.3),
+                  width: 1,
+                ),
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: BorderRadius.circular(5),
                 child: Stack(
                   children: [
-                    // Mana fill with gradient
-                    FractionallySizedBox(
-                      widthFactor: manaPercentage,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              manaColor.withOpacity(0.8),
-                              manaColor,
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                      ),
-                    ),
-                    // Shine effect
+                    // Mana fill with candy gradient
                     FractionallySizedBox(
                       widthFactor: manaPercentage,
                       child: Container(
@@ -167,9 +244,31 @@ class StatusBarWidget extends StatelessWidget {
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
                             colors: [
-                              Colors.white.withOpacity(0.4),
-                              Colors.transparent,
+                              Color.lerp(manaColor, Colors.white, 0.3)!,
+                              manaColor,
+                              Color.lerp(manaColor, Colors.black, 0.2)!,
                             ],
+                            stops: const [0.0, 0.5, 1.0],
+                          ),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                      ),
+                    ),
+                    // Glossy shine effect
+                    FractionallySizedBox(
+                      widthFactor: manaPercentage,
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 1, left: 2, right: 2),
+                        height: 4,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.white.withOpacity(0.6),
+                              Colors.white.withOpacity(0.0),
+                            ],
+                          ),
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(4),
                           ),
                         ),
                       ),
@@ -186,11 +285,11 @@ class StatusBarWidget extends StatelessWidget {
 
   Color _getManaColor(double percentage) {
     if (percentage > 0.6) {
-      return AppColors.magicPurple;
+      return AppColors.manaBlue;
     } else if (percentage > 0.3) {
-      return AppColors.sparkleGold;
+      return AppColors.candyOrange;
     } else {
-      return AppColors.primaryPink;
+      return AppColors.candyRed;
     }
   }
 }

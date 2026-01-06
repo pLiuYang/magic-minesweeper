@@ -102,30 +102,37 @@ class _GameScreenState extends State<GameScreen> {
               decoration: const BoxDecoration(
                 gradient: AppColors.gameGradient,
               ),
-              child: SafeArea(
-                child: Column(
-                  children: [
-                    // Custom app bar
-                    _buildAppBar(context),
-                    // Status bar
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      child: StatusBarWidget(),
+              child: Stack(
+                children: [
+                  // Background decorations
+                  _buildBackgroundDecorations(),
+                  // Main content
+                  SafeArea(
+                    child: Column(
+                      children: [
+                        // Custom app bar
+                        _buildAppBar(context),
+                        // Status bar
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          child: StatusBarWidget(),
+                        ),
+                        // Game board
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            child: GameBoardWidget(),
+                          ),
+                        ),
+                        // Spell bar
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                          child: SpellBarWidget(),
+                        ),
+                      ],
                     ),
-                    // Game board
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: GameBoardWidget(),
-                      ),
-                    ),
-                    // Spell bar
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                      child: SpellBarWidget(),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           );
@@ -134,86 +141,213 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
+  Widget _buildBackgroundDecorations() {
+    return Stack(
+      children: [
+        // Decorative circles
+        Positioned(
+          top: -30,
+          right: -30,
+          child: Container(
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(
+                colors: [
+                  AppColors.candyPink.withOpacity(0.2),
+                  AppColors.candyPink.withOpacity(0.0),
+                ],
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: 100,
+          left: -40,
+          child: Container(
+            width: 120,
+            height: 120,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(
+                colors: [
+                  AppColors.candyPurple.withOpacity(0.15),
+                  AppColors.candyPurple.withOpacity(0.0),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildAppBar(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Row(
         children: [
-          // Menu button
+          // Menu button - Candy style
+          _buildIconButton(
+            icon: Icons.menu_rounded,
+            color: AppColors.candyPurple,
+            onPressed: () => _showGameMenu(context),
+          ),
+          const Spacer(),
+          // Title - Candy Crush style
           Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.8),
-              borderRadius: BorderRadius.circular(12),
+              gradient: const LinearGradient(
+                colors: [
+                  Color(0xFFFFB6C1),
+                  Color(0xFFFF69B4),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.5),
+                width: 2,
+              ),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.primaryPurple.withOpacity(0.1),
+                  color: AppColors.candyPink.withOpacity(0.3),
                   blurRadius: 8,
-                  offset: const Offset(0, 2),
+                  offset: const Offset(0, 3),
                 ),
               ],
             ),
-            child: IconButton(
-              icon: Icon(Icons.menu_rounded, color: AppColors.magicPurple),
-              onPressed: () => _showGameMenu(context),
-            ),
-          ),
-          const Spacer(),
-          // Title
-          Column(
-            children: [
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.auto_awesome, color: AppColors.sparkleGold, size: 18),
-                  const SizedBox(width: 6),
-                  ShaderMask(
-                    shaderCallback: (bounds) => LinearGradient(
-                      colors: [AppColors.magicPurple, AppColors.primaryPink],
-                    ).createShader(bounds),
-                    child: const Text(
+            child: Column(
+              children: [
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.auto_awesome, color: AppColors.sparkleGold, size: 16),
+                    const SizedBox(width: 6),
+                    const Text(
                       'Magic Sweeper',
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        fontSize: 18,
+                        fontSize: 16,
+                        shadows: [
+                          Shadow(
+                            color: Color(0x60000000),
+                            offset: Offset(1, 1),
+                            blurRadius: 2,
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 6),
-                  Icon(Icons.auto_awesome, color: AppColors.sparkleGold, size: 18),
-                ],
-              ),
-              Text(
-                widget.difficulty.name,
-                style: TextStyle(
-                  color: AppColors.magicPurple.withOpacity(0.6),
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
+                    const SizedBox(width: 6),
+                    Icon(Icons.auto_awesome, color: AppColors.sparkleGold, size: 16),
+                  ],
                 ),
-              ),
-            ],
-          ),
-          const Spacer(),
-          // Spell book button
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.8),
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.primaryPurple.withOpacity(0.1),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
+                const SizedBox(height: 2),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    widget.difficulty.name,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ],
             ),
-            child: IconButton(
-              icon: Icon(Icons.auto_stories_rounded, color: AppColors.magicPurple),
-              tooltip: 'Spell Book',
-              onPressed: () => _showSpellBook(context),
-            ),
+          ),
+          const Spacer(),
+          // Spell book button - Candy style
+          _buildIconButton(
+            icon: Icons.auto_stories_rounded,
+            color: AppColors.candyPink,
+            onPressed: () => _showSpellBook(context),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildIconButton({
+    required IconData icon,
+    required Color color,
+    required VoidCallback onPressed,
+  }) {
+    final lightColor = Color.lerp(color, Colors.white, 0.3)!;
+    final darkColor = Color.lerp(color, Colors.black, 0.2)!;
+    
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [lightColor, color, darkColor],
+            stops: const [0.0, 0.5, 1.0],
+          ),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: Colors.white.withOpacity(0.4),
+            width: 2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: color.withOpacity(0.4),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            // Glossy highlight
+            Positioned(
+              top: 2,
+              left: 4,
+              right: 4,
+              height: 12,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(12),
+                  ),
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.white.withOpacity(0.4),
+                      Colors.white.withOpacity(0.0),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Center(
+              child: Icon(
+                icon,
+                color: Colors.white,
+                size: 22,
+                shadows: const [
+                  Shadow(
+                    color: Color(0x60000000),
+                    offset: Offset(1, 1),
+                    blurRadius: 2,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -236,11 +370,22 @@ class _GameScreenState extends State<GameScreen> {
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          gradient: const LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFFFFF0F5),
+              Colors.white,
+            ],
+          ),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+          border: Border.all(
+            color: AppColors.sparkleGold.withOpacity(0.5),
+            width: 3,
+          ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primaryPurple.withOpacity(0.1),
+              color: AppColors.candyPurple.withOpacity(0.2),
               blurRadius: 20,
               offset: const Offset(0, -5),
             ),
@@ -251,18 +396,20 @@ class _GameScreenState extends State<GameScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 40,
-              height: 4,
+              width: 50,
+              height: 5,
               decoration: BoxDecoration(
-                color: AppColors.primaryPurple.withOpacity(0.3),
-                borderRadius: BorderRadius.circular(2),
+                gradient: const LinearGradient(
+                  colors: [AppColors.candyPurple, AppColors.candyPink],
+                ),
+                borderRadius: BorderRadius.circular(3),
               ),
             ),
             const SizedBox(height: 24),
             _buildMenuItem(
               icon: Icons.refresh_rounded,
               label: 'New Game',
-              color: AppColors.magicPurple,
+              color: AppColors.candyPurple,
               onTap: () {
                 Navigator.pop(context);
                 setState(() {
@@ -274,7 +421,7 @@ class _GameScreenState extends State<GameScreen> {
             _buildMenuItem(
               icon: Icons.auto_stories_rounded,
               label: 'Spell Book',
-              color: AppColors.primaryPink,
+              color: AppColors.candyPink,
               onTap: () {
                 Navigator.pop(context);
                 _showSpellBook(context);
@@ -283,7 +430,7 @@ class _GameScreenState extends State<GameScreen> {
             _buildMenuItem(
               icon: Icons.grid_view_rounded,
               label: 'Change Difficulty',
-              color: AppColors.crystalBlue,
+              color: AppColors.candyBlue,
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pop(context);
@@ -315,36 +462,84 @@ class _GameScreenState extends State<GameScreen> {
     required VoidCallback onTap,
     Color? color,
   }) {
+    final itemColor = color ?? AppColors.candyPurple;
+    final lightColor = Color.lerp(itemColor, Colors.white, 0.3)!;
+    
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: ListTile(
-        leading: Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: (color ?? AppColors.magicPurple).withOpacity(0.15),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Icon(icon, color: color ?? AppColors.magicPurple, size: 22),
-        ),
-        title: Text(
-          label,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: AppColors.magicPurple,
-          ),
-        ),
-        trailing: Icon(
-          Icons.chevron_right_rounded,
-          color: (color ?? AppColors.magicPurple).withOpacity(0.5),
-        ),
-        onTap: onTap,
-        shape: RoundedRectangleBorder(
+      margin: const EdgeInsets.only(bottom: 10),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
           borderRadius: BorderRadius.circular(16),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: itemColor.withOpacity(0.2),
+                width: 1,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 42,
+                  height: 42,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [lightColor, itemColor],
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: itemColor.withOpacity(0.3),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    icon,
+                    color: Colors.white,
+                    size: 22,
+                    shadows: const [
+                      Shadow(
+                        color: Color(0x60000000),
+                        offset: Offset(1, 1),
+                        blurRadius: 2,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey.shade800,
+                  ),
+                ),
+                const Spacer(),
+                Icon(
+                  Icons.chevron_right_rounded,
+                  color: itemColor.withOpacity(0.5),
+                ),
+              ],
+            ),
+          ),
         ),
-        tileColor: Colors.transparent,
-        hoverColor: (color ?? AppColors.magicPurple).withOpacity(0.05),
       ),
     );
   }
