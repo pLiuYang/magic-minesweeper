@@ -2,12 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/multiplayer_match.dart';
 import '../providers/multiplayer_provider.dart';
+import '../services/auth_service.dart';
 import '../utils/constants.dart';
 import 'multiplayer_lobby_screen.dart';
 import 'leaderboard_screen.dart';
+import 'online_lobby_screen.dart';
 
-class MultiplayerMenuScreen extends StatelessWidget {
+class MultiplayerMenuScreen extends StatefulWidget {
   const MultiplayerMenuScreen({super.key});
+
+  @override
+  State<MultiplayerMenuScreen> createState() => _MultiplayerMenuScreenState();
+}
+
+class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
+  bool _isConnecting = false;
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +45,11 @@ class MultiplayerMenuScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(20),
                   child: Column(
                     children: [
+                      // Online/Offline toggle
+                      _buildConnectionStatus(context),
+                      
+                      const SizedBox(height: 20),
+                      
                       // Mode cards
                       ...MultiplayerModeConfig.modes.map(
                         (config) => _buildModeCard(context, config),
@@ -62,83 +76,328 @@ class MultiplayerMenuScreen extends StatelessWidget {
   }
 
   Widget _buildHeader(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      child: Row(
-        children: [
-          // Back button
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
+    return Consumer<MultiplayerProvider>(
+      builder: (context, provider, child) {
+        final isOnline = provider.isConnected;
+        return Container(
+          padding: const EdgeInsets.all(20),
+          child: Row(
+            children: [
+              // Back button
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ),
+              const SizedBox(width: 16),
+              
+              // Title
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Multiplayer',
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        shadows: [
+                          Shadow(
+                            color: Color(0xFF00D9FF),
+                            blurRadius: 10,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Text(
+                      isOnline 
+                          ? 'Connected - Play online!' 
+                          : 'Challenge friends or compete globally',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white.withOpacity(0.7),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              
+              // Online indicator
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: (isOnline ? Colors.green : Colors.orange).withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: (isOnline ? Colors.green : Colors.orange).withOpacity(0.5),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: isOnline ? Colors.green : Colors.orange,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      isOnline ? 'Online' : 'Local',
+                      style: TextStyle(
+                        color: isOnline ? Colors.green : Colors.orange,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildConnectionStatus(BuildContext context) {
+    return Consumer2<AuthService, MultiplayerProvider>(
+      builder: (context, authService, multiplayerProvider, child) {
+        final isAuthenticated = authService.isAuthenticated;
+        final isConnected = multiplayerProvider.isConnected;
+
+        return Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                (isConnected ? Colors.green : Colors.blue).withOpacity(0.2),
+                (isConnected ? Colors.green : Colors.blue).withOpacity(0.1),
+              ],
             ),
-            child: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () => Navigator.pop(context),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: (isConnected ? Colors.green : Colors.blue).withOpacity(0.3),
             ),
           ),
-          const SizedBox(width: 16),
-          
-          // Title
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Multiplayer',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    shadows: [
-                      Shadow(
-                        color: Color(0xFF00D9FF),
-                        blurRadius: 10,
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    isConnected ? Icons.cloud_done : Icons.cloud_off,
+                    color: isConnected ? Colors.green : Colors.blue,
+                    size: 24,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          isConnected ? 'Online Mode' : 'Offline Mode',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Text(
+                          isConnected
+                              ? 'Playing against real players'
+                              : isAuthenticated 
+                                  ? 'Tap to connect online'
+                                  : 'Sign in to play online',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.white.withOpacity(0.7),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (_isConnecting)
+                    const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  else if (isConnected)
+                    TextButton(
+                      onPressed: () {
+                        multiplayerProvider.disconnectFromBackend();
+                      },
+                      child: const Text(
+                        'Disconnect',
+                        style: TextStyle(color: Colors.orange),
+                      ),
+                    )
+                  else if (isAuthenticated)
+                    ElevatedButton(
+                      onPressed: _connectToBackend,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text('Connect'),
+                    )
+                  else
+                    ElevatedButton.icon(
+                      onPressed: () => _showLoginDialog(context),
+                      icon: const Icon(Icons.login, size: 18),
+                      label: const Text('Sign In'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF00D9FF),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              if (isAuthenticated && authService.currentUser != null) ...[
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 20,
+                        backgroundColor: Colors.blue,
+                        child: Text(
+                          authService.currentUser!.name.isNotEmpty
+                              ? authService.currentUser!.name[0].toUpperCase()
+                              : '?',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              authService.currentUser!.name,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              'Signed in',
+                              style: TextStyle(
+                                color: Colors.white.withOpacity(0.6),
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          await authService.logout();
+                          multiplayerProvider.disconnectFromBackend();
+                        },
+                        child: const Text(
+                          'Sign Out',
+                          style: TextStyle(color: Colors.red),
+                        ),
                       ),
                     ],
                   ),
                 ),
-                Text(
-                  'Challenge friends or compete globally',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.white.withOpacity(0.7),
-                  ),
-                ),
               ],
-            ),
+            ],
           ),
-          
-          // Online indicator
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.green.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.green.withOpacity(0.5)),
+        );
+      },
+    );
+  }
+
+  Future<void> _connectToBackend() async {
+    setState(() => _isConnecting = true);
+    
+    final provider = context.read<MultiplayerProvider>();
+    await provider.connectToBackend();
+    
+    setState(() => _isConnecting = false);
+  }
+
+  void _showLoginDialog(BuildContext context) {
+    final authService = context.read<AuthService>();
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF1a1a2e),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        title: const Text(
+          'Sign In',
+          style: TextStyle(color: Colors.white),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Sign in with your Manus account to play online multiplayer games.',
+              style: TextStyle(
+                color: Colors.white.withOpacity(0.7),
+              ),
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 8,
-                  height: 8,
-                  decoration: const BoxDecoration(
-                    color: Colors.green,
-                    shape: BoxShape.circle,
+            const SizedBox(height: 20),
+            ElevatedButton.icon(
+              onPressed: () async {
+                Navigator.pop(context);
+                final loginUrl = authService.getLoginUrl();
+                // In a real app, this would open a web view or browser
+                // For now, show a message
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Login URL: $loginUrl'),
+                    duration: const Duration(seconds: 5),
                   ),
+                );
+              },
+              icon: const Icon(Icons.account_circle),
+              label: const Text('Sign in with Manus'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF00D9FF),
+                minimumSize: const Size(double.infinity, 48),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                const SizedBox(width: 6),
-                const Text(
-                  'Local',
-                  style: TextStyle(
-                    color: Colors.green,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
+              ),
             ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
           ),
         ],
       ),
@@ -146,119 +405,150 @@ class MultiplayerMenuScreen extends StatelessWidget {
   }
 
   Widget _buildModeCard(BuildContext context, MultiplayerModeConfig config) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () => _selectMode(context, config),
-          borderRadius: BorderRadius.circular(20),
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  config.color.withOpacity(0.3),
-                  config.color.withOpacity(0.1),
-                ],
-              ),
+    return Consumer<MultiplayerProvider>(
+      builder: (context, provider, child) {
+        final isOnline = provider.isConnected;
+        
+        return Container(
+          margin: const EdgeInsets.only(bottom: 16),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () => _selectMode(context, config, isOnline),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: config.color.withOpacity(0.5),
-                width: 2,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: config.color.withOpacity(0.2),
-                  blurRadius: 15,
-                  offset: const Offset(0, 5),
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                // Icon
-                Container(
-                  width: 70,
-                  height: 70,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        config.color,
-                        config.color.withOpacity(0.7),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: config.color.withOpacity(0.4),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      config.color.withOpacity(0.3),
+                      config.color.withOpacity(0.1),
                     ],
                   ),
-                  child: Icon(
-                    config.icon,
-                    color: Colors.white,
-                    size: 36,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: config.color.withOpacity(0.5),
+                    width: 2,
                   ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: config.color.withOpacity(0.2),
+                      blurRadius: 15,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 16),
-                
-                // Info
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        config.name,
-                        style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                child: Row(
+                  children: [
+                    // Icon
+                    Container(
+                      width: 70,
+                      height: 70,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            config.color,
+                            config.color.withOpacity(0.7),
+                          ],
                         ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        config.description,
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.white.withOpacity(0.7),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          _buildInfoChip(
-                            Icons.people,
-                            '${config.minPlayers}-${config.maxPlayers}',
-                          ),
-                          const SizedBox(width: 8),
-                          _buildInfoChip(
-                            Icons.timer,
-                            '${config.defaultTimeLimit ~/ 60}min',
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: config.color.withOpacity(0.4),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
                           ),
                         ],
                       ),
-                    ],
-                  ),
+                      child: Icon(
+                        config.icon,
+                        color: Colors.white,
+                        size: 36,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    
+                    // Info
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                config.name,
+                                style: const TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              if (isOnline) ...[
+                                const SizedBox(width: 8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 6,
+                                    vertical: 2,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.green.withOpacity(0.2),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: const Text(
+                                    'ONLINE',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color: Colors.green,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            config.description,
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.white.withOpacity(0.7),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              _buildInfoChip(
+                                Icons.people,
+                                '${config.minPlayers}-${config.maxPlayers}',
+                              ),
+                              const SizedBox(width: 8),
+                              _buildInfoChip(
+                                Icons.timer,
+                                '${config.defaultTimeLimit ~/ 60}min',
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    
+                    // Arrow
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      color: Colors.white.withOpacity(0.5),
+                      size: 20,
+                    ),
+                  ],
                 ),
-                
-                // Arrow
-                Icon(
-                  Icons.arrow_forward_ios,
-                  color: Colors.white.withOpacity(0.5),
-                  size: 20,
-                ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -476,13 +766,24 @@ class MultiplayerMenuScreen extends StatelessWidget {
     );
   }
 
-  void _selectMode(BuildContext context, MultiplayerModeConfig config) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => MultiplayerLobbyScreen(modeConfig: config),
-      ),
-    );
+  void _selectMode(BuildContext context, MultiplayerModeConfig config, bool isOnline) {
+    if (isOnline) {
+      // Navigate to online lobby
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => OnlineLobbyScreen(modeConfig: config),
+        ),
+      );
+    } else {
+      // Navigate to local lobby
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MultiplayerLobbyScreen(modeConfig: config),
+        ),
+      );
+    }
   }
 
   void _openLeaderboard(BuildContext context) {

@@ -83,13 +83,19 @@ class Player {
     };
   }
 
-  /// Create from JSON
+  /// Create from JSON (supports both local and backend format)
   factory Player.fromJson(Map<String, dynamic> json) {
+    // Handle backend format (uses 'id' as int and 'openId' as string)
+    final idValue = json['openId'] ?? json['id'];
+    final id = idValue is int ? idValue.toString() : idValue as String;
+    
     return Player(
-      id: json['id'] as String,
-      name: json['name'] as String,
+      id: id,
+      name: json['name'] as String? ?? json['displayName'] as String? ?? 'Player',
       avatarAsset: json['avatarAsset'] as String? ?? 'assets/images/avatar_default.png',
-      primaryColor: Color(json['primaryColor'] as int? ?? Colors.blue.value),
+      primaryColor: json['primaryColor'] != null 
+          ? Color(json['primaryColor'] as int) 
+          : Colors.blue,
       score: json['score'] as int? ?? 0,
       mana: json['mana'] as int? ?? 0,
       maxMana: json['maxMana'] as int? ?? 100,
@@ -98,7 +104,9 @@ class Player {
       totalScore: json['totalScore'] as int? ?? 0,
       lastPlayed: json['lastPlayed'] != null 
           ? DateTime.parse(json['lastPlayed'] as String) 
-          : null,
+          : json['lastSignedIn'] != null
+              ? DateTime.parse(json['lastSignedIn'] as String)
+              : null,
     );
   }
 

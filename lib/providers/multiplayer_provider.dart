@@ -4,23 +4,40 @@ import 'package:flutter/material.dart';
 import '../models/player.dart';
 import '../models/multiplayer_match.dart';
 import '../models/competitive_spell.dart';
-import '../models/game_board.dart';
 import '../models/leaderboard_entry.dart';
+import '../services/auth_service.dart';
+import '../services/match_service.dart';
+import '../services/matchmaking_service.dart';
+import '../services/leaderboard_service.dart';
+import '../services/socket_service.dart';
 
 /// Provider for managing multiplayer game state
 class MultiplayerProvider extends ChangeNotifier {
+  // Services
+  final AuthService _authService = AuthService();
+  final MatchService _matchService = MatchService();
+  final MatchmakingService _matchmakingService = MatchmakingService();
+  final LeaderboardService _leaderboardService = LeaderboardService();
+  final SocketService _socketService = SocketService();
+
   // Current player
   Player _currentPlayer = Player.player1();
   Player get currentPlayer => _currentPlayer;
 
-  // Current match
+  // Current match (local model)
   MultiplayerMatch? _currentMatch;
   MultiplayerMatch? get currentMatch => _currentMatch;
+
+  // Backend match data
+  MatchData? _backendMatch;
+  MatchData? get backendMatch => _backendMatch;
+  MatchDetails? _matchDetails;
+  MatchDetails? get matchDetails => _matchDetails;
 
   // Match timer
   Timer? _matchTimer;
 
-  // AI opponent timer (for simulated multiplayer)
+  // AI opponent timer (for offline/local play)
   Timer? _aiTimer;
 
   // Active spell effects
@@ -39,16 +56,77 @@ class MultiplayerProvider extends ChangeNotifier {
   final List<MultiplayerMatch> _matchHistory = [];
   List<MultiplayerMatch> get matchHistory => List.unmodifiable(_matchHistory);
 
-  // Connection status (for future online play)
+  // Connection status
   bool _isConnected = false;
   bool get isConnected => _isConnected;
+
+  // Online mode flag
+  bool _isOnlineMode = false;
+  bool get isOnlineMode => _isOnlineMode;
 
   // Searching for match
   bool _isSearching = false;
   bool get isSearching => _isSearching;
 
+  // Available matches for lobby
+  List<AvailableMatch> _availableMatches = [];
+  List<AvailableMatch> get availableMatches => _availableMatches;
+
+  // Stream subscriptions
+  final List<StreamSubscription> _subscriptions = [];
+
   MultiplayerProvider() {
     _loadLeaderboard();
+    _setupSocketListeners();
+  }
+
+  /// Setup socket event listeners
+  void _setupSocketListeners() {
+    _subscriptions.add(_socketService.onGameState.listen(_handleGameState));
+    _subscriptions.add(_socketService.onPlayerJoined.listen(_handlePlayerJoined));
+    _subscriptions.add(_socketService.onPlayerReady.listen(_handlePlayerReady));
+    _subscriptions.add(_socketService.onGameStarting.listen(_handleGameStarting));
+    _subscriptions.add(_socketService.onGameStarted.listen(_handleGameStarted));
+    _subscriptions.add(_socketService.onProgressUpdated.listen(_handleProgressUpdated));
+    _subscriptions.add(_socketService.onSpellCast.listen(_handleSpellCast));
+    _subscriptions.add(_socketService.onPlayerFinished.listen(_handlePlayerFinished));
+    _subscriptions.add(_socketService.onGameOver.listen(_handleGameOver));
+    _subscriptions.add(_socketService.onPlayerDisconnected.listen(_handlePlayerDisconnected));
+    _subscriptions.add(_socketService.onPlayerReconnected.listen(_handlePlayerReconnected));
+    _subscriptions.add(_socketService.onError.listen(_handleError));
+  }
+
+  /// Connect to backend
+  Future<bool> connectToBackend() async {
+    try {
+      // Check authentication
+      final isAuthed = await _authService.checkAuth();
+      if (!isAuthed) {
+        return false;
+      }
+
+      // Update current player from auth
+      if (_authService.currentUser != null) {
+        _currentPlayer = _authService.currentUser!;
+      }
+
+      // Connect to WebSocket
+      _isConnected = await _socketService.connect();
+      _isOnlineMode = _isConnected;
+      notifyListeners();
+      return _isConnected;
+    } catch (e) {
+      debugPrint('Failed to connect to backend: $e');
+      return false;
+    }
+  }
+
+  /// Disconnect from backend
+  void disconnectFromBackend() {
+    _socketService.disconnect();
+    _isConnected = false;
+    _isOnlineMode = false;
+    notifyListeners();
   }
 
   /// Set current player
@@ -63,8 +141,60 @@ class MultiplayerProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Create a new match
+  /// Create a new match (online or offline)
   Future<MultiplayerMatch> createMatch({
+    required MultiplayerMode mode,
+    required String difficulty,
+    int? timeLimit,
+    bool online = false,
+  }) async {
+    if (online && _isConnected) {
+      return await _createOnlineMatch(mode: mode, difficulty: difficulty, timeLimit: timeLimit);
+    } else {
+      return await _createOfflineMatch(mode: mode, difficulty: difficulty, timeLimit: timeLimit);
+    }
+  }
+
+  /// Create online match via backend
+  Future<MultiplayerMatch> _createOnlineMatch({
+    required MultiplayerMode mode,
+    required String difficulty,
+    int? timeLimit,
+  }) async {
+    final response = await _matchService.createMatch(
+      mode: mode.name,
+      difficulty: difficulty,
+      maxPlayers: mode == MultiplayerMode.coop ? 4 : 2,
+      timeLimit: timeLimit,
+    );
+
+    if (response.isSuccess && response.data != null) {
+      _backendMatch = response.data;
+      
+      // Create local match model
+      final match = MultiplayerMatch(
+        id: response.data!.id.toString(),
+        mode: mode,
+        difficulty: difficulty,
+        players: [_currentPlayer],
+        timeLimit: timeLimit ?? 300,
+        boardSeed: response.data!.boardSeed,
+      );
+
+      _currentMatch = match;
+
+      // Join WebSocket room
+      _socketService.joinGame(response.data!.id, int.parse(_currentPlayer.id));
+
+      notifyListeners();
+      return match;
+    }
+
+    throw Exception(response.error ?? 'Failed to create match');
+  }
+
+  /// Create offline match (local play)
+  Future<MultiplayerMatch> _createOfflineMatch({
     required MultiplayerMode mode,
     required String difficulty,
     int? timeLimit,
@@ -103,6 +233,60 @@ class MultiplayerProvider extends ChangeNotifier {
     return match;
   }
 
+  /// Join an existing online match
+  Future<bool> joinMatch(int matchId) async {
+    if (!_isConnected) return false;
+
+    final response = await _matchService.joinMatch(matchId);
+    if (response.isSuccess && response.data != null) {
+      _backendMatch = response.data;
+
+      // Load match details
+      await refreshMatchDetails();
+
+      // Join WebSocket room
+      _socketService.joinGame(matchId, int.parse(_currentPlayer.id));
+
+      notifyListeners();
+      return true;
+    }
+    return false;
+  }
+
+  /// Refresh match details from backend
+  Future<void> refreshMatchDetails() async {
+    if (_backendMatch == null) return;
+
+    final response = await _matchService.getMatch(_backendMatch!.id);
+    if (response.isSuccess && response.data != null) {
+      _matchDetails = response.data;
+      notifyListeners();
+    }
+  }
+
+  /// Set ready status (online)
+  Future<void> setReady(bool ready) async {
+    if (_backendMatch != null && _isConnected) {
+      await _matchService.setReady(_backendMatch!.id, ready);
+      _socketService.setReady(_backendMatch!.id, ready);
+    }
+  }
+
+  /// Load available matches from backend
+  Future<void> loadAvailableMatches({String? mode, String? difficulty}) async {
+    if (!_isConnected) return;
+
+    final response = await _matchService.getAvailableMatches(
+      mode: mode,
+      difficulty: difficulty,
+    );
+
+    if (response.isSuccess && response.data != null) {
+      _availableMatches = response.data!;
+      notifyListeners();
+    }
+  }
+
   /// Start the current match
   void startMatch() {
     if (_currentMatch == null) return;
@@ -119,8 +303,8 @@ class MultiplayerProvider extends ChangeNotifier {
     // Start match timer
     _startMatchTimer();
 
-    // Start AI opponent simulation if needed
-    if (_currentMatch!.mode != MultiplayerMode.coop) {
+    // Start AI opponent simulation if offline
+    if (!_isOnlineMode && _currentMatch!.mode != MultiplayerMode.coop) {
       _startAISimulation();
     }
 
@@ -144,11 +328,21 @@ class MultiplayerProvider extends ChangeNotifier {
       // Update active effects
       _updateActiveEffects();
 
+      // Send progress update to server if online
+      if (_isOnlineMode && _backendMatch != null) {
+        _socketService.updateProgress(
+          matchId: _backendMatch!.id,
+          score: _currentMatch!.getPlayerScore(_currentPlayer.id),
+          tilesRevealed: 0, // TODO: track tiles revealed
+          mana: _currentPlayer.mana,
+        );
+      }
+
       notifyListeners();
     });
   }
 
-  /// Start AI simulation for opponent
+  /// Start AI simulation for opponent (offline mode)
   void _startAISimulation() {
     _aiTimer?.cancel();
     
@@ -237,8 +431,19 @@ class MultiplayerProvider extends ChangeNotifier {
     // Record cooldown
     _cooldownTracker.recordCast(spell.type);
 
-    // Apply effect
+    // Apply effect locally
     _applySpellEffect(spell, _currentPlayer.id, targetId);
+
+    // Send to server if online
+    if (_isOnlineMode && _backendMatch != null) {
+      _socketService.castSpell(
+        matchId: _backendMatch!.id,
+        casterId: int.parse(_currentPlayer.id),
+        targetId: int.parse(targetId),
+        spellType: spell.type.name,
+        duration: spell.duration.inMilliseconds,
+      );
+    }
 
     notifyListeners();
     return true;
@@ -258,7 +463,7 @@ class MultiplayerProvider extends ChangeNotifier {
     _activeEffects.add(effect);
 
     // Handle instant effects
-    if (spell.duration == 0) {
+    if (spell.duration == Duration.zero) {
       _processInstantEffect(effect);
     }
 
@@ -315,7 +520,7 @@ class MultiplayerProvider extends ChangeNotifier {
 
   /// Update active effects (remove expired ones)
   void _updateActiveEffects() {
-    _activeEffects.removeWhere((effect) => !effect.isActive && effect.duration > 0);
+    _activeEffects.removeWhere((effect) => !effect.isActive && effect.duration > Duration.zero);
   }
 
   /// Check if player has active effect
@@ -361,6 +566,21 @@ class MultiplayerProvider extends ChangeNotifier {
     // Add to history
     _matchHistory.add(_currentMatch!);
 
+    // Report to server if online
+    if (_isOnlineMode && _backendMatch != null) {
+      _socketService.playerFinished(
+        matchId: _backendMatch!.id,
+        won: finalWinnerId == _currentPlayer.id,
+        hitMine: false,
+        score: _currentMatch!.getPlayerScore(_currentPlayer.id),
+        completionTime: _currentMatch!.duration,
+        tilesRevealed: 0,
+        flagsPlaced: 0,
+        manaUsed: 0,
+        spellsCast: 0,
+      );
+    }
+
     // Update leaderboard
     _updateLeaderboard();
 
@@ -383,36 +603,120 @@ class MultiplayerProvider extends ChangeNotifier {
     _aiTimer?.cancel();
     _currentMatch?.cancel();
     _currentMatch = null;
+    _backendMatch = null;
+    _matchDetails = null;
     _activeEffects.clear();
+    
+    if (_isOnlineMode) {
+      _socketService.leaveGame();
+    }
+    
     notifyListeners();
   }
 
-  /// Start searching for online match (placeholder for future)
+  /// Start searching for online match
   Future<void> startMatchmaking(MultiplayerMode mode, String difficulty) async {
     _isSearching = true;
     notifyListeners();
 
-    // Simulate matchmaking delay
-    await Future.delayed(const Duration(seconds: 2));
+    if (_isConnected) {
+      // Use backend matchmaking
+      final result = await _matchmakingService.joinQueue(
+        mode: mode.name,
+        difficulty: difficulty,
+      );
 
-    // Create local match for now
-    await createMatch(mode: mode, difficulty: difficulty);
+      if (result.status == MatchmakingStatus.matched && result.matchId != null) {
+        await joinMatch(result.matchId!);
+        _isSearching = false;
+      } else if (result.status == MatchmakingStatus.searching) {
+        // Start polling for match
+        _matchmakingService.startPolling(
+          onStatusUpdate: (status) async {
+            if (status.status == MatchmakingStatus.matched && status.matchId != null) {
+              await joinMatch(status.matchId!);
+              _isSearching = false;
+              notifyListeners();
+            } else if (status.status == MatchmakingStatus.error) {
+              _isSearching = false;
+              notifyListeners();
+            }
+          },
+        );
+      }
+    } else {
+      // Simulate matchmaking delay for offline
+      await Future.delayed(const Duration(seconds: 2));
+      await createMatch(mode: mode, difficulty: difficulty);
+      _isSearching = false;
+    }
 
-    _isSearching = false;
     notifyListeners();
   }
 
   /// Cancel matchmaking
   void cancelMatchmaking() {
     _isSearching = false;
+    if (_isConnected) {
+      _matchmakingService.leaveQueue();
+    }
     notifyListeners();
   }
 
   /// Load leaderboard data
-  void _loadLeaderboard() {
-    // Load sample data for now
+  Future<void> _loadLeaderboard() async {
+    if (_isConnected) {
+      final response = await _leaderboardService.getLeaderboard();
+      if (response.isSuccess && response.data != null) {
+        _leaderboardEntries = response.data!.map((e) => LeaderboardEntry(
+          id: e.id.toString(),
+          playerId: e.userId.toString(),
+          playerName: e.playerName,
+          score: e.score,
+          rank: e.rank,
+          difficulty: e.difficulty,
+          gameMode: e.gameMode,
+          timeSeconds: e.completionTime ?? 0,
+          timestamp: e.createdAt,
+        )).toList();
+        notifyListeners();
+        return;
+      }
+    }
+
+    // Fall back to sample data
     _leaderboardEntries = SampleLeaderboardData.generateSampleEntries();
     notifyListeners();
+  }
+
+  /// Refresh leaderboard from backend
+  Future<void> refreshLeaderboard({
+    String? gameMode,
+    String? difficulty,
+    String category = 'allTime',
+  }) async {
+    if (!_isConnected) return;
+
+    final response = await _leaderboardService.getLeaderboard(
+      gameMode: gameMode,
+      difficulty: difficulty,
+      category: category,
+    );
+
+    if (response.isSuccess && response.data != null) {
+      _leaderboardEntries = response.data!.map((e) => LeaderboardEntry(
+        id: e.id.toString(),
+        playerId: e.userId.toString(),
+        playerName: e.playerName,
+        score: e.score,
+        rank: e.rank,
+        difficulty: e.difficulty,
+        gameMode: e.gameMode,
+        timeSeconds: e.completionTime ?? 0,
+        timestamp: e.createdAt,
+      )).toList();
+      notifyListeners();
+    }
   }
 
   /// Update leaderboard with current match result
@@ -522,10 +826,90 @@ class MultiplayerProvider extends ChangeNotifier {
     return entry.rank > 0 ? entry.rank : null;
   }
 
+  // Socket event handlers
+  void _handleGameState(GameStateEvent event) {
+    // Update local match state from server
+    notifyListeners();
+  }
+
+  void _handlePlayerJoined(PlayerJoinedEvent event) {
+    // Add player to match
+    notifyListeners();
+  }
+
+  void _handlePlayerReady(PlayerReadyEvent event) {
+    // Update player ready status
+    notifyListeners();
+  }
+
+  void _handleGameStarting(GameStartingEvent event) {
+    // Show countdown
+    notifyListeners();
+  }
+
+  void _handleGameStarted(GameStartedEvent event) {
+    // Start the game
+    if (_currentMatch != null) {
+      _currentMatch!.boardSeed = event.boardSeed;
+      startMatch();
+    }
+    notifyListeners();
+  }
+
+  void _handleProgressUpdated(ProgressUpdatedEvent event) {
+    // Update opponent progress
+    if (_currentMatch != null) {
+      _currentMatch!.updatePlayerScore(event.oderId.toString(), event.score);
+    }
+    notifyListeners();
+  }
+
+  void _handleSpellCast(SpellCastEvent event) {
+    // Apply spell effect from opponent
+    if (event.targetId.toString() == _currentPlayer.id) {
+      final spell = CompetitiveSpell.defaultVersusSpells.firstWhere(
+        (s) => s.type.name == event.spellType,
+        orElse: () => CompetitiveSpell.defaultVersusSpells.first,
+      );
+      _applySpellEffect(spell, event.casterId.toString(), event.targetId.toString());
+    }
+    notifyListeners();
+  }
+
+  void _handlePlayerFinished(PlayerFinishedEvent event) {
+    // Handle opponent finishing
+    notifyListeners();
+  }
+
+  void _handleGameOver(GameOverEvent event) {
+    // End the match
+    final winnerId = event.winnerId?.toString();
+    endMatch(winnerId: winnerId, completed: true);
+    notifyListeners();
+  }
+
+  void _handlePlayerDisconnected(PlayerDisconnectedEvent event) {
+    // Handle opponent disconnection
+    notifyListeners();
+  }
+
+  void _handlePlayerReconnected(PlayerReconnectedEvent event) {
+    // Handle opponent reconnection
+    notifyListeners();
+  }
+
+  void _handleError(String error) {
+    debugPrint('Socket error: $error');
+  }
+
   @override
   void dispose() {
     _matchTimer?.cancel();
     _aiTimer?.cancel();
+    _matchmakingService.dispose();
+    for (final sub in _subscriptions) {
+      sub.cancel();
+    }
     super.dispose();
   }
 }

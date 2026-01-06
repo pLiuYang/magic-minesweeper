@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'providers/settings_provider.dart';
 import 'providers/multiplayer_provider.dart';
+import 'services/auth_service.dart';
+import 'services/socket_service.dart';
 import 'screens/main_menu_screen.dart';
 import 'utils/constants.dart';
 
@@ -26,6 +28,8 @@ class MagicSweeperApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => SettingsProvider()..loadSettings()),
+        ChangeNotifierProvider(create: (_) => AuthService()),
+        ChangeNotifierProvider(create: (_) => SocketService()),
         ChangeNotifierProvider(create: (_) => MultiplayerProvider()),
       ],
       child: MaterialApp(
@@ -45,8 +49,25 @@ class MagicSweeperApp extends StatelessWidget {
   }
 }
 
-class MagicSweeperHome extends StatelessWidget {
+class MagicSweeperHome extends StatefulWidget {
   const MagicSweeperHome({super.key});
+
+  @override
+  State<MagicSweeperHome> createState() => _MagicSweeperHomeState();
+}
+
+class _MagicSweeperHomeState extends State<MagicSweeperHome> {
+  @override
+  void initState() {
+    super.initState();
+    // Try to connect to backend on app start
+    _initializeBackend();
+  }
+
+  Future<void> _initializeBackend() async {
+    final authService = context.read<AuthService>();
+    await authService.checkAuth();
+  }
 
   @override
   Widget build(BuildContext context) {
