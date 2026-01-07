@@ -372,15 +372,15 @@ class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
             ElevatedButton.icon(
               onPressed: () async {
                 Navigator.pop(context);
-                final loginUrl = authService.getLoginUrl();
-                // In a real app, this would open a web view or browser
-                // For now, show a message
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Login URL: $loginUrl'),
-                    duration: const Duration(seconds: 5),
-                  ),
-                );
+                final success = await authService.login();
+                if (!success && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(authService.error ?? 'Failed to open login page'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
               },
               icon: const Icon(Icons.account_circle),
               label: const Text('Sign in with Manus'),

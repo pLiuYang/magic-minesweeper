@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'api_service.dart';
 import 'api_config.dart';
 import '../models/player.dart';
@@ -70,6 +71,38 @@ class AuthService extends ChangeNotifier {
   /// Get login URL for OAuth
   String getLoginUrl() {
     return ApiConfig.oauthLogin;
+  }
+  
+  /// Launch login in browser
+  Future<bool> login() async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+    
+    try {
+      final loginUrl = Uri.parse(getLoginUrl());
+      
+      if (await canLaunchUrl(loginUrl)) {
+        final launched = await launchUrl(
+          loginUrl,
+          mode: LaunchMode.externalApplication,
+        );
+        
+        _isLoading = false;
+        notifyListeners();
+        return launched;
+      } else {
+        _error = 'Could not launch login URL';
+        _isLoading = false;
+        notifyListeners();
+        return false;
+      }
+    } catch (e) {
+      _error = 'Login failed: $e';
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
   }
   
   /// Handle OAuth callback (called when app receives deep link)
