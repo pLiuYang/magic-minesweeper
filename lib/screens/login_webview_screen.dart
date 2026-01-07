@@ -14,7 +14,6 @@ class LoginWebViewScreen extends StatefulWidget {
 class _LoginWebViewScreenState extends State<LoginWebViewScreen> {
   late final WebViewController _controller;
   bool _isLoading = true;
-  String _currentUrl = '';
   bool _loginCompleted = false;
 
   @override
@@ -32,9 +31,7 @@ class _LoginWebViewScreenState extends State<LoginWebViewScreen> {
           onPageStarted: (String url) {
             setState(() {
               _isLoading = true;
-              _currentUrl = url;
             });
-            _checkForAuthCallback(url);
           },
           onPageFinished: (String url) {
             setState(() {
@@ -46,7 +43,6 @@ class _LoginWebViewScreenState extends State<LoginWebViewScreen> {
             debugPrint('WebView error: ${error.description}');
           },
           onNavigationRequest: (NavigationRequest request) {
-            // Allow all navigation
             return NavigationDecision.navigate;
           },
         ),
@@ -55,7 +51,6 @@ class _LoginWebViewScreenState extends State<LoginWebViewScreen> {
   }
 
   void _checkForAuthCallback(String url) async {
-    // Check if we've been redirected to the callback URL or the main page after auth
     if (_loginCompleted) return;
     
     // After successful OAuth, the backend redirects to the base URL
@@ -66,52 +61,84 @@ class _LoginWebViewScreenState extends State<LoginWebViewScreen> {
       
       _loginCompleted = true;
       
-      // Get cookies from WebView and try to authenticate
-      final authService = AuthService();
-      
-      // Extract cookies from WebView
-      final cookieManager = WebViewCookieManager();
-      final cookies = await cookieManager.getCookies(ApiConfig.baseUrl);
-      
-      // Find the session cookie
-      String? sessionCookie;
-      for (final cookie in cookies) {
-        if (cookie.name == 'app_session_id') {
-          sessionCookie = cookie.value;
-          break;
-        }
-      }
-      
-      if (sessionCookie != null) {
-        // Store the session cookie in our API service
-        await authService.setSessionFromCookie(sessionCookie);
+      // Try to get the session cookie using JavaScript
+      try {
+        final cookieString = await _controller.runJavaScriptReturningResult(
+          'document.cookie'
+        );
         
-        // Check authentication status
-        final isAuthenticated = await authService.checkAuth();
+        // Parse the cookie string to find app_session_id
+        String? sessionCookie;
+        final cookieStr = cookieString.toString().replaceAll('"', '');
+        final cookies = cookieStr.split(';');
         
-        if (mounted) {
-          if (isAuthenticated) {
-            // Success! Close the WebView and return to the app
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Successfully signed in!'),
-                backgroundColor: Colors.green,
-              ),
-            );
-            Navigator.of(context).pop(true);
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Authentication failed. Please try again.'),
-                backgroundColor: Colors.red,
-              ),
-            );
-            Navigator.of(context).pop(false);
+        for (final cookie in cookies) {
+          final trimmed = cookie.trim();
+          if (trimmed.startsWith('app_session_id=')) {
+            sessionCookie = trimmed.substring('app_session_id='.length);
+            break;
           }
         }
-      } else {
-        // No session cookie found, might need to wait or retry
-        debugPrint('No session cookie found yet');
+        
+        if (sessionCookie != null && sessionCookie.isNotEmpty) {
+          // Store the session cookie in our API service
+          final authService = AuthService();
+          await authService.setSessionFromCookie(sessionCookie);
+          
+          // Check authentication status
+          final isAuthenticated = await authService.checkAuth();
+          
+          if (mounted) {
+            if (isAuthenticated) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Successfully signed in!'),
+                  backgroundColor: Colors.green,
+                ),
+              );
+              Navigator.of(context).pop(true);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Authentication failed. Please try again.'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+              Navigator.of(context).pop(false);
+            }
+          }
+        } else {
+          // No session cookie found via JavaScript, try checking auth anyway
+          // The cookie might be httpOnly
+          final authService = AuthService();
+          final isAuthenticated = await authService.checkAuth();
+          
+          if (mounted) {
+            if (isAuthenticated) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Successfully signed in!'),
+                  backgroundColor: Colors.green,
+                ),
+              );
+              Navigator.of(context).pop(true);
+            } else {
+              // Cookie is httpOnly, inform user
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Login completed. Please check your connection.'),
+                  backgroundColor: Colors.orange,
+                ),
+              );
+              Navigator.of(context).pop(false);
+            }
+          }
+        }
+      } catch (e) {
+        debugPrint('Error getting cookies: $e');
+        if (mounted) {
+          Navigator.of(context).pop(false);
+        }
       }
     }
   }
