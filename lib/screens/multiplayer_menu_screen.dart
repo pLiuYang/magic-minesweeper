@@ -7,6 +7,7 @@ import '../utils/constants.dart';
 import 'multiplayer_lobby_screen.dart';
 import 'leaderboard_screen.dart';
 import 'online_lobby_screen.dart';
+import 'login_webview_screen.dart';
 
 class MultiplayerMenuScreen extends StatefulWidget {
   const MultiplayerMenuScreen({super.key});
@@ -346,8 +347,6 @@ class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
   }
 
   void _showLoginDialog(BuildContext context) {
-    final authService = context.read<AuthService>();
-    
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -372,14 +371,17 @@ class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
             ElevatedButton.icon(
               onPressed: () async {
                 Navigator.pop(context);
-                final success = await authService.login();
-                if (!success && context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(authService.error ?? 'Failed to open login page'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
+                // Open WebView login screen
+                final result = await Navigator.push<bool>(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const LoginWebViewScreen(),
+                  ),
+                );
+                
+                if (result == true && context.mounted) {
+                  // Refresh the UI after successful login
+                  setState(() {});
                 }
               },
               icon: const Icon(Icons.account_circle),

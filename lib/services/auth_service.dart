@@ -105,6 +105,11 @@ class AuthService extends ChangeNotifier {
     }
   }
   
+  /// Set session from cookie obtained from WebView
+  Future<void> setSessionFromCookie(String sessionCookie) async {
+    await _api.setSessionCookie(sessionCookie);
+  }
+  
   /// Handle OAuth callback (called when app receives deep link)
   Future<bool> handleOAuthCallback(String callbackUrl) async {
     _isLoading = true;

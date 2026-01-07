@@ -5,6 +5,7 @@ import 'providers/settings_provider.dart';
 import 'providers/multiplayer_provider.dart';
 import 'services/auth_service.dart';
 import 'services/socket_service.dart';
+import 'services/api_service.dart';
 import 'screens/main_menu_screen.dart';
 import 'utils/constants.dart';
 
@@ -65,8 +66,14 @@ class _MagicSweeperHomeState extends State<MagicSweeperHome> {
   }
 
   Future<void> _initializeBackend() async {
-    final authService = context.read<AuthService>();
-    await authService.checkAuth();
+    // Initialize API service first (loads stored session)
+    await ApiService().init();
+    
+    // Then check auth status
+    if (mounted) {
+      final authService = context.read<AuthService>();
+      await authService.checkAuth();
+    }
   }
 
   @override

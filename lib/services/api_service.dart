@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'api_config.dart';
 
 /// API Service for communicating with the Magic Minesweeper backend
@@ -11,18 +12,29 @@ class ApiService {
   final HttpClient _client = HttpClient();
   
   String? _sessionCookie;
+  static const String _cookieKey = 'app_session_cookie';
   
   /// Get stored session cookie
   String? get sessionCookie => _sessionCookie;
   
-  /// Set session cookie
-  void setSessionCookie(String cookie) {
-    _sessionCookie = cookie;
+  /// Initialize and load stored session cookie
+  Future<void> init() async {
+    final prefs = await SharedPreferences.getInstance();
+    _sessionCookie = prefs.getString(_cookieKey);
+  }
+  
+  /// Set session cookie and persist it
+  Future<void> setSessionCookie(String cookie) async {
+    _sessionCookie = 'app_session_id=$cookie';
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_cookieKey, _sessionCookie!);
   }
   
   /// Clear session cookie (logout)
   Future<void> clearSession() async {
     _sessionCookie = null;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_cookieKey);
   }
   
   /// Make a tRPC query (GET request)
