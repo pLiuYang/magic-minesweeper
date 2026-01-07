@@ -1,7 +1,7 @@
 /// API Configuration for Magic Minesweeper Backend
 class ApiConfig {
   // Backend URL - Update this when deploying to production
-  static const String baseUrl = 'https://3000-iixk09z4hkevt378f1d2j-9c5d9a37.sg1.manus.computer';
+  static const String baseUrl = 'https://mms.manus.space';
   
   // For local development
   // static const String baseUrl = 'http://localhost:3000';
