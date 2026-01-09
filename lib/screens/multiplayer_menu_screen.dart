@@ -347,9 +347,15 @@ class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
   }
 
   void _showLoginDialog(BuildContext context) {
+    // Capture the parent screen's navigator and state update callback
+    final parentNavigator = Navigator.of(context);
+    final refreshUI = () {
+      if (mounted) setState(() {});
+    };
+    
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         backgroundColor: const Color(0xFF1a1a2e),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
@@ -370,18 +376,19 @@ class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
             const SizedBox(height: 20),
             ElevatedButton.icon(
               onPressed: () async {
-                Navigator.pop(context);
-                // Open WebView login screen
-                final result = await Navigator.push<bool>(
-                  context,
+                // Close the dialog first
+                Navigator.pop(dialogContext);
+                
+                // Open WebView login screen using parent navigator
+                final result = await parentNavigator.push<bool>(
                   MaterialPageRoute(
                     builder: (context) => const LoginWebViewScreen(),
                   ),
                 );
                 
-                if (result == true && context.mounted) {
+                if (result == true) {
                   // Refresh the UI after successful login
-                  setState(() {});
+                  refreshUI();
                 }
               },
               icon: const Icon(Icons.account_circle),
@@ -398,7 +405,7 @@ class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext),
             child: const Text('Cancel'),
           ),
         ],
