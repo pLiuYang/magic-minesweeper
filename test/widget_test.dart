@@ -8,14 +8,21 @@
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:magic_sweeper/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   testWidgets('App loads successfully', (WidgetTester tester) async {
+    // Mock SharedPreferences
+    SharedPreferences.setMockInitialValues({});
+
     // Build our app and trigger a frame.
     await tester.pumpWidget(const MagicSweeperApp());
 
+    // Wait for async initialization to complete
+    await tester.pumpAndSettle();
+
     // Verify that the app loads with the title
-    expect(find.text('Magic'), findsOneWidget);
-    expect(find.text('Sweeper'), findsOneWidget);
+    expect(find.text('MAGIC'), findsWidgets);
+    expect(find.text('SWEEPER'), findsWidgets);
   });
 }

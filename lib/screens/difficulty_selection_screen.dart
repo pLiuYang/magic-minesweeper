@@ -10,148 +10,84 @@ class DifficultySelectionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: AppColors.menuGradient,
-        ),
-        child: Stack(
-          children: [
-            // Background decorations
-            _buildBackgroundDecorations(),
-            SafeArea(
+      backgroundColor: const Color(0xFF2D0A31), // Deep purple
+      body: Stack(
+        children: [
+          // Background decorations
+          _buildBackgroundDecorations(),
+
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  const SizedBox(height: 16),
                   // Header
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
-                      children: [
-                        // Back button - Candy style
-                        _buildBackButton(context),
-                        const Expanded(
-                          child: Column(
-                            children: [
-                              Text(
-                                'Select Level',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 26,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                  shadows: [
-                                    Shadow(
-                                      color: Color(0x60000000),
-                                      offset: Offset(2, 2),
-                                      blurRadius: 4,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(height: 4),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.star, color: AppColors.sparkleGold, size: 16),
-                                  SizedBox(width: 4),
-                                  Text(
-                                    'Choose your challenge',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.white70,
-                                    ),
-                                  ),
-                                  SizedBox(width: 4),
-                                  Icon(Icons.star, color: AppColors.sparkleGold, size: 16),
-                                ],
+                  Row(
+                    children: [
+                      _buildBackButton(context),
+                      const Expanded(
+                        child: Text(
+                          'SELECT LEVEL',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                            letterSpacing: 2,
+                            shadows: [
+                              Shadow(
+                                color: Color(0xFF4C1D95),
+                                offset: Offset(2, 2),
+                                blurRadius: 0,
                               ),
                             ],
                           ),
                         ),
-                        const SizedBox(width: 48), // Balance the back button
+                      ),
+                      const SizedBox(width: 48), // Balance back button
+                    ],
+                  ),
+
+                  const SizedBox(height: 32),
+
+                  // Difficulty Cards
+                  Expanded(
+                    child: ListView(
+                      children: [
+                        _buildDifficultyCard(
+                          context,
+                          config: GameConstants.beginner,
+                          color: const Color(0xFF4ADE80), // Mint for Easy
+                          icon: Icons.filter_1,
+                          stars: 1,
+                        ),
+                        const SizedBox(height: 20),
+                        _buildDifficultyCard(
+                          context,
+                          config: GameConstants.intermediate,
+                          color: const Color(0xFFFACC15), // Yellow for Medium
+                          icon: Icons.filter_2,
+                          stars: 2,
+                        ),
+                        const SizedBox(height: 20),
+                        _buildDifficultyCard(
+                          context,
+                          config: GameConstants.expert,
+                          color: const Color(0xFFF472B6), // Pink for Hard
+                          icon: Icons.filter_3,
+                          stars: 3,
+                        ),
                       ],
                     ),
                   ),
-                  // Difficulty options
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          _buildDifficultyCard(
-                            context,
-                            config: GameConstants.beginner,
-                            color: AppColors.candyGreen,
-                            icon: Icons.sentiment_satisfied_rounded,
-                            stars: 1,
-                          ),
-                          const SizedBox(height: 16),
-                          _buildDifficultyCard(
-                            context,
-                            config: GameConstants.intermediate,
-                            color: AppColors.candyOrange,
-                            icon: Icons.sentiment_neutral_rounded,
-                            stars: 2,
-                          ),
-                          const SizedBox(height: 16),
-                          _buildDifficultyCard(
-                            context,
-                            config: GameConstants.expert,
-                            color: AppColors.candyRed,
-                            icon: Icons.sentiment_very_dissatisfied_rounded,
-                            stars: 3,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
-    );
-  }
-
-  Widget _buildBackgroundDecorations() {
-    return Stack(
-      children: [
-        Positioned(
-          top: -50,
-          left: -50,
-          child: Container(
-            width: 150,
-            height: 150,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: RadialGradient(
-                colors: [
-                  AppColors.candyPink.withOpacity(0.3),
-                  AppColors.candyPink.withOpacity(0.0),
-                ],
-              ),
-            ),
-          ),
-        ),
-        Positioned(
-          bottom: 100,
-          right: -30,
-          child: Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: RadialGradient(
-                colors: [
-                  AppColors.candyPurple.withOpacity(0.25),
-                  AppColors.candyPurple.withOpacity(0.0),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 
@@ -159,43 +95,21 @@ class DifficultySelectionScreen extends StatelessWidget {
     return GestureDetector(
       onTap: () => Navigator.pop(context),
       child: Container(
-        width: 44,
-        height: 44,
+        width: 48,
+        height: 48,
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFFB39DDB),
-              AppColors.candyPurple,
-              Color(0xFF5E35B1),
-            ],
-            stops: [0.0, 0.5, 1.0],
-          ),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: Colors.white.withOpacity(0.4),
-            width: 2,
-          ),
-          boxShadow: [
+          color: const Color(0xFF4C1D95), // Dark purple button
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.white.withOpacity(0.2), width: 2),
+          boxShadow: const [
             BoxShadow(
-              color: AppColors.candyPurple.withOpacity(0.4),
-              blurRadius: 8,
-              offset: const Offset(0, 3),
+              color: Colors.black26,
+              offset: Offset(0, 4),
+              blurRadius: 0,
             ),
           ],
         ),
-        child: const Icon(
-          Icons.arrow_back_rounded,
-          color: Colors.white,
-          shadows: [
-            Shadow(
-              color: Color(0x60000000),
-              offset: Offset(1, 1),
-              blurRadius: 2,
-            ),
-          ],
-        ),
+        child: const Icon(Icons.arrow_back_rounded, color: Colors.white),
       ),
     );
   }
@@ -209,8 +123,6 @@ class DifficultySelectionScreen extends StatelessWidget {
   }) {
     final settingsProvider = context.read<SettingsProvider>();
     final bestTime = settingsProvider.formatBestTime(config.name);
-    final lightColor = Color.lerp(color, Colors.white, 0.3)!;
-    final darkColor = Color.lerp(color, Colors.black, 0.2)!;
 
     return GestureDetector(
       onTap: () {
@@ -223,192 +135,167 @@ class DifficultySelectionScreen extends StatelessWidget {
         );
       },
       child: Container(
-        padding: const EdgeInsets.all(16),
+        height: 140, // Chunky card
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Colors.white,
-              Colors.white.withOpacity(0.95),
-            ],
-          ),
+          color: color,
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
-            color: color.withOpacity(0.3),
-            width: 2,
+            color: Colors.black.withOpacity(0.2),
+            width: 4,
           ),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.3),
-              blurRadius: 15,
+              color: Colors.black.withOpacity(0.3),
               offset: const Offset(0, 8),
-            ),
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
+              blurRadius: 0,
             ),
           ],
         ),
-        child: Row(
+        child: Stack(
           children: [
-            // Icon - Candy style
-            Container(
-              width: 65,
-              height: 65,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [lightColor, color, darkColor],
-                  stops: const [0.0, 0.5, 1.0],
+            // Inner Highlight
+            Positioned(
+              top: 4,
+              left: 8,
+              right: 8,
+              height: 24,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.25),
+                  borderRadius: BorderRadius.circular(16),
                 ),
-                borderRadius: BorderRadius.circular(18),
-                border: Border.all(
-                  color: Colors.white.withOpacity(0.4),
-                  width: 2,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: color.withOpacity(0.4),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
               ),
-              child: Stack(
+            ),
+
+            // Content
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Row(
                 children: [
-                  // Glossy highlight
-                  Positioned(
-                    top: 3,
-                    left: 6,
-                    right: 6,
-                    height: 18,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(14),
-                        ),
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.white.withOpacity(0.4),
-                            Colors.white.withOpacity(0.0),
-                          ],
-                        ),
-                      ),
+                  // Icon Box
+                  Container(
+                    width: 72,
+                    height: 72,
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(16),
                     ),
+                    child: Icon(icon, size: 36, color: const Color(0xFF111827)),
                   ),
-                  Center(
-                    child: Icon(
-                      icon,
-                      color: Colors.white,
-                      size: 32,
-                      shadows: const [
-                        Shadow(
-                          color: Color(0x60000000),
-                          offset: Offset(1, 1),
-                          blurRadius: 2,
+                  const SizedBox(width: 20),
+
+                  // Text Info
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          config.name.toUpperCase(),
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w900,
+                            color: Color(0xFF111827),
+                            letterSpacing: 1,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            const Icon(Icons.timer_outlined,
+                                size: 16, color: Color(0xFF111827)),
+                            const SizedBox(width: 4),
+                            Text(
+                              'BEST: $bestTime',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF111827),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 16),
-            // Info
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    config.name,
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: color,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: List.generate(
-                      stars,
-                      (index) => Padding(
-                        padding: const EdgeInsets.only(right: 2),
-                        child: Icon(
-                          Icons.star_rounded,
-                          color: AppColors.sparkleGold,
-                          size: 18,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 4),
+
+                  // Play Arrow
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    width: 40,
+                    height: 40,
                     decoration: BoxDecoration(
-                      color: color.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
+                      color: const Color(0xFF111827),
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Text(
-                      '${config.width} × ${config.height}  •  ${config.mines} mines',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: color,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            // Best time - Trophy style
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    AppColors.sparkleGold.withOpacity(0.2),
-                    AppColors.sparkleGold.withOpacity(0.1),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: AppColors.sparkleGold.withOpacity(0.3),
-                ),
-              ),
-              child: Column(
-                children: [
-                  Icon(
-                    Icons.emoji_events_rounded,
-                    color: AppColors.sparkleGold,
-                    size: 24,
-                    shadows: const [
-                      Shadow(
-                        color: Color(0x40000000),
-                        offset: Offset(1, 1),
-                        blurRadius: 2,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    bestTime,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey.shade700,
-                    ),
+                    child: const Icon(Icons.play_arrow_rounded,
+                        color: Colors.white),
                   ),
                 ],
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBackgroundDecorations() {
+    return Stack(
+      children: [
+        // Grid pattern overlay (subtle)
+        Positioned.fill(
+          child: Opacity(
+            opacity: 0.05,
+            child: Image.asset(
+              'assets/images/grid_pattern.png',
+              repeat: ImageRepeat.repeat,
+              errorBuilder: (_, __, ___) =>
+                  Container(color: Colors.transparent),
+            ),
+          ),
+        ),
+        // Scattered pixel elements
+        _buildPixelSquare(
+            top: 100, left: 20, color: const Color(0xFFFACC15), size: 16),
+        _buildPixelSquare(
+            top: 200, right: 30, color: const Color(0xFFF472B6), size: 12),
+        _buildPixelSquare(
+            bottom: 150, left: 40, color: const Color(0xFF4ADE80), size: 14),
+        _buildPixelSquare(
+            bottom: 50, right: 60, color: const Color(0xFF2DD4BF), size: 18),
+      ],
+    );
+  }
+
+  Widget _buildPixelSquare(
+      {double? top,
+      double? bottom,
+      double? left,
+      double? right,
+      required Color color,
+      required double size}) {
+    return Positioned(
+      top: top,
+      bottom: bottom,
+      left: left,
+      right: right,
+      child: Transform.rotate(
+        angle: 0.1,
+        child: Container(
+          width: size,
+          height: size,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(
+                2), // Slight rounding for "soft pixel" look
+            boxShadow: [
+              BoxShadow(
+                color: color.withOpacity(0.5),
+                blurRadius: 4,
+                spreadRadius: 2,
+              ),
+            ],
+          ),
         ),
       ),
     );

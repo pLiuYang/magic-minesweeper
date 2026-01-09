@@ -53,103 +53,142 @@ class GameConstants {
 }
 
 class AppColors {
-  // ============ CANDY CRUSH INSPIRED PALETTE ============
+  // ============ NEO-RETRO GAMING PALETTE ============
   
-  // Primary vibrant colors - Candy-like saturated tones
-  static const Color candyPink = Color(0xFFFF6B9D);       // Hot pink
-  static const Color candyPurple = Color(0xFF9B59B6);     // Rich purple
-  static const Color candyBlue = Color(0xFF3498DB);       // Bright blue
-  static const Color candyGreen = Color(0xFF2ECC71);      // Emerald green
-  static const Color candyOrange = Color(0xFFFF9F43);     // Vibrant orange
-  static const Color candyYellow = Color(0xFFFECA57);     // Golden yellow
-  static const Color candyRed = Color(0xFFFF6B6B);        // Coral red
+  // Primary colors - Bold arcade style
+  static const Color retroGold = Color(0xFFFBBF24);       // Primary gold
+  static const Color retroPink = Color(0xFFF472B6);       // Vibrant pink
+  static const Color retroMint = Color(0xFF34D399);       // Fresh mint
+  static const Color retroSky = Color(0xFF60A5FA);        // Sky blue
+  static const Color retroOrange = Color(0xFFFB923C);     // Warm orange
+  static const Color retroPurple = Color(0xFFA78BFA);     // Soft purple
+  static const Color retroRed = Color(0xFFF87171);        // Coral red
+  
+  // Legacy aliases for compatibility
+  static const Color candyPink = retroPink;
+  static const Color candyPurple = retroPurple;
+  static const Color candyBlue = retroSky;
+  static const Color candyGreen = retroMint;
+  static const Color candyOrange = retroOrange;
+  static const Color candyYellow = retroGold;
+  static const Color candyRed = retroRed;
   
   // UI Theme colors
-  static const Color primaryPink = Color(0xFFFF6B9D);     // Main UI pink
-  static const Color primaryPurple = Color(0xFF9B59B6);   // Main purple
-  static const Color primaryBlue = Color(0xFF5DADE2);     // Sky blue
-  static const Color primaryMint = Color(0xFF48DBDB);     // Turquoise
-  static const Color accentGold = Color(0xFFFFD700);      // Pure gold
+  static const Color primaryPink = retroPink;
+  static const Color primaryPurple = retroPurple;
+  static const Color primaryBlue = retroSky;
+  static const Color primaryMint = retroMint;
+  static const Color accentGold = retroGold;
   
   // Vibrant accents
-  static const Color magicPurple = Color(0xFF8E44AD);     // Deep magic purple
-  static const Color crystalBlue = Color(0xFF00CED1);     // Crystal cyan
-  static const Color sparkleGold = Color(0xFFFFD700);     // Sparkle gold
-  static const Color glowPink = Color(0xFFFF69B4);        // Hot pink glow
+  static const Color magicPurple = Color(0xFF8B5CF6);     // Electric purple
+  static const Color crystalBlue = Color(0xFF22D3EE);     // Cyan
+  static const Color sparkleGold = Color(0xFFFBBF24);     // Gold sparkle
+  static const Color glowPink = Color(0xFFF472B6);        // Pink glow
 
-  // Background colors - Candy Crush style gradients
-  static const Color backgroundLight = Color(0xFFE8F4FD);  // Light sky blue
-  static const Color backgroundGradientTop = Color(0xFF87CEEB);  // Sky blue
-  static const Color backgroundGradientBottom = Color(0xFFB8E994); // Soft green
-  static const Color cardBackground = Color(0xFFFFFFFF);
+  // Background colors - Dark warm tones
+  static const Color backgroundDark = Color(0xFF111827);   // Deep dark
+  static const Color backgroundMedium = Color(0xFF1F2937); // Warm dark
+  static const Color surfaceDark = Color(0xFF374151);      // Card surface
+  static const Color surfaceLight = Color(0xFF4B5563);     // Lighter surface
+  static const Color cardBackground = Color(0xFF1F2937);
+  
+  // Legacy light backgrounds (for compatibility)
+  static const Color backgroundLight = Color(0xFF1F2937);
+  static const Color backgroundGradientTop = Color(0xFF1F2937);
+  static const Color backgroundGradientBottom = Color(0xFF111827);
 
-  // Cell colors - Glossy candy-like appearance
-  static const Color cellCovered = Color(0xFF7B68EE);     // Medium slate blue
-  static const Color cellCoveredHover = Color(0xFF6A5ACD); // Slate blue
-  static const Color cellRevealed = Color(0xFFF0F8FF);    // Alice blue (light)
-  static const Color cellMine = Color(0xFFFF4757);        // Bright red
-  static const Color cellFlag = Color(0xFFFF6B9D);        // Hot pink
-  static const Color cellSafe = Color(0xFF2ECC71);        // Emerald green
+  // Cell colors - Chunky retro arcade style
+  static const Color cellCovered = Color(0xFF6366F1);     // Indigo
+  static const Color cellCoveredHover = Color(0xFF818CF8); // Light indigo
+  static const Color cellRevealed = Color(0xFF374151);    // Dark surface
+  static const Color cellMine = Color(0xFFF87171);        // Coral red
+  static const Color cellFlag = Color(0xFFFBBF24);        // Gold flag
+  static const Color cellSafe = Color(0xFF34D399);        // Mint green
 
-  // Number colors (1-8) - Vibrant candy colors
+  // Number colors (1-8) - Bright retro colors
   static const List<Color> numberColors = [
-    Color(0xFF3498DB), // 1 - Bright Blue
-    Color(0xFF27AE60), // 2 - Emerald Green
-    Color(0xFFE74C3C), // 3 - Bright Red
-    Color(0xFF9B59B6), // 4 - Purple
-    Color(0xFFE67E22), // 5 - Orange
-    Color(0xFF1ABC9C), // 6 - Turquoise
-    Color(0xFF2C3E50), // 7 - Dark Blue
-    Color(0xFF7F8C8D), // 8 - Gray
+    Color(0xFF60A5FA), // 1 - Sky Blue
+    Color(0xFF34D399), // 2 - Mint Green
+    Color(0xFFF87171), // 3 - Coral Red
+    Color(0xFFA78BFA), // 4 - Purple
+    Color(0xFFFB923C), // 5 - Orange
+    Color(0xFF22D3EE), // 6 - Cyan
+    Color(0xFFFBBF24), // 7 - Gold
+    Color(0xFFE5E7EB), // 8 - Light Gray
   ];
 
-  // Button colors - Candy-like gradients
-  static const Color buttonPrimary = Color(0xFF9B59B6);   // Purple
-  static const Color buttonSecondary = Color(0xFFFF6B9D); // Pink
-  static const Color buttonSuccess = Color(0xFF2ECC71);   // Green
-  static const Color buttonWarning = Color(0xFFFFD700);   // Gold
-  static const Color buttonGray = Color(0xFF95A5A6);      // Cool gray
+  // Button colors - Chunky arcade style
+  static const Color buttonPrimary = Color(0xFFFBBF24);   // Gold
+  static const Color buttonSecondary = Color(0xFFF472B6); // Pink
+  static const Color buttonSuccess = Color(0xFF34D399);   // Mint
+  static const Color buttonWarning = Color(0xFFFB923C);   // Orange
+  static const Color buttonGray = Color(0xFF6B7280);      // Dark gray
 
-  // Status colors - Vibrant
-  static const Color success = Color(0xFF2ECC71);
-  static const Color warning = Color(0xFFF39C12);
-  static const Color error = Color(0xFFE74C3C);
-  static const Color info = Color(0xFF3498DB);
+  // Status colors - Bright arcade
+  static const Color success = Color(0xFF34D399);
+  static const Color warning = Color(0xFFFBBF24);
+  static const Color error = Color(0xFFF87171);
+  static const Color info = Color(0xFF60A5FA);
 
-  // Mana color - Magical blue glow
-  static const Color manaBlue = Color(0xFF00BFFF);
-  static const Color manaGlow = Color(0xFF87CEFA);
+  // Mana color - Electric blue glow
+  static const Color manaBlue = Color(0xFF22D3EE);
+  static const Color manaGlow = Color(0xFF67E8F9);
 
-  // Gradient for background - Candy Crush sky style
+  // Gradient for background - Dark arcade style
   static const LinearGradient menuGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     colors: [
-      Color(0xFF87CEEB),  // Sky blue
-      Color(0xFFADD8E6),  // Light blue
-      Color(0xFFB8E994),  // Soft green
+      Color(0xFF1F2937),  // Warm dark
+      Color(0xFF111827),  // Deep dark
     ],
-    stops: [0.0, 0.5, 1.0],
   );
 
-  // Game screen gradient - Vibrant game feel
+  // Game screen gradient - Dark with subtle warmth
   static const LinearGradient gameGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     colors: [
-      Color(0xFF87CEEB),  // Sky blue
-      Color(0xFFE0F7FA),  // Very light cyan
+      Color(0xFF1F2937),  // Warm dark
+      Color(0xFF111827),  // Deep dark
     ],
   );
 
-  // Pink panel gradient - Candy Crush style UI panels
+  // Gold panel gradient - Retro arcade style
+  static const LinearGradient goldPanelGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [
+      Color(0xFFFDE047),  // Light gold
+      Color(0xFFFBBF24),  // Gold
+      Color(0xFFD97706),  // Dark gold
+    ],
+    stops: [0.0, 0.5, 1.0],
+  );
+  
+  // Pink panel gradient - Arcade pink
   static const LinearGradient pinkPanelGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [
-      Color(0xFFFF69B4),  // Hot pink
-      Color(0xFFFF1493),  // Deep pink
+      Color(0xFFF9A8D4),  // Light pink
+      Color(0xFFF472B6),  // Pink
+      Color(0xFFDB2777),  // Dark pink
     ],
+    stops: [0.0, 0.5, 1.0],
+  );
+
+  // Mint panel gradient
+  static const LinearGradient mintPanelGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [
+      Color(0xFF6EE7B7),  // Light mint
+      Color(0xFF34D399),  // Mint
+      Color(0xFF059669),  // Dark mint
+    ],
+    stops: [0.0, 0.5, 1.0],
   );
 
   // Purple panel gradient
@@ -157,36 +196,43 @@ class AppColors {
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [
-      Color(0xFFBA68C8),  // Medium purple
-      Color(0xFF9B59B6),  // Purple
+      Color(0xFFC4B5FD),  // Light purple
+      Color(0xFFA78BFA),  // Purple
+      Color(0xFF7C3AED),  // Dark purple
     ],
+    stops: [0.0, 0.5, 1.0],
   );
 
   // Spell colors - Vibrant magical effects
-  static const Color spellReveal = Color(0xFF2ECC71);     // Emerald
-  static const Color spellScan = Color(0xFF00BFFF);       // Deep sky blue
-  static const Color spellDisarm = Color(0xFFFFD700);     // Gold
-  static const Color spellShield = Color(0xFF9B59B6);     // Purple
-  static const Color spellTeleport = Color(0xFFFF69B4);   // Hot pink
-  static const Color spellPurify = Color(0xFFFFFFFF);     // White/Rainbow
+  static const Color spellReveal = Color(0xFF34D399);     // Mint
+  static const Color spellScan = Color(0xFF22D3EE);       // Cyan
+  static const Color spellDisarm = Color(0xFFFBBF24);     // Gold
+  static const Color spellShield = Color(0xFFA78BFA);     // Purple
+  static const Color spellTeleport = Color(0xFFF472B6);   // Pink
+  static const Color spellPurify = Color(0xFFFFFFFF);     // White
 
   // Scan effect colors - Pulsing glow
-  static const Color scanGlow = Color(0xFFFF4757);        // Warning red
-  static const Color scanPulse = Color(0xFFFFD700);       // Gold pulse
+  static const Color scanGlow = Color(0xFFF87171);        // Coral red
+  static const Color scanPulse = Color(0xFFFBBF24);       // Gold pulse
   
   // Purify effect colors
-  static const Color purifyGlow = Color(0xFF00FF7F);      // Spring green
+  static const Color purifyGlow = Color(0xFF34D399);      // Mint green
   static const Color purifySparkle = Color(0xFFFFFFFF);   // White sparkle
+  
+  // Text colors for dark theme
+  static const Color textPrimary = Color(0xFFF9FAFB);     // Near white
+  static const Color textSecondary = Color(0xFF9CA3AF);   // Gray
+  static const Color textMuted = Color(0xFF6B7280);       // Dark gray
 }
 
 class AppTextStyles {
   static const TextStyle title = TextStyle(
     fontSize: 32,
     fontWeight: FontWeight.bold,
-    color: Color(0xFF2C3E50),
+    color: Color(0xFFF9FAFB),  // Light text for dark theme
     shadows: [
       Shadow(
-        color: Color(0x40000000),
+        color: Color(0x60000000),
         offset: Offset(2, 2),
         blurRadius: 4,
       ),
@@ -196,18 +242,18 @@ class AppTextStyles {
   static const TextStyle subtitle = TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.w600,
-    color: Color(0xFF7F8C8D),
+    color: Color(0xFF9CA3AF),  // Secondary gray
   );
 
   static const TextStyle buttonText = TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.bold,
-    color: Colors.white,
+    color: Color(0xFF111827),  // Dark text on bright buttons
     shadows: [
       Shadow(
-        color: Color(0x60000000),
-        offset: Offset(1, 1),
-        blurRadius: 2,
+        color: Color(0x40FFFFFF),
+        offset: Offset(0, 1),
+        blurRadius: 1,
       ),
     ],
   );
@@ -217,7 +263,7 @@ class AppTextStyles {
     fontWeight: FontWeight.bold,
     shadows: [
       Shadow(
-        color: Color(0x40000000),
+        color: Color(0x60000000),
         offset: Offset(1, 1),
         blurRadius: 2,
       ),
@@ -227,12 +273,13 @@ class AppTextStyles {
   static const TextStyle statsLabel = TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.w500,
-    color: Color(0xFF7F8C8D),
+    color: Color(0xFF9CA3AF),  // Secondary gray
   );
 
   static const TextStyle statsValue = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.bold,
-    color: Color(0xFF2C3E50),
+    color: Color(0xFFF9FAFB),  // Light text
   );
 }
+

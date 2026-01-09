@@ -38,21 +38,15 @@ class VictoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: isWon
-                ? [const Color(0xFFFFE4B5), const Color(0xFFFFF8E7), Colors.white]
-                : [const Color(0xFFE8E8E8), const Color(0xFFF5F5F5), Colors.white],
-          ),
-        ),
-        child: Stack(
-          children: [
-            // Background decorations
-            _buildBackgroundDecorations(),
-            SafeArea(
+      backgroundColor: const Color(0xFF2D0A31), // Deep purple
+      body: Stack(
+        children: [
+          // Background decorations
+          _buildBackgroundDecorations(),
+
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Column(
                 children: [
                   const Spacer(),
@@ -61,13 +55,13 @@ class VictoryScreen extends StatelessWidget {
                   const SizedBox(height: 24),
                   // Title
                   _buildTitle(),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 24),
                   // Stars (only for win)
                   if (isWon) _buildStars(),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 32),
                   // Stats card
                   _buildStatsCard(),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 24),
                   // New best time badge
                   if (isNewBestTime) _buildNewBestTimeBadge(),
                   const Spacer(),
@@ -77,8 +71,8 @@ class VictoryScreen extends StatelessWidget {
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -86,118 +80,93 @@ class VictoryScreen extends StatelessWidget {
   Widget _buildBackgroundDecorations() {
     return Stack(
       children: [
+        // Grid pattern overlay (subtle)
+        Positioned.fill(
+          child: Opacity(
+            opacity: 0.05,
+            child: Image.asset(
+              'assets/images/grid_pattern.png',
+              repeat: ImageRepeat.repeat,
+              errorBuilder: (_, __, ___) =>
+                  Container(color: Colors.transparent),
+            ),
+          ),
+        ),
+        // Scattered pixel elements
         if (isWon) ...[
-          Positioned(
-            top: -30,
-            left: -30,
-            child: Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    AppColors.sparkleGold.withOpacity(0.3),
-                    AppColors.sparkleGold.withOpacity(0.0),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            top: 100,
-            right: -20,
-            child: Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    AppColors.candyPink.withOpacity(0.2),
-                    AppColors.candyPink.withOpacity(0.0),
-                  ],
-                ),
-              ),
-            ),
-          ),
+          _buildPixelSquare(
+              top: 80, left: 30, color: const Color(0xFFFACC15), size: 16),
+          _buildPixelSquare(
+              top: 150, right: 40, color: const Color(0xFFF472B6), size: 12),
+          _buildPixelSquare(
+              bottom: 200, left: 20, color: const Color(0xFF4ADE80), size: 14),
+          _buildPixelSquare(
+              bottom: 100, right: 30, color: const Color(0xFF2DD4BF), size: 18),
         ],
       ],
     );
   }
 
-  Widget _buildResultIcon() {
-    final color = isWon ? AppColors.sparkleGold : Colors.grey.shade500;
-    final lightColor = Color.lerp(color, Colors.white, 0.3)!;
-    final darkColor = Color.lerp(color, Colors.black, 0.2)!;
-    
-    return Container(
-      width: 130,
-      height: 130,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [lightColor, color, darkColor],
-          stops: const [0.0, 0.5, 1.0],
+  Widget _buildPixelSquare(
+      {double? top,
+      double? bottom,
+      double? left,
+      double? right,
+      required Color color,
+      required double size}) {
+    return Positioned(
+      top: top,
+      bottom: bottom,
+      left: left,
+      right: right,
+      child: Transform.rotate(
+        angle: 0.1,
+        child: Container(
+          width: size,
+          height: size,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(2),
+            boxShadow: [
+              BoxShadow(
+                color: color.withOpacity(0.5),
+                blurRadius: 4,
+                spreadRadius: 2,
+              ),
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildResultIcon() {
+    final color = isWon ? const Color(0xFFFACC15) : const Color(0xFF9CA3AF);
+
+    return Container(
+      width: 100,
+      height: 100,
+      decoration: BoxDecoration(
+        color: color,
         shape: BoxShape.circle,
         border: Border.all(
-          color: Colors.white.withOpacity(0.5),
+          color: Colors.black.withOpacity(0.3),
           width: 4,
         ),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.5),
-            blurRadius: 25,
+            color: color.withOpacity(0.4),
+            blurRadius: 20,
             offset: const Offset(0, 10),
-          ),
-          BoxShadow(
-            color: color.withOpacity(0.3),
-            blurRadius: 40,
-            spreadRadius: 5,
           ),
         ],
       ),
-      child: Stack(
-        children: [
-          // Glossy highlight
-          Positioned(
-            top: 8,
-            left: 20,
-            right: 20,
-            height: 35,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(60),
-                ),
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.white.withOpacity(0.5),
-                    Colors.white.withOpacity(0.0),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Center(
-            child: Icon(
-              isWon ? Icons.emoji_events_rounded : Icons.sentiment_dissatisfied_rounded,
-              color: Colors.white,
-              size: 65,
-              shadows: const [
-                Shadow(
-                  color: Color(0x60000000),
-                  offset: Offset(2, 2),
-                  blurRadius: 4,
-                ),
-              ],
-            ),
-          ),
-        ],
+      child: Center(
+        child: Icon(
+          isWon ? Icons.emoji_events_rounded : Icons.close_rounded,
+          color: const Color(0xFF111827),
+          size: 50,
+        ),
       ),
     );
   }
@@ -205,46 +174,33 @@ class VictoryScreen extends StatelessWidget {
   Widget _buildTitle() {
     return Column(
       children: [
-        ShaderMask(
-          shaderCallback: (bounds) => LinearGradient(
-            colors: isWon
-                ? [AppColors.sparkleGold, const Color(0xFFFFB347)]
-                : [Colors.grey.shade600, Colors.grey.shade500],
-          ).createShader(bounds),
-          child: Text(
-            isWon ? 'Victory!' : 'Game Over',
-            style: const TextStyle(
-              fontSize: 44,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              shadows: [
-                Shadow(
-                  color: Color(0x40000000),
-                  blurRadius: 10,
-                  offset: Offset(0, 4),
-                ),
-              ],
-            ),
+        Text(
+          isWon ? 'VICTORY!' : 'GAME OVER',
+          style: TextStyle(
+            fontSize: 40,
+            fontWeight: FontWeight.w900,
+            color: Colors.white,
+            letterSpacing: 2,
+            shadows: [
+              Shadow(
+                color:
+                    isWon ? const Color(0xFFCA8A04) : const Color(0xFF374151),
+                offset: const Offset(4, 4),
+                blurRadius: 0,
+              ),
+            ],
           ),
         ),
         if (isWon) ...[
           const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.auto_awesome, color: AppColors.sparkleGold, size: 18),
-              const SizedBox(width: 8),
-              Text(
-                'Congratulations!',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey.shade600,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Icon(Icons.auto_awesome, color: AppColors.sparkleGold, size: 18),
-            ],
+          const Text(
+            'CONGRATULATIONS!',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFFFACC15),
+              letterSpacing: 1,
+            ),
           ),
         ],
       ],
@@ -257,35 +213,20 @@ class VictoryScreen extends StatelessWidget {
       children: List.generate(3, (index) {
         final isActive = index < stars;
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 6),
-          child: Container(
-            padding: const EdgeInsets.all(4),
-            decoration: isActive
-                ? BoxDecoration(
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.sparkleGold.withOpacity(0.5),
-                        blurRadius: 12,
-                        spreadRadius: 2,
-                      ),
-                    ],
-                  )
-                : null,
-            child: Icon(
-              Icons.star_rounded,
-              size: 52,
-              color: isActive ? AppColors.sparkleGold : Colors.grey.shade300,
-              shadows: isActive
-                  ? const [
-                      Shadow(
-                        color: Color(0x60000000),
-                        offset: Offset(1, 2),
-                        blurRadius: 3,
-                      ),
-                    ]
-                  : null,
-            ),
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Icon(
+            Icons.star_rounded,
+            size: 48,
+            color: isActive ? const Color(0xFFFACC15) : const Color(0xFF374151),
+            shadows: isActive
+                ? [
+                    const Shadow(
+                      color: Color(0xFFCA8A04),
+                      offset: Offset(0, 4),
+                      blurRadius: 0,
+                    ),
+                  ]
+                : [],
           ),
         );
       }),
@@ -294,168 +235,63 @@ class VictoryScreen extends StatelessWidget {
 
   Widget _buildStatsCard() {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 28),
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.white,
-            Colors.white.withOpacity(0.95),
-          ],
-        ),
+        color: const Color(0xFF1F2937),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: isWon
-              ? AppColors.sparkleGold.withOpacity(0.3)
-              : Colors.grey.shade300,
-          width: 2,
+          color: isWon ? const Color(0xFFFBBF24) : const Color(0xFF374151),
+          width: 3,
         ),
         boxShadow: [
           BoxShadow(
-            color: (isWon ? AppColors.sparkleGold : Colors.grey).withOpacity(0.2),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
+            color: Colors.black.withOpacity(0.5),
+            offset: const Offset(0, 8),
+            blurRadius: 0,
           ),
         ],
       ),
       child: Column(
         children: [
-          _buildStatRow(Icons.timer_rounded, 'Time', _timeDisplay, AppColors.candyBlue),
-          _buildDivider(),
-          _buildStatRow(Icons.grid_view_rounded, 'Tiles Cleared', '$tilesCleared/$totalTiles', AppColors.candyGreen),
-          _buildDivider(),
-          _buildStatRow(Icons.auto_fix_high_rounded, 'Spells Used', '$spellsUsed', AppColors.candyPurple),
-          _buildDivider(),
-          _buildStatRow(Icons.water_drop_rounded, 'Mana Remaining', '$manaRemaining', AppColors.manaBlue),
-          _buildDivider(),
-          const SizedBox(height: 8),
-          // Score row - special styling
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: isWon
-                    ? [AppColors.sparkleGold.withOpacity(0.15), AppColors.sparkleGold.withOpacity(0.05)]
-                    : [Colors.grey.shade100, Colors.grey.shade50],
-              ),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(
-                color: isWon
-                    ? AppColors.sparkleGold.withOpacity(0.3)
-                    : Colors.grey.shade300,
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.monetization_on_rounded,
-                  color: AppColors.sparkleGold,
-                  size: 28,
-                  shadows: const [
-                    Shadow(
-                      color: Color(0x40000000),
-                      offset: Offset(1, 1),
-                      blurRadius: 2,
-                    ),
-                  ],
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  'Score: ',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.grey.shade600,
-                  ),
-                ),
-                Text(
-                  '${score.toString()} pts',
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: isWon ? AppColors.sparkleGold : Colors.grey.shade700,
-                  ),
-                ),
-              ],
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildStatColumn('TIME', _timeDisplay, const Color(0xFF60A5FA)),
+              _buildStatColumn('SCORE', '$score', const Color(0xFFFACC15)),
+              _buildStatColumn('TILES', '$tilesCleared/$totalTiles',
+                  const Color(0xFF4ADE80)),
+            ],
           ),
         ],
       ),
     );
   }
 
-  Widget _buildDivider() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Container(
-        height: 1,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Colors.transparent,
-              Colors.grey.shade300,
-              Colors.transparent,
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStatRow(IconData icon, String label, String value, Color color) {
-    final lightColor = Color.lerp(color, Colors.white, 0.3)!;
-    
-    return Row(
+  Widget _buildStatColumn(String label, String value, Color color) {
+    return Column(
       children: [
-        Container(
-          width: 36,
-          height: 36,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [lightColor, color],
-            ),
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: color.withOpacity(0.3),
-                blurRadius: 4,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Icon(
-            icon,
-            color: Colors.white,
-            size: 18,
-            shadows: const [
-              Shadow(
-                color: Color(0x60000000),
-                offset: Offset(1, 1),
-                blurRadius: 2,
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(width: 12),
         Text(
           label,
           style: TextStyle(
-            fontSize: 15,
-            color: Colors.grey.shade600,
-            fontWeight: FontWeight.w500,
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+            color: color.withOpacity(0.7),
+            letterSpacing: 1,
           ),
         ),
-        const Spacer(),
+        const SizedBox(height: 4),
         Text(
           value,
           style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.grey.shade800,
+            fontSize: 20,
+            fontWeight: FontWeight.w900,
+            color: color,
+            shadows: [
+              Shadow(
+                color: color.withOpacity(0.3),
+                blurRadius: 8,
+              ),
+            ],
           ),
         ),
       ],
@@ -464,102 +300,74 @@ class VictoryScreen extends StatelessWidget {
 
   Widget _buildNewBestTimeBadge() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppColors.sparkleGold, Color(0xFFFFB347)],
-        ),
+        color: const Color(0xFFFBBF24),
         borderRadius: BorderRadius.circular(30),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.5),
-          width: 2,
-        ),
-        boxShadow: [
+        border: Border.all(color: Colors.black, width: 2),
+        boxShadow: const [
           BoxShadow(
-            color: AppColors.sparkleGold.withOpacity(0.5),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
+            color: Colors.black26,
+            offset: Offset(0, 4),
+            blurRadius: 0,
           ),
         ],
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(
-            Icons.emoji_events_rounded,
-            color: Colors.white,
-            size: 24,
-            shadows: [
-              Shadow(
-                color: Color(0x60000000),
-                offset: Offset(1, 1),
-                blurRadius: 2,
-              ),
-            ],
-          ),
-          const SizedBox(width: 8),
-          const Text(
-            'New Best Time!',
+        children: const [
+          Icon(Icons.emoji_events, size: 16, color: Colors.black),
+          SizedBox(width: 8),
+          Text(
+            'NEW BEST TIME!',
             style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              shadows: [
-                Shadow(
-                  color: Color(0x60000000),
-                  offset: Offset(1, 1),
-                  blurRadius: 2,
-                ),
-              ],
+              fontSize: 12,
+              fontWeight: FontWeight.w900,
+              color: Colors.black,
             ),
           ),
-          const SizedBox(width: 4),
-          Icon(Icons.auto_awesome, color: Colors.white.withOpacity(0.9), size: 16),
         ],
       ),
     );
   }
 
   Widget _buildActionButtons(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 28),
-      child: Row(
-        children: [
-          // Menu button
-          Expanded(
-            child: _buildButton(
-              label: 'Menu',
-              icon: Icons.home_rounded,
-              color: AppColors.buttonGray,
-              onPressed: () {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => const MainMenuScreen()),
-                  (route) => false,
-                );
-              },
-            ),
+    return Row(
+      children: [
+        // Menu button
+        Expanded(
+          child: _buildButton(
+            label: 'MENU',
+            icon: Icons.home_rounded,
+            color: const Color(0xFF9CA3AF),
+            onPressed: () {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const MainMenuScreen()),
+                (route) => false,
+              );
+            },
           ),
-          const SizedBox(width: 14),
-          // Play Again button
-          Expanded(
-            flex: 2,
-            child: _buildButton(
-              label: 'Play Again',
-              icon: Icons.replay_rounded,
-              color: isWon ? AppColors.candyGreen : AppColors.candyPurple,
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => GameScreen(difficulty: difficulty),
-                  ),
-                );
-              },
-            ),
+        ),
+        const SizedBox(width: 16),
+        // Play Again button
+        Expanded(
+          flex: 2,
+          child: _buildButton(
+            label: 'PLAY AGAIN',
+            icon: Icons.replay_rounded,
+            color: isWon ? const Color(0xFF4ADE80) : const Color(0xFFC084FC),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => GameScreen(difficulty: difficulty),
+                ),
+              );
+            },
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -569,30 +377,22 @@ class VictoryScreen extends StatelessWidget {
     required Color color,
     required VoidCallback onPressed,
   }) {
-    final lightColor = Color.lerp(color, Colors.white, 0.3)!;
-    final darkColor = Color.lerp(color, Colors.black, 0.2)!;
-    
     return GestureDetector(
       onTap: onPressed,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [lightColor, color, darkColor],
-            stops: const [0.0, 0.5, 1.0],
-          ),
-          borderRadius: BorderRadius.circular(20),
+          color: color,
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: Colors.white.withOpacity(0.4),
-            width: 2,
+            color: Colors.black.withOpacity(0.2),
+            width: 3,
           ),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.4),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
+              color: Colors.black.withOpacity(0.3),
+              offset: const Offset(0, 4),
+              blurRadius: 0,
             ),
           ],
         ),
@@ -601,30 +401,17 @@ class VictoryScreen extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: Colors.white,
-              size: 22,
-              shadows: const [
-                Shadow(
-                  color: Color(0x60000000),
-                  offset: Offset(1, 1),
-                  blurRadius: 2,
-                ),
-              ],
+              color: const Color(0xFF111827),
+              size: 20,
             ),
             const SizedBox(width: 8),
             Text(
               label,
               style: const TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                shadows: [
-                  Shadow(
-                    color: Color(0x60000000),
-                    offset: Offset(1, 1),
-                    blurRadius: 2,
-                  ),
-                ],
+                fontSize: 14,
+                fontWeight: FontWeight.w900,
+                color: Color(0xFF111827),
+                letterSpacing: 1,
               ),
             ),
           ],

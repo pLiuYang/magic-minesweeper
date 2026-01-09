@@ -52,7 +52,8 @@ class _GameScreenState extends State<GameScreen> {
 
       // Update best time if won
       if (_gameProvider.isWon) {
-        final currentBest = settingsProvider.getBestTime(widget.difficulty.name);
+        final currentBest =
+            settingsProvider.getBestTime(widget.difficulty.name);
         if (currentBest == null || _gameProvider.elapsedSeconds < currentBest) {
           settingsProvider.updateBestTime(
             widget.difficulty.name,
@@ -76,7 +77,9 @@ class _GameScreenState extends State<GameScreen> {
                 stars: _gameProvider.calculateStars(),
                 difficulty: widget.difficulty,
                 isNewBestTime: _gameProvider.isWon &&
-                    (context.read<SettingsProvider>().getBestTime(widget.difficulty.name) ==
+                    (context
+                            .read<SettingsProvider>()
+                            .getBestTime(widget.difficulty.name) ==
                         _gameProvider.elapsedSeconds),
                 spellsUsed: _gameProvider.spellsUsed,
                 manaRemaining: _gameProvider.mana,
@@ -98,42 +101,39 @@ class _GameScreenState extends State<GameScreen> {
           WidgetsBinding.instance.addPostFrameCallback((_) => _checkGameEnd());
 
           return Scaffold(
-            body: Container(
-              decoration: const BoxDecoration(
-                gradient: AppColors.gameGradient,
-              ),
-              child: Stack(
-                children: [
-                  // Background decorations
-                  _buildBackgroundDecorations(),
-                  // Main content
-                  SafeArea(
-                    child: Column(
-                      children: [
-                        // Custom app bar
-                        _buildAppBar(context),
-                        // Status bar
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          child: StatusBarWidget(),
+            backgroundColor: const Color(0xFF2D0A31), // Deep purple
+            body: Stack(
+              children: [
+                // Background decorations
+                _buildBackgroundDecorations(),
+                // Main content
+                SafeArea(
+                  child: Column(
+                    children: [
+                      // Custom app bar
+                      _buildAppBar(context),
+                      // Status bar
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        child: StatusBarWidget(),
+                      ),
+                      // Game board
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: GameBoardWidget(),
                         ),
-                        // Game board
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            child: GameBoardWidget(),
-                          ),
-                        ),
-                        // Spell bar
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                          child: SpellBarWidget(),
-                        ),
-                      ],
-                    ),
+                      ),
+                      // Spell bar
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                        child: SpellBarWidget(),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           );
         },
@@ -144,42 +144,61 @@ class _GameScreenState extends State<GameScreen> {
   Widget _buildBackgroundDecorations() {
     return Stack(
       children: [
-        // Decorative circles
-        Positioned(
-          top: -30,
-          right: -30,
-          child: Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: RadialGradient(
-                colors: [
-                  AppColors.candyPink.withOpacity(0.2),
-                  AppColors.candyPink.withOpacity(0.0),
-                ],
-              ),
+        // Grid pattern overlay (subtle)
+        Positioned.fill(
+          child: Opacity(
+            opacity: 0.05,
+            child: Image.asset(
+              'assets/images/grid_pattern.png',
+              repeat: ImageRepeat.repeat,
+              errorBuilder: (_, __, ___) =>
+                  Container(color: Colors.transparent),
             ),
           ),
         ),
-        Positioned(
-          bottom: 100,
-          left: -40,
-          child: Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: RadialGradient(
-                colors: [
-                  AppColors.candyPurple.withOpacity(0.15),
-                  AppColors.candyPurple.withOpacity(0.0),
-                ],
-              ),
-            ),
-          ),
-        ),
+        // Scattered pixel elements
+        _buildPixelSquare(
+            top: 100, left: 20, color: const Color(0xFFFACC15), size: 16),
+        _buildPixelSquare(
+            top: 200, right: 30, color: const Color(0xFFF472B6), size: 12),
+        _buildPixelSquare(
+            bottom: 150, left: 40, color: const Color(0xFF4ADE80), size: 14),
+        _buildPixelSquare(
+            bottom: 50, right: 60, color: const Color(0xFF2DD4BF), size: 18),
       ],
+    );
+  }
+
+  Widget _buildPixelSquare(
+      {double? top,
+      double? bottom,
+      double? left,
+      double? right,
+      required Color color,
+      required double size}) {
+    return Positioned(
+      top: top,
+      bottom: bottom,
+      left: left,
+      right: right,
+      child: Transform.rotate(
+        angle: 0.1,
+        child: Container(
+          width: size,
+          height: size,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(2),
+            boxShadow: [
+              BoxShadow(
+                color: color.withOpacity(0.5),
+                blurRadius: 4,
+                spreadRadius: 2,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -188,86 +207,53 @@ class _GameScreenState extends State<GameScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Row(
         children: [
-          // Menu button - Candy style
-          _buildIconButton(
+          // Menu button
+          _buildRetroIconButton(
             icon: Icons.menu_rounded,
-            color: AppColors.candyPurple,
+            color: const Color(0xFFC084FC), // Purple
             onPressed: () => _showGameMenu(context),
           ),
           const Spacer(),
-          // Title - Candy Crush style
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [
-                  Color(0xFFFFB6C1),
-                  Color(0xFFFF69B4),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: Colors.white.withOpacity(0.5),
-                width: 2,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.candyPink.withOpacity(0.3),
-                  blurRadius: 8,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.auto_awesome, color: AppColors.sparkleGold, size: 16),
-                    const SizedBox(width: 6),
-                    const Text(
-                      'Magic Sweeper',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        shadows: [
-                          Shadow(
-                            color: Color(0x60000000),
-                            offset: Offset(1, 1),
-                            blurRadius: 2,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    Icon(Icons.auto_awesome, color: AppColors.sparkleGold, size: 16),
+          // Title / Difficulty
+          Column(
+            children: [
+              Text(
+                'MAGIC SWEEPER',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w900,
+                  fontSize: 16,
+                  letterSpacing: 1,
+                  shadows: [
+                    Shadow(color: Color(0xFF4C1D95), offset: Offset(2, 2)),
                   ],
                 ),
-                const SizedBox(height: 2),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    widget.difficulty.name,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                    ),
+              ),
+              const SizedBox(height: 4),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(color: Colors.white.withOpacity(0.2)),
+                ),
+                child: Text(
+                  widget.difficulty.name.toUpperCase(),
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1,
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
           const Spacer(),
-          // Spell book button - Candy style
-          _buildIconButton(
+          // Spell book button
+          _buildRetroIconButton(
             icon: Icons.auto_stories_rounded,
-            color: AppColors.candyPink,
+            color: const Color(0xFFF472B6), // Pink
             onPressed: () => _showSpellBook(context),
           ),
         ],
@@ -275,78 +261,35 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
-  Widget _buildIconButton({
+  Widget _buildRetroIconButton({
     required IconData icon,
     required Color color,
     required VoidCallback onPressed,
   }) {
-    final lightColor = Color.lerp(color, Colors.white, 0.3)!;
-    final darkColor = Color.lerp(color, Colors.black, 0.2)!;
-    
     return GestureDetector(
       onTap: onPressed,
       child: Container(
         width: 44,
         height: 44,
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [lightColor, color, darkColor],
-            stops: const [0.0, 0.5, 1.0],
-          ),
-          borderRadius: BorderRadius.circular(14),
+          color: color,
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: Colors.white.withOpacity(0.4),
-            width: 2,
+            color: Colors.black.withOpacity(0.2),
+            width: 3,
           ),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.4),
-              blurRadius: 8,
-              offset: const Offset(0, 3),
+              color: Colors.black.withOpacity(0.3),
+              offset: const Offset(0, 4),
+              blurRadius: 0,
             ),
           ],
         ),
-        child: Stack(
-          children: [
-            // Glossy highlight
-            Positioned(
-              top: 2,
-              left: 4,
-              right: 4,
-              height: 12,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(12),
-                  ),
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.white.withOpacity(0.4),
-                      Colors.white.withOpacity(0.0),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Center(
-              child: Icon(
-                icon,
-                color: Colors.white,
-                size: 22,
-                shadows: const [
-                  Shadow(
-                    color: Color(0x60000000),
-                    offset: Offset(1, 1),
-                    blurRadius: 2,
-                  ),
-                ],
-              ),
-            ),
-          ],
+        child: Icon(
+          icon,
+          color: const Color(0xFF111827),
+          size: 24,
         ),
       ),
     );
@@ -370,22 +313,15 @@ class _GameScreenState extends State<GameScreen> {
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFFFFF0F5),
-              Colors.white,
-            ],
-          ),
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+          color: const Color(0xFF1F2937),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           border: Border.all(
-            color: AppColors.sparkleGold.withOpacity(0.5),
-            width: 3,
+            color: const Color(0xFFFBBF24), // Gold border
+            width: 4,
           ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.candyPurple.withOpacity(0.2),
+              color: Colors.black.withOpacity(0.5),
               blurRadius: 20,
               offset: const Offset(0, -5),
             ),
@@ -397,19 +333,17 @@ class _GameScreenState extends State<GameScreen> {
           children: [
             Container(
               width: 50,
-              height: 5,
+              height: 4,
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [AppColors.candyPurple, AppColors.candyPink],
-                ),
-                borderRadius: BorderRadius.circular(3),
+                color: const Color(0xFF374151),
+                borderRadius: BorderRadius.circular(2),
               ),
             ),
             const SizedBox(height: 24),
             _buildMenuItem(
               icon: Icons.refresh_rounded,
-              label: 'New Game',
-              color: AppColors.candyPurple,
+              label: 'NEW GAME',
+              color: const Color(0xFFC084FC),
               onTap: () {
                 Navigator.pop(context);
                 setState(() {
@@ -420,8 +354,8 @@ class _GameScreenState extends State<GameScreen> {
             ),
             _buildMenuItem(
               icon: Icons.auto_stories_rounded,
-              label: 'Spell Book',
-              color: AppColors.candyPink,
+              label: 'SPELL BOOK',
+              color: const Color(0xFFF472B6),
               onTap: () {
                 Navigator.pop(context);
                 _showSpellBook(context);
@@ -429,8 +363,8 @@ class _GameScreenState extends State<GameScreen> {
             ),
             _buildMenuItem(
               icon: Icons.grid_view_rounded,
-              label: 'Change Difficulty',
-              color: AppColors.candyBlue,
+              label: 'CHANGE DIFFICULTY',
+              color: const Color(0xFF4ADE80),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pop(context);
@@ -438,13 +372,14 @@ class _GameScreenState extends State<GameScreen> {
             ),
             _buildMenuItem(
               icon: Icons.home_rounded,
-              label: 'Main Menu',
-              color: AppColors.buttonGray,
+              label: 'MAIN MENU',
+              color: const Color(0xFF9CA3AF),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (context) => const MainMenuScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const MainMenuScreen()),
                   (route) => false,
                 );
               },
@@ -462,79 +397,54 @@ class _GameScreenState extends State<GameScreen> {
     required VoidCallback onTap,
     Color? color,
   }) {
-    final itemColor = color ?? AppColors.candyPurple;
-    final lightColor = Color.lerp(itemColor, Colors.white, 0.3)!;
-    
+    final itemColor = color ?? const Color(0xFFC084FC);
+
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.only(bottom: 12),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(12),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
+              color: itemColor,
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: itemColor.withOpacity(0.2),
-                width: 1,
+                color: Colors.black.withOpacity(0.2),
+                width: 3,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
+                  color: Colors.black.withOpacity(0.3),
+                  offset: const Offset(0, 4),
+                  blurRadius: 0,
                 ),
               ],
             ),
             child: Row(
               children: [
-                Container(
-                  width: 42,
-                  height: 42,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [lightColor, itemColor],
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: itemColor.withOpacity(0.3),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Icon(
-                    icon,
-                    color: Colors.white,
-                    size: 22,
-                    shadows: const [
-                      Shadow(
-                        color: Color(0x60000000),
-                        offset: Offset(1, 1),
-                        blurRadius: 2,
-                      ),
-                    ],
-                  ),
+                Icon(
+                  icon,
+                  color: const Color(0xFF111827),
+                  size: 24,
                 ),
                 const SizedBox(width: 16),
                 Text(
                   label,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey.shade800,
+                    fontWeight: FontWeight.w900,
+                    color: Color(0xFF111827),
+                    letterSpacing: 1,
                   ),
                 ),
                 const Spacer(),
-                Icon(
-                  Icons.chevron_right_rounded,
-                  color: itemColor.withOpacity(0.5),
+                const Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  color: Color(0xFF111827),
+                  size: 16,
                 ),
               ],
             ),

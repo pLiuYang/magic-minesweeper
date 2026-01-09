@@ -23,7 +23,8 @@ class MenuButton extends StatefulWidget {
   State<MenuButton> createState() => _MenuButtonState();
 }
 
-class _MenuButtonState extends State<MenuButton> with SingleTickerProviderStateMixin {
+class _MenuButtonState extends State<MenuButton>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
   bool _isPressed = false;
@@ -70,11 +71,12 @@ class _MenuButtonState extends State<MenuButton> with SingleTickerProviderStateM
   @override
   Widget build(BuildContext context) {
     final isDisabled = !widget.enabled;
-    final buttonColor = isDisabled ? Colors.grey.shade400 : widget.color;
-    
-    // Create lighter and darker shades for gradient
-    final lightColor = Color.lerp(buttonColor, Colors.white, 0.3)!;
-    final darkColor = Color.lerp(buttonColor, Colors.black, 0.2)!;
+    // Use the exact color provided, or gray if disabled
+    final baseColor = isDisabled ? Colors.grey.shade600 : widget.color;
+
+    // Calculate highlight (top) and shadow (bottom/border) colors for pseudo-3D look
+    final highlightColor = Color.lerp(baseColor, Colors.white, 0.4)!;
+    final shadowColor = Color.lerp(baseColor, Colors.black, 0.4)!;
 
     return GestureDetector(
       onTapDown: _handleTapDown,
@@ -89,104 +91,91 @@ class _MenuButtonState extends State<MenuButton> with SingleTickerProviderStateM
             child: Stack(
               clipBehavior: Clip.none,
               children: [
-                // Main button
+                // Drop shadow block (drawn behind everything)
+                Positioned(
+                  top: 6,
+                  left: 0,
+                  right: 0,
+                  bottom: -6,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF111827)
+                          .withOpacity(0.6), // Dark shadow
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                ),
+
+                // Main Button Body
                 Container(
                   width: double.infinity,
-                  height: 60,
+                  height: 68,
                   decoration: BoxDecoration(
-                    // Candy-style gradient
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        lightColor,
-                        buttonColor,
-                        darkColor,
-                      ],
-                      stops: const [0.0, 0.5, 1.0],
-                    ),
-                    borderRadius: BorderRadius.circular(30),
+                    color: baseColor,
+                    borderRadius: BorderRadius.circular(16),
+                    // Hard border
                     border: Border.all(
-                      color: Colors.white.withOpacity(0.3),
-                      width: 2,
+                      color: shadowColor,
+                      width: 3,
                     ),
-                    boxShadow: isDisabled
-                        ? []
-                        : [
-                            // Bottom shadow for 3D effect
-                            BoxShadow(
-                              color: darkColor.withOpacity(0.5),
-                              blurRadius: 8,
-                              offset: const Offset(0, 4),
-                            ),
-                            // Glow effect
-                            BoxShadow(
-                              color: buttonColor.withOpacity(0.3),
-                              blurRadius: 12,
-                              spreadRadius: 1,
-                            ),
-                          ],
+                    // Inner bevel effect
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        highlightColor,
+                        baseColor,
+                        baseColor,
+                      ],
+                      stops: const [0.0, 0.1, 1.0],
+                    ),
                   ),
                   child: Stack(
                     children: [
-                      // Glossy highlight
+                      // Inner highlight line at top
                       Positioned(
-                        top: 3,
-                        left: 20,
-                        right: 20,
-                        height: 20,
+                        top: 2,
+                        left: 4,
+                        right: 4,
+                        height: 4,
                         child: Container(
                           decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.vertical(
-                              top: Radius.circular(28),
-                            ),
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                Colors.white.withOpacity(isDisabled ? 0.1 : 0.4),
-                                Colors.white.withOpacity(0.0),
-                              ],
-                            ),
+                            color: Colors.white.withOpacity(0.4),
+                            borderRadius: BorderRadius.circular(8),
                           ),
                         ),
                       ),
-                      // Content
-                      Center(
+
+                      // Label & Icon
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
-                              widget.icon,
-                              color: Colors.white,
-                              size: 26,
-                              shadows: isDisabled
-                                  ? []
-                                  : const [
-                                      Shadow(
-                                        color: Color(0x60000000),
-                                        offset: Offset(1, 1),
-                                        blurRadius: 2,
-                                      ),
-                                    ],
+                            // Text
+                            Text(
+                              widget.text.toUpperCase(),
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight
+                                    .w900, // Extra bold for blocky look
+                                color: const Color(0xFF111827), // Dark text
+                                letterSpacing: 1.2,
+                                shadows: [
+                                  Shadow(
+                                    color: Colors.white.withOpacity(0.3),
+                                    offset: const Offset(0, 1),
+                                    blurRadius: 0,
+                                  ),
+                                ],
+                              ),
                             ),
                             const SizedBox(width: 12),
-                            Text(
-                              widget.text,
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                                shadows: isDisabled
-                                    ? []
-                                    : const [
-                                        Shadow(
-                                          color: Color(0x60000000),
-                                          offset: Offset(1, 1),
-                                          blurRadius: 2,
-                                        ),
-                                      ],
-                              ),
+                            // Icon on RIGHT side now, as per mockup
+                            Icon(
+                              widget.icon,
+                              color: const Color(0xFF111827),
+                              size: 26,
                             ),
                           ],
                         ),
@@ -194,54 +183,36 @@ class _MenuButtonState extends State<MenuButton> with SingleTickerProviderStateM
                     ],
                   ),
                 ),
-                // Badge
+
+                // Badge (if applicable)
                 if (widget.badge != null)
                   Positioned(
-                    top: -8,
-                    right: 10,
+                    top: -12,
+                    right: 12,
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 10,
-                        vertical: 4,
+                        vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [
-                            AppColors.sparkleGold,
-                            Color(0xFFFFB347),
-                          ],
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.sparkleGold.withOpacity(0.4),
-                            blurRadius: 6,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
+                        color: const Color(0xFF111827), // Dark bg
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.white, width: 2),
                       ),
                       child: Row(
-                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(
-                            Icons.star_rounded,
-                            color: Colors.white,
-                            size: 12,
+                          Icon(
+                            Icons.star,
+                            color: AppColors.retroGold,
+                            size: 14,
                           ),
                           const SizedBox(width: 4),
                           Text(
                             widget.badge!,
                             style: const TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
                               color: Colors.white,
-                              shadows: [
-                                Shadow(
-                                  color: Color(0x60000000),
-                                  offset: Offset(0.5, 0.5),
-                                  blurRadius: 1,
-                                ),
-                              ],
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ],

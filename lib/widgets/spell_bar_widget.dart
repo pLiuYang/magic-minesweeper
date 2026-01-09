@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/spell.dart';
 import '../providers/game_provider.dart';
-import '../utils/constants.dart';
 
 class SpellBarWidget extends StatelessWidget {
   const SpellBarWidget({super.key});
@@ -12,31 +11,18 @@ class SpellBarWidget extends StatelessWidget {
     return Consumer<GameProvider>(
       builder: (context, gameProvider, child) {
         return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            // Candy Crush style pink panel
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Color(0xFFFFB6C1),  // Light pink
-                Color(0xFFFF69B4),  // Hot pink
-              ],
-            ),
-            borderRadius: BorderRadius.circular(24),
+            color: const Color(0xFF1F2937),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: Colors.white.withOpacity(0.5),
+              color: const Color(0xFFFBBF24), // Gold border for magic feel
               width: 3,
             ),
             boxShadow: [
               BoxShadow(
-                color: AppColors.candyPink.withOpacity(0.4),
-                blurRadius: 15,
-                offset: const Offset(0, -4),
-              ),
-              BoxShadow(
-                color: Colors.black.withOpacity(0.2),
-                blurRadius: 8,
+                color: Colors.black.withOpacity(0.5),
+                blurRadius: 0,
                 offset: const Offset(0, 4),
               ),
             ],
@@ -44,12 +30,12 @@ class SpellBarWidget extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Fixed-height status area to prevent layout shifts
+              // Fixed-height status area
               SizedBox(
-                height: 28,
+                height: 32,
                 child: _buildStatusIndicator(gameProvider),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 12),
               // Spell buttons
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -75,18 +61,18 @@ class SpellBarWidget extends StatelessWidget {
     if (gameProvider.isSpellMode && gameProvider.selectedSpell != null) {
       final spell = Spell.getSpell(gameProvider.selectedSpell!);
       return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.9),
-          borderRadius: BorderRadius.circular(14),
+          color: spell.color,
+          borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: spell.color.withOpacity(0.5),
+            color: Colors.white.withOpacity(0.5),
             width: 2,
           ),
           boxShadow: [
             BoxShadow(
-              color: spell.color.withOpacity(0.3),
-              blurRadius: 8,
+              color: Colors.black.withOpacity(0.3),
+              offset: const Offset(0, 2),
             ),
           ],
         ),
@@ -94,17 +80,18 @@ class SpellBarWidget extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              Icons.touch_app_rounded,
-              size: 14,
-              color: spell.color,
+              Icons.touch_app,
+              size: 16,
+              color: Colors.white,
             ),
-            const SizedBox(width: 6),
+            const SizedBox(width: 8),
             Text(
-              'Tap to cast ${spell.name}',
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.bold,
-                color: spell.color,
+              'TAP TO CAST ${spell.name.toUpperCase()}',
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w900,
+                color: Colors.white,
+                letterSpacing: 1,
               ),
             ),
             const SizedBox(width: 8),
@@ -113,13 +100,13 @@ class SpellBarWidget extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(2),
                 decoration: BoxDecoration(
-                  color: spell.color.withOpacity(0.2),
+                  color: Colors.black.withOpacity(0.2),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
-                  Icons.close_rounded,
-                  size: 12,
-                  color: spell.color,
+                child: const Icon(
+                  Icons.close,
+                  size: 14,
+                  color: Colors.white,
                 ),
               ),
             ),
@@ -127,27 +114,22 @@ class SpellBarWidget extends StatelessWidget {
         ),
       );
     }
-    
+
     // Show shield indicator
     if (gameProvider.hasShield) {
       return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              AppColors.candyPurple.withOpacity(0.9),
-              AppColors.candyPink.withOpacity(0.9),
-            ],
-          ),
-          borderRadius: BorderRadius.circular(14),
+          color: const Color(0xFF8B5CF6), // Purple
+          borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: Colors.white.withOpacity(0.5),
             width: 2,
           ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.candyPurple.withOpacity(0.4),
-              blurRadius: 8,
+              color: Colors.black.withOpacity(0.3),
+              offset: const Offset(0, 2),
             ),
           ],
         ),
@@ -155,61 +137,41 @@ class SpellBarWidget extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             const Icon(
-              Icons.shield_rounded,
-              size: 14,
+              Icons.shield,
+              size: 16,
               color: Colors.white,
             ),
-            const SizedBox(width: 6),
+            const SizedBox(width: 8),
             const Text(
-              'Shield Active',
+              'SHIELD ACTIVE',
               style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.bold,
+                fontSize: 12,
+                fontWeight: FontWeight.w900,
                 color: Colors.white,
+                letterSpacing: 1,
               ),
-            ),
-            const SizedBox(width: 4),
-            Icon(
-              Icons.auto_awesome,
-              size: 12,
-              color: AppColors.sparkleGold,
             ),
           ],
         ),
       );
     }
-    
+
     // Default: show hint text
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.8),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.auto_awesome_rounded,
-            size: 14,
-            color: AppColors.candyPurple.withOpacity(0.7),
-          ),
-          const SizedBox(width: 6),
-          Text(
-            'Select a spell to cast',
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              color: AppColors.candyPurple.withOpacity(0.7),
-            ),
-          ),
-        ],
+    return Center(
+      child: Text(
+        'SELECT A SPELL TO CAST',
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+          color: Colors.white.withOpacity(0.5),
+          letterSpacing: 1,
+        ),
       ),
     );
   }
 }
 
-class _SpellButton extends StatefulWidget {
+class _SpellButton extends StatelessWidget {
   final Spell spell;
   final bool isSelected;
   final bool canCast;
@@ -225,223 +187,68 @@ class _SpellButton extends StatefulWidget {
   });
 
   @override
-  State<_SpellButton> createState() => _SpellButtonState();
-}
-
-class _SpellButtonState extends State<_SpellButton> with SingleTickerProviderStateMixin {
-  late AnimationController _glowController;
-  late Animation<double> _glowAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _glowController = AnimationController(
-      duration: const Duration(milliseconds: 1500),
-      vsync: this,
-    );
-    _glowAnimation = Tween<double>(begin: 0.3, end: 1.0).animate(
-      CurvedAnimation(parent: _glowController, curve: Curves.easeInOut),
-    );
-  }
-
-  @override
-  void didUpdateWidget(_SpellButton oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.isSelected && !oldWidget.isSelected) {
-      _glowController.repeat(reverse: true);
-    } else if (!widget.isSelected && oldWidget.isSelected) {
-      _glowController.stop();
-      _glowController.reset();
-    }
-  }
-
-  @override
-  void dispose() {
-    _glowController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final isDisabled = !widget.canCast;
-    final buttonColor = widget.spell.color;
-    final lightColor = Color.lerp(buttonColor, Colors.white, 0.3)!;
-    final darkColor = Color.lerp(buttonColor, Colors.black, 0.2)!;
-    
+    final isDisabled = !canCast;
+    final buttonColor = isDisabled ? const Color(0xFF374151) : spell.color;
+
     return GestureDetector(
-      onTap: isDisabled ? null : widget.onTap,
-      child: AnimatedBuilder(
-        animation: _glowAnimation,
-        builder: (context, child) {
-          return Container(
-            width: 74,
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-            decoration: BoxDecoration(
-              // Candy-style gradient button
-              gradient: isDisabled
-                  ? null
-                  : LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: widget.isSelected
-                          ? [lightColor, buttonColor, darkColor]
-                          : [Colors.white, Colors.white.withOpacity(0.9)],
-                      stops: widget.isSelected ? const [0.0, 0.5, 1.0] : null,
-                    ),
-              color: isDisabled ? Colors.grey.shade300 : null,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: widget.isSelected
-                    ? Colors.white.withOpacity(0.5)
-                    : isDisabled
-                        ? Colors.grey.shade400
-                        : buttonColor.withOpacity(0.3),
-                width: widget.isSelected ? 2 : 1,
-              ),
-              boxShadow: widget.isSelected
-                  ? [
-                      BoxShadow(
-                        color: buttonColor.withOpacity(0.5 * _glowAnimation.value),
-                        blurRadius: 12 * _glowAnimation.value,
-                        spreadRadius: 2 * _glowAnimation.value,
-                      ),
-                      BoxShadow(
-                        color: darkColor.withOpacity(0.4),
-                        blurRadius: 4,
-                        offset: const Offset(0, 3),
-                      ),
-                    ]
-                  : [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+      onTap: isDisabled ? null : onTap,
+      child: Container(
+        width: 72,
+        height: 72, // Square buttons
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.white : buttonColor,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected ? buttonColor : Colors.black.withOpacity(0.3),
+            width: 3,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: isSelected
+                  ? buttonColor.withOpacity(0.6)
+                  : Colors.black.withOpacity(0.4),
+              offset: isSelected ? const Offset(0, 0) : const Offset(0, 4),
+              blurRadius: isSelected ? 12 : 0,
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              spell.icon,
+              size: 28,
+              color: isSelected
+                  ? buttonColor
+                  : (isDisabled ? Colors.grey.shade600 : Colors.white),
+            ),
+            const SizedBox(height: 4),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Icon with candy-style circular background
-                Container(
-                  width: 38,
-                  height: 38,
-                  decoration: BoxDecoration(
-                    gradient: isDisabled
-                        ? null
-                        : LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: widget.isSelected
-                                ? [Colors.white.withOpacity(0.4), Colors.white.withOpacity(0.2)]
-                                : [lightColor, buttonColor],
-                          ),
-                    color: isDisabled ? Colors.grey.shade400 : null,
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: isDisabled
-                          ? Colors.grey.shade500
-                          : widget.isSelected
-                              ? Colors.white.withOpacity(0.6)
-                              : Colors.white.withOpacity(0.5),
-                      width: 2,
-                    ),
-                    boxShadow: isDisabled
-                        ? []
-                        : [
-                            BoxShadow(
-                              color: buttonColor.withOpacity(0.3),
-                              blurRadius: 4,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                  ),
-                  child: Icon(
-                    widget.spell.icon,
-                    size: 18,
-                    color: isDisabled
-                        ? Colors.grey.shade600
-                        : widget.isSelected
-                            ? Colors.white
-                            : Colors.white,
-                    shadows: isDisabled
-                        ? []
-                        : const [
-                            Shadow(
-                              color: Color(0x60000000),
-                              offset: Offset(1, 1),
-                              blurRadius: 2,
-                            ),
-                          ],
-                  ),
+                Icon(
+                  Icons.auto_awesome,
+                  size: 10,
+                  color: isSelected
+                      ? buttonColor
+                      : (isDisabled ? Colors.grey.shade600 : Colors.white70),
                 ),
-                const SizedBox(height: 5),
-                // Name
+                const SizedBox(width: 2),
                 Text(
-                  widget.spell.name,
+                  '${spell.manaCost}',
                   style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                    color: isDisabled
-                        ? Colors.grey.shade600
-                        : widget.isSelected
-                            ? Colors.white
-                            : AppColors.candyPurple,
-                    shadows: widget.isSelected
-                        ? const [
-                            Shadow(
-                              color: Color(0x60000000),
-                              offset: Offset(0.5, 0.5),
-                              blurRadius: 1,
-                            ),
-                          ]
-                        : [],
-                  ),
-                ),
-                const SizedBox(height: 2),
-                // Mana cost
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
-                  decoration: BoxDecoration(
-                    color: widget.isSelected
-                        ? Colors.white.withOpacity(0.3)
-                        : isDisabled
-                            ? Colors.grey.shade400
-                            : AppColors.manaBlue.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.auto_awesome,
-                        size: 10,
-                        color: isDisabled
-                            ? Colors.grey.shade600
-                            : widget.isSelected
-                                ? Colors.white
-                                : AppColors.manaBlue,
-                      ),
-                      const SizedBox(width: 2),
-                      Text(
-                        '${widget.spell.manaCost}',
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: isDisabled
-                              ? Colors.grey.shade600
-                              : widget.isSelected
-                                  ? Colors.white
-                                  : AppColors.manaBlue,
-                        ),
-                      ),
-                    ],
+                    fontSize: 12,
+                    fontWeight: FontWeight.w900,
+                    color: isSelected
+                        ? buttonColor
+                        : (isDisabled ? Colors.grey.shade600 : Colors.white),
                   ),
                 ),
               ],
             ),
-          );
-        },
+          ],
+        ),
       ),
     );
   }
@@ -484,31 +291,23 @@ class _SpellBookDialogState extends State<SpellBookDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(28),
-      ),
+      backgroundColor: Colors.transparent,
+      insetPadding: const EdgeInsets.all(16),
       child: Container(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(24),
         constraints: const BoxConstraints(maxWidth: 400),
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFFFFF0F5),  // Lavender blush
-              Colors.white,
-            ],
-          ),
-          borderRadius: BorderRadius.circular(28),
+          color: const Color(0xFF1F2937),
+          borderRadius: BorderRadius.circular(24),
           border: Border.all(
-            color: AppColors.sparkleGold.withOpacity(0.5),
-            width: 3,
+            color: const Color(0xFFFBBF24), // Gold
+            width: 4,
           ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.candyPurple.withOpacity(0.3),
-              blurRadius: 30,
-              offset: const Offset(0, 10),
+              color: Colors.black.withOpacity(0.5),
+              blurRadius: 0,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
@@ -519,239 +318,150 @@ class _SpellBookDialogState extends State<SpellBookDialog> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [AppColors.candyPurple, AppColors.candyPink],
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Icon(
-                        Icons.auto_stories_rounded,
-                        color: Colors.white,
-                        size: 24,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    ShaderMask(
-                      shaderCallback: (bounds) => const LinearGradient(
-                        colors: [AppColors.candyPurple, AppColors.candyPink],
-                      ).createShader(bounds),
-                      child: const Text(
-                        'Spell Book',
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
-                    shape: BoxShape.circle,
+                const Text(
+                  'SPELL BOOK',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.white,
+                    letterSpacing: 2,
                   ),
-                  child: IconButton(
-                    icon: Icon(Icons.close_rounded, color: Colors.grey.shade600),
-                    onPressed: () => Navigator.pop(context),
+                ),
+                GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFEF4444), // Red
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                          color: Colors.black.withOpacity(0.3), width: 2),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.4),
+                          offset: const Offset(0, 2),
+                          blurRadius: 0,
+                        ),
+                      ],
+                    ),
+                    child:
+                        const Icon(Icons.close, color: Colors.white, size: 20),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 24),
+
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    AppColors.candyPurple.withOpacity(0.15),
-                    AppColors.candyPink.withOpacity(0.15),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: AppColors.candyPurple.withOpacity(0.2),
-                ),
+                color: const Color(0xFF374151),
+                borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.info_outline, size: 16, color: AppColors.candyPurple),
+                  const Icon(Icons.info_outline,
+                      size: 16, color: Color(0xFFFBBF24)),
                   const SizedBox(width: 8),
                   Text(
-                    'Select up to 4 spells (${_selected.length}/4)',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.candyPurple,
+                    'SELECT UP TO 4 SPELLS (${_selected.length}/4)',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFFFBBF24),
+                      letterSpacing: 1,
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 16),
-            
+            const SizedBox(height: 24),
+
             // Spell grid
             GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
-                childAspectRatio: 0.85,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
+                childAspectRatio: 0.9,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
               ),
               itemCount: Spell.allSpells.length,
               itemBuilder: (context, index) {
                 final spell = Spell.allSpells[index];
                 final isSelected = _selected.contains(spell.type);
-                final lightColor = Color.lerp(spell.color, Colors.white, 0.3)!;
-                final darkColor = Color.lerp(spell.color, Colors.black, 0.2)!;
-                
+
                 return GestureDetector(
                   onTap: () => _toggleSpell(spell.type),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    padding: const EdgeInsets.all(10),
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      gradient: isSelected
-                          ? LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [lightColor, spell.color, darkColor],
-                              stops: const [0.0, 0.5, 1.0],
-                            )
-                          : null,
-                      color: isSelected ? null : Colors.white,
-                      borderRadius: BorderRadius.circular(18),
+                      color: isSelected ? spell.color : const Color(0xFF374151),
+                      borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: isSelected ? Colors.white.withOpacity(0.5) : Colors.grey.shade300,
-                        width: isSelected ? 2 : 1,
+                        color: isSelected
+                            ? Colors.white
+                            : Colors.black.withOpacity(0.3),
+                        width: 3,
                       ),
-                      boxShadow: isSelected
-                          ? [
-                              BoxShadow(
-                                color: spell.color.withOpacity(0.4),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
-                              ),
-                            ]
-                          : [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.05),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.4),
+                          offset: isSelected
+                              ? const Offset(0, 0)
+                              : const Offset(0, 4),
+                          blurRadius: isSelected ? 8 : 0,
+                        ),
+                      ],
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // Checkmark for selected
-                        if (isSelected)
-                          Align(
-                            alignment: Alignment.topRight,
-                            child: Container(
-                              padding: const EdgeInsets.all(2),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.2),
-                                    blurRadius: 4,
-                                  ),
-                                ],
-                              ),
-                              child: Icon(
-                                Icons.check,
-                                size: 12,
-                                color: spell.color,
-                              ),
-                            ),
-                          ),
-                        Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            gradient: isSelected
-                                ? null
-                                : LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: [lightColor, spell.color],
-                                  ),
-                            color: isSelected ? Colors.white.withOpacity(0.3) : null,
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: isSelected ? Colors.white.withOpacity(0.5) : Colors.white.withOpacity(0.8),
-                              width: 2,
-                            ),
-                          ),
-                          child: Icon(
-                            spell.icon,
-                            size: 22,
-                            color: isSelected ? Colors.white : Colors.white,
-                            shadows: const [
-                              Shadow(
-                                color: Color(0x60000000),
-                                offset: Offset(1, 1),
-                                blurRadius: 2,
-                              ),
-                            ],
-                          ),
+                        Icon(
+                          spell.icon,
+                          size: 24,
+                          color:
+                              isSelected ? Colors.white : Colors.grey.shade400,
                         ),
-                        const SizedBox(height: 6),
+                        const SizedBox(height: 4),
                         Text(
-                          spell.name,
+                          spell.name.toUpperCase(),
+                          textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                            color: isSelected ? Colors.white : AppColors.candyPurple,
-                            shadows: isSelected
-                                ? const [
-                                    Shadow(
-                                      color: Color(0x60000000),
-                                      offset: Offset(0.5, 0.5),
-                                      blurRadius: 1,
-                                    ),
-                                  ]
-                                : [],
+                            fontSize: 8,
+                            fontWeight: FontWeight.w900,
+                            color: isSelected
+                                ? Colors.white
+                                : Colors.grey.shade400,
                           ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 2),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? Colors.white.withOpacity(0.3)
-                                : AppColors.manaBlue.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.auto_awesome,
-                                size: 10,
-                                color: isSelected ? Colors.white : AppColors.manaBlue,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.auto_awesome,
+                              size: 8,
+                              color: isSelected
+                                  ? Colors.white70
+                                  : Colors.grey.shade500,
+                            ),
+                            const SizedBox(width: 2),
+                            Text(
+                              '${spell.manaCost}',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: isSelected
+                                    ? Colors.white
+                                    : Colors.grey.shade500,
                               ),
-                              const SizedBox(width: 2),
-                              Text(
-                                '${spell.manaCost}',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                  color: isSelected ? Colors.white : AppColors.manaBlue,
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -759,59 +469,49 @@ class _SpellBookDialogState extends State<SpellBookDialog> {
                 );
               },
             ),
-            
-            const SizedBox(height: 20),
-            
-            // Save button - Candy style
+
+            const SizedBox(height: 24),
+
+            // Save button
             SizedBox(
               width: double.infinity,
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: _selected.isNotEmpty
-                      ? const LinearGradient(
-                          colors: [AppColors.candyPurple, AppColors.candyPink],
-                        )
-                      : null,
-                  color: _selected.isEmpty ? Colors.grey.shade300 : null,
-                  borderRadius: BorderRadius.circular(18),
-                  boxShadow: _selected.isNotEmpty
-                      ? [
-                          BoxShadow(
-                            color: AppColors.candyPurple.withOpacity(0.4),
-                            blurRadius: 8,
-                            offset: const Offset(0, 4),
-                          ),
-                        ]
-                      : [],
-                ),
-                child: ElevatedButton(
-                  onPressed: _selected.isNotEmpty
-                      ? () {
-                          widget.onSave(_selected);
-                          Navigator.pop(context);
-                        }
-                      : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.transparent,
-                    shadowColor: Colors.transparent,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(18),
+              child: GestureDetector(
+                onTap: _selected.isNotEmpty
+                    ? () {
+                        widget.onSave(_selected);
+                        Navigator.pop(context);
+                      }
+                    : null,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  decoration: BoxDecoration(
+                    color: _selected.isNotEmpty
+                        ? const Color(0xFF4ADE80)
+                        : const Color(0xFF374151),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: Colors.black.withOpacity(0.2),
+                      width: 3,
                     ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.4),
+                        offset: const Offset(0, 4),
+                        blurRadius: 0,
+                      ),
+                    ],
                   ),
-                  child: const Text(
-                    'Save Selection',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      shadows: [
-                        Shadow(
-                          color: Color(0x60000000),
-                          offset: Offset(1, 1),
-                          blurRadius: 2,
-                        ),
-                      ],
+                  child: Center(
+                    child: Text(
+                      'EQUIP SPELLS',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w900,
+                        color: _selected.isNotEmpty
+                            ? const Color(0xFF064E3B)
+                            : Colors.grey.shade600,
+                        letterSpacing: 1,
+                      ),
                     ),
                   ),
                 ),

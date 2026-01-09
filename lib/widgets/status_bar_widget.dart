@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/game_provider.dart';
-import '../utils/constants.dart';
 
 class StatusBarWidget extends StatelessWidget {
   const StatusBarWidget({super.key});
@@ -11,32 +10,19 @@ class StatusBarWidget extends StatelessWidget {
     return Consumer<GameProvider>(
       builder: (context, gameProvider, child) {
         return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            // Candy Crush style pink panel
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Color(0xFFFFB6C1),  // Light pink
-                Color(0xFFFF69B4),  // Hot pink
-              ],
-            ),
-            borderRadius: BorderRadius.circular(20),
+            color: const Color(0xFF1F2937),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: Colors.white.withOpacity(0.5),
+              color: const Color(0xFF4B5563),
               width: 3,
             ),
             boxShadow: [
               BoxShadow(
-                color: AppColors.candyPink.withOpacity(0.4),
-                blurRadius: 12,
+                color: Colors.black.withOpacity(0.5),
+                blurRadius: 0,
                 offset: const Offset(0, 4),
-              ),
-              BoxShadow(
-                color: Colors.black.withOpacity(0.15),
-                blurRadius: 6,
-                offset: const Offset(0, 3),
               ),
             ],
           ),
@@ -45,19 +31,19 @@ class StatusBarWidget extends StatelessWidget {
             children: [
               // Flag counter
               _buildStatusItem(
-                icon: Icons.flag_rounded,
-                iconColor: AppColors.candyRed,
+                icon: Icons.flag,
+                iconColor: const Color(0xFFFACC15), // Yellow/Gold
                 value: '${gameProvider.remainingFlags}',
-                label: 'Flags',
+                label: 'FLAGS',
               ),
-              // Mana bar
+              // Mana bar (Expanded)
               _buildManaBar(gameProvider),
               // Timer
               _buildStatusItem(
-                icon: Icons.timer_rounded,
-                iconColor: AppColors.candyBlue,
+                icon: Icons.timer,
+                iconColor: const Color(0xFF2DD4BF), // Teal/Mint
                 value: gameProvider.timerDisplay,
-                label: 'Time',
+                label: 'TIME',
               ),
             ],
           ),
@@ -72,209 +58,116 @@ class StatusBarWidget extends StatelessWidget {
     required String value,
     required String label,
   }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.9),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: iconColor.withOpacity(0.3),
-          width: 2,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color.lerp(iconColor, Colors.white, 0.3)!,
-                  iconColor,
-                ],
+    return Row(
+      children: [
+        Icon(icon, color: iconColor, size: 24),
+        const SizedBox(width: 8),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+                color: Colors.white.withOpacity(0.5),
+                letterSpacing: 1,
               ),
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: iconColor.withOpacity(0.3),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
-                ),
-              ],
             ),
-            child: Icon(
-              icon,
-              color: Colors.white,
-              size: 16,
-              shadows: const [
-                Shadow(
-                  color: Color(0x60000000),
-                  offset: Offset(1, 1),
-                  blurRadius: 2,
-                ),
-              ],
+            Text(
+              value,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w900,
+                color: Colors.white,
+                letterSpacing: 1,
+              ),
             ),
-          ),
-          const SizedBox(width: 8),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey.shade800,
-              shadows: const [
-                Shadow(
-                  color: Color(0x20000000),
-                  offset: Offset(1, 1),
-                  blurRadius: 2,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+          ],
+        ),
+      ],
     );
   }
 
   Widget _buildManaBar(GameProvider gameProvider) {
     final manaPercentage = gameProvider.manaPercentage;
     final manaColor = _getManaColor(manaPercentage);
-    
+
     return Expanded(
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 10),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.9),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: manaColor.withOpacity(0.3),
-            width: 2,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  padding: const EdgeInsets.all(3),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Color.lerp(manaColor, Colors.white, 0.3)!,
-                        manaColor,
-                      ],
-                    ),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.auto_awesome_rounded,
-                    size: 12,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(width: 6),
-                Text(
+                const Text(
                   'MANA',
                   style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
-                    color: manaColor,
+                    color: Color(0xFF60A5FA), // Blue
                     letterSpacing: 1,
                   ),
                 ),
-                const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: manaColor.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    '${gameProvider.mana}/${gameProvider.maxMana}',
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      color: manaColor,
-                    ),
+                Text(
+                  '${gameProvider.mana}/${gameProvider.maxMana}',
+                  style: const TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF60A5FA),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 6),
-            // Candy-style progress bar
+            const SizedBox(height: 4),
+            // Retro Progress Bar
             Container(
               height: 12,
               decoration: BoxDecoration(
-                color: manaColor.withOpacity(0.2),
+                color: const Color(0xFF111827),
                 borderRadius: BorderRadius.circular(6),
                 border: Border.all(
-                  color: manaColor.withOpacity(0.3),
-                  width: 1,
+                  color: const Color(0xFF374151),
+                  width: 2,
                 ),
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(5),
-                child: Stack(
-                  children: [
-                    // Mana fill with candy gradient
-                    FractionallySizedBox(
-                      widthFactor: manaPercentage,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Color.lerp(manaColor, Colors.white, 0.3)!,
-                              manaColor,
-                              Color.lerp(manaColor, Colors.black, 0.2)!,
-                            ],
-                            stops: const [0.0, 0.5, 1.0],
+              child: Stack(
+                children: [
+                  FractionallySizedBox(
+                    widthFactor: manaPercentage,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: manaColor,
+                        borderRadius: BorderRadius.circular(4),
+                        boxShadow: [
+                          BoxShadow(
+                            color: manaColor.withOpacity(0.5),
+                            blurRadius: 4,
                           ),
-                          borderRadius: BorderRadius.circular(5),
+                        ],
+                      ),
+                    ),
+                  ),
+                  // Shine lines for retro effect
+                  if (manaPercentage > 0)
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: FractionallySizedBox(
+                        widthFactor: manaPercentage,
+                        child: Image.asset(
+                          'assets/images/grid_pattern.png', // Reusing pattern if available, or just lines
+                          fit: BoxFit.cover,
+                          color: Colors.white.withOpacity(0.2),
+                          colorBlendMode: BlendMode.overlay,
+                          errorBuilder: (_, __, ___) => const SizedBox(),
                         ),
                       ),
                     ),
-                    // Glossy shine effect
-                    FractionallySizedBox(
-                      widthFactor: manaPercentage,
-                      child: Container(
-                        margin: const EdgeInsets.only(top: 1, left: 2, right: 2),
-                        height: 4,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.white.withOpacity(0.6),
-                              Colors.white.withOpacity(0.0),
-                            ],
-                          ),
-                          borderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(4),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                ],
               ),
             ),
           ],
@@ -285,11 +178,11 @@ class StatusBarWidget extends StatelessWidget {
 
   Color _getManaColor(double percentage) {
     if (percentage > 0.6) {
-      return AppColors.manaBlue;
+      return const Color(0xFF60A5FA); // Blue
     } else if (percentage > 0.3) {
-      return AppColors.candyOrange;
+      return const Color(0xFFFACC15); // Yellow
     } else {
-      return AppColors.candyRed;
+      return const Color(0xFFF87171); // Red
     }
   }
 }
