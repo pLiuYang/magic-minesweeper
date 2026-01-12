@@ -178,7 +178,7 @@ class _LoginWebViewScreenState extends State<LoginWebViewScreen> {
           WebViewWidget(controller: _controller),
           if (_isLoading)
             Container(
-              color: const Color(0xFF1a1a2e).withOpacity(0.7),
+              color: const Color(0xFF1a1a2e).withValues(alpha: 0.7),
               child: const Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,

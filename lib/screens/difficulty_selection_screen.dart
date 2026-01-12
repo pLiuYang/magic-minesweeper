@@ -100,7 +100,7 @@ class DifficultySelectionScreen extends StatelessWidget {
         decoration: BoxDecoration(
           color: const Color(0xFF4C1D95), // Dark purple button
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.white.withOpacity(0.2), width: 2),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: 2),
           boxShadow: const [
             BoxShadow(
               color: Colors.black26,
@@ -140,12 +140,12 @@ class DifficultySelectionScreen extends StatelessWidget {
           color: color,
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
             width: 4,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withValues(alpha: 0.3),
               offset: const Offset(0, 8),
               blurRadius: 0,
             ),
@@ -161,7 +161,7 @@ class DifficultySelectionScreen extends StatelessWidget {
               height: 24,
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.25),
+                  color: Colors.white.withValues(alpha: 0.25),
                   borderRadius: BorderRadius.circular(16),
                 ),
               ),
@@ -177,7 +177,7 @@ class DifficultySelectionScreen extends StatelessWidget {
                     width: 72,
                     height: 72,
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Icon(icon, size: 36, color: const Color(0xFF111827)),
@@ -290,7 +290,7 @@ class DifficultySelectionScreen extends StatelessWidget {
                 2), // Slight rounding for "soft pixel" look
             boxShadow: [
               BoxShadow(
-                color: color.withOpacity(0.5),
+                color: color.withValues(alpha: 0.5),
                 blurRadius: 4,
                 spreadRadius: 2,
               ),

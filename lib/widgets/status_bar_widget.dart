@@ -20,7 +20,7 @@ class StatusBarWidget extends StatelessWidget {
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.5),
+                color: Colors.black.withValues(alpha: 0.5),
                 blurRadius: 0,
                 offset: const Offset(0, 4),
               ),
@@ -71,7 +71,7 @@ class StatusBarWidget extends StatelessWidget {
               style: TextStyle(
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
-                color: Colors.white.withOpacity(0.5),
+                color: Colors.white.withValues(alpha: 0.5),
                 letterSpacing: 1,
               ),
             ),
@@ -145,7 +145,7 @@ class StatusBarWidget extends StatelessWidget {
                         borderRadius: BorderRadius.circular(4),
                         boxShadow: [
                           BoxShadow(
-                            color: manaColor.withOpacity(0.5),
+                            color: manaColor.withValues(alpha: 0.5),
                             blurRadius: 4,
                           ),
                         ],
@@ -161,7 +161,7 @@ class StatusBarWidget extends StatelessWidget {
                         child: Image.asset(
                           'assets/images/grid_pattern.png', // Reusing pattern if available, or just lines
                           fit: BoxFit.cover,
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withValues(alpha: 0.2),
                           colorBlendMode: BlendMode.overlay,
                           errorBuilder: (_, __, ___) => const SizedBox(),
                         ),

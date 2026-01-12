@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/multiplayer_match.dart';
 import '../providers/multiplayer_provider.dart';
-import '../utils/constants.dart';
 import 'versus_game_screen.dart';
 
 class MultiplayerLobbyScreen extends StatefulWidget {
@@ -29,12 +28,12 @@ class _MultiplayerLobbyScreenState extends State<MultiplayerLobbyScreen>
   void initState() {
     super.initState();
     _timeLimit = widget.modeConfig.defaultTimeLimit;
-    
+
     _pulseController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1500),
     )..repeat(reverse: true);
-    
+
     _pulseAnimation = Tween<double>(begin: 1.0, end: 1.2).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
@@ -55,7 +54,7 @@ class _MultiplayerLobbyScreenState extends State<MultiplayerLobbyScreen>
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              widget.modeConfig.color.withOpacity(0.3),
+              widget.modeConfig.color.withValues(alpha: 0.3),
               const Color(0xFF1a1a2e),
               const Color(0xFF16213e),
             ],
@@ -73,7 +72,7 @@ class _MultiplayerLobbyScreenState extends State<MultiplayerLobbyScreen>
       children: [
         // Header
         _buildHeader(),
-        
+
         // Settings
         Expanded(
           child: SingleChildScrollView(
@@ -83,23 +82,23 @@ class _MultiplayerLobbyScreenState extends State<MultiplayerLobbyScreen>
               children: [
                 // Mode info card
                 _buildModeInfoCard(),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // Difficulty selection
                 _buildSectionTitle('Difficulty'),
                 const SizedBox(height: 12),
                 _buildDifficultySelector(),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // Time limit
                 _buildSectionTitle('Time Limit'),
                 const SizedBox(height: 12),
                 _buildTimeLimitSelector(),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // Players preview
                 _buildSectionTitle('Players'),
                 const SizedBox(height: 12),
@@ -108,7 +107,7 @@ class _MultiplayerLobbyScreenState extends State<MultiplayerLobbyScreen>
             ),
           ),
         ),
-        
+
         // Start button
         _buildStartButton(),
       ],
@@ -134,12 +133,12 @@ class _MultiplayerLobbyScreenState extends State<MultiplayerLobbyScreen>
                     gradient: RadialGradient(
                       colors: [
                         widget.modeConfig.color,
-                        widget.modeConfig.color.withOpacity(0.3),
+                        widget.modeConfig.color.withValues(alpha: 0.3),
                       ],
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: widget.modeConfig.color.withOpacity(0.5),
+                        color: widget.modeConfig.color.withValues(alpha: 0.5),
                         blurRadius: 30,
                         spreadRadius: 10,
                       ),
@@ -154,9 +153,9 @@ class _MultiplayerLobbyScreenState extends State<MultiplayerLobbyScreen>
               );
             },
           ),
-          
+
           const SizedBox(height: 40),
-          
+
           const Text(
             'Finding Opponent...',
             style: TextStyle(
@@ -165,24 +164,24 @@ class _MultiplayerLobbyScreenState extends State<MultiplayerLobbyScreen>
               color: Colors.white,
             ),
           ),
-          
+
           const SizedBox(height: 12),
-          
+
           Text(
             'Setting up ${widget.modeConfig.name} match',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.white.withOpacity(0.7),
+              color: Colors.white.withValues(alpha: 0.7),
             ),
           ),
-          
+
           const SizedBox(height: 40),
-          
+
           // Cancel button
           OutlinedButton(
             onPressed: _cancelSearch,
             style: OutlinedButton.styleFrom(
-              side: BorderSide(color: Colors.white.withOpacity(0.5)),
+              side: BorderSide(color: Colors.white.withValues(alpha: 0.5)),
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -205,7 +204,7 @@ class _MultiplayerLobbyScreenState extends State<MultiplayerLobbyScreen>
         children: [
           Container(
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: IconButton(
@@ -237,13 +236,13 @@ class _MultiplayerLobbyScreenState extends State<MultiplayerLobbyScreen>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            widget.modeConfig.color.withOpacity(0.3),
-            widget.modeConfig.color.withOpacity(0.1),
+            widget.modeConfig.color.withValues(alpha: 0.3),
+            widget.modeConfig.color.withValues(alpha: 0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: widget.modeConfig.color.withOpacity(0.5),
+          color: widget.modeConfig.color.withValues(alpha: 0.5),
           width: 2,
         ),
       ),
@@ -280,7 +279,7 @@ class _MultiplayerLobbyScreenState extends State<MultiplayerLobbyScreen>
                   widget.modeConfig.description,
                   style: TextStyle(
                     fontSize: 13,
-                    color: Colors.white.withOpacity(0.7),
+                    color: Colors.white.withValues(alpha: 0.7),
                   ),
                 ),
               ],
@@ -314,7 +313,8 @@ class _MultiplayerLobbyScreenState extends State<MultiplayerLobbyScreen>
         final isSelected = _selectedDifficulty == diff['id'];
         return Expanded(
           child: GestureDetector(
-            onTap: () => setState(() => _selectedDifficulty = diff['id'] as String),
+            onTap: () =>
+                setState(() => _selectedDifficulty = diff['id'] as String),
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 4),
               padding: const EdgeInsets.symmetric(vertical: 16),
@@ -323,16 +323,16 @@ class _MultiplayerLobbyScreenState extends State<MultiplayerLobbyScreen>
                     ? LinearGradient(
                         colors: [
                           widget.modeConfig.color,
-                          widget.modeConfig.color.withOpacity(0.7),
+                          widget.modeConfig.color.withValues(alpha: 0.7),
                         ],
                       )
                     : null,
-                color: isSelected ? null : Colors.white.withOpacity(0.1),
+                color: isSelected ? null : Colors.white.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: isSelected
                       ? widget.modeConfig.color
-                      : Colors.white.withOpacity(0.2),
+                      : Colors.white.withValues(alpha: 0.2),
                   width: 2,
                 ),
               ),
@@ -348,7 +348,8 @@ class _MultiplayerLobbyScreenState extends State<MultiplayerLobbyScreen>
                     diff['name'] as String,
                     style: TextStyle(
                       color: Colors.white,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      fontWeight:
+                          isSelected ? FontWeight.bold : FontWeight.normal,
                     ),
                   ),
                 ],
@@ -382,16 +383,16 @@ class _MultiplayerLobbyScreenState extends State<MultiplayerLobbyScreen>
                     ? LinearGradient(
                         colors: [
                           widget.modeConfig.color,
-                          widget.modeConfig.color.withOpacity(0.7),
+                          widget.modeConfig.color.withValues(alpha: 0.7),
                         ],
                       )
                     : null,
-                color: isSelected ? null : Colors.white.withOpacity(0.1),
+                color: isSelected ? null : Colors.white.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: isSelected
                       ? widget.modeConfig.color
-                      : Colors.white.withOpacity(0.2),
+                      : Colors.white.withValues(alpha: 0.2),
                   width: 2,
                 ),
               ),
@@ -400,7 +401,8 @@ class _MultiplayerLobbyScreenState extends State<MultiplayerLobbyScreen>
                   time['label'] as String,
                   style: TextStyle(
                     color: Colors.white,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal,
                     fontSize: 13,
                   ),
                 ),
@@ -418,9 +420,9 @@ class _MultiplayerLobbyScreenState extends State<MultiplayerLobbyScreen>
         return Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.05),
+            color: Colors.white.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.white.withOpacity(0.1)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
           ),
           child: Row(
             children: [
@@ -433,7 +435,7 @@ class _MultiplayerLobbyScreenState extends State<MultiplayerLobbyScreen>
                   isReady: true,
                 ),
               ),
-              
+
               // VS
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -445,14 +447,14 @@ class _MultiplayerLobbyScreenState extends State<MultiplayerLobbyScreen>
                     color: widget.modeConfig.color,
                     shadows: [
                       Shadow(
-                        color: widget.modeConfig.color.withOpacity(0.5),
+                        color: widget.modeConfig.color.withValues(alpha: 0.5),
                         blurRadius: 10,
                       ),
                     ],
                   ),
                 ),
               ),
-              
+
               // Player 2 (Opponent)
               Expanded(
                 child: _buildPlayerSlot(
@@ -482,12 +484,12 @@ class _MultiplayerLobbyScreenState extends State<MultiplayerLobbyScreen>
           height: 60,
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [color, color.withOpacity(0.7)],
+              colors: [color, color.withValues(alpha: 0.7)],
             ),
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: color.withOpacity(0.4),
+                color: color.withValues(alpha: 0.4),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -514,7 +516,7 @@ class _MultiplayerLobbyScreenState extends State<MultiplayerLobbyScreen>
         Text(
           subtitle,
           style: TextStyle(
-            color: Colors.white.withOpacity(0.6),
+            color: Colors.white.withValues(alpha: 0.6),
             fontSize: 12,
           ),
         ),
@@ -522,7 +524,9 @@ class _MultiplayerLobbyScreenState extends State<MultiplayerLobbyScreen>
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
           decoration: BoxDecoration(
-            color: isReady ? Colors.green.withOpacity(0.2) : Colors.orange.withOpacity(0.2),
+            color: isReady
+                ? Colors.green.withValues(alpha: 0.2)
+                : Colors.orange.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
@@ -552,7 +556,7 @@ class _MultiplayerLobbyScreenState extends State<MultiplayerLobbyScreen>
               borderRadius: BorderRadius.circular(16),
             ),
             elevation: 8,
-            shadowColor: widget.modeConfig.color.withOpacity(0.5),
+            shadowColor: widget.modeConfig.color.withValues(alpha: 0.5),
           ),
           child: const Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -577,7 +581,7 @@ class _MultiplayerLobbyScreenState extends State<MultiplayerLobbyScreen>
     setState(() => _isSearching = true);
 
     final provider = Provider.of<MultiplayerProvider>(context, listen: false);
-    
+
     // Create match
     await provider.createMatch(
       mode: widget.modeConfig.mode,
@@ -606,6 +610,7 @@ class _MultiplayerLobbyScreenState extends State<MultiplayerLobbyScreen>
 
   void _cancelSearch() {
     setState(() => _isSearching = false);
-    Provider.of<MultiplayerProvider>(context, listen: false).cancelMatchmaking();
+    Provider.of<MultiplayerProvider>(context, listen: false)
+        .cancelMatchmaking();
   }
 }

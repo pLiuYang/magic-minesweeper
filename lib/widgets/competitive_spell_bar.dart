@@ -25,13 +25,13 @@ class CompetitiveSpellBar extends StatelessWidget {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                const Color(0xFF2d2d44).withOpacity(0.9),
+                const Color(0xFF2d2d44).withValues(alpha: 0.9),
                 const Color(0xFF1a1a2e),
               ],
             ),
             border: Border(
               top: BorderSide(
-                color: Colors.white.withOpacity(0.1),
+                color: Colors.white.withValues(alpha: 0.1),
               ),
             ),
           ),
@@ -52,7 +52,7 @@ class CompetitiveSpellBar extends StatelessWidget {
                       borderRadius: BorderRadius.circular(6),
                       child: LinearProgressIndicator(
                         value: player.mana / player.maxMana,
-                        backgroundColor: Colors.white.withOpacity(0.1),
+                        backgroundColor: Colors.white.withValues(alpha: 0.1),
                         valueColor: AlwaysStoppedAnimation(
                           Colors.blue.shade400,
                         ),
@@ -72,7 +72,7 @@ class CompetitiveSpellBar extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 12),
-              
+
               // Spell buttons
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -122,7 +122,7 @@ class _SpellButtonState extends State<_SpellButton>
       vsync: this,
       duration: const Duration(milliseconds: 1500),
     )..repeat(reverse: true);
-    
+
     _glowAnimation = Tween<double>(begin: 0.3, end: 0.7).animate(
       CurvedAnimation(parent: _glowController, curve: Curves.easeInOut),
     );
@@ -139,7 +139,6 @@ class _SpellButtonState extends State<_SpellButton>
     final canCast = widget.currentMana >= widget.spell.manaCost &&
         !widget.cooldownTracker.isOnCooldown(widget.spell);
     final isOnCooldown = widget.cooldownTracker.isOnCooldown(widget.spell);
-    final cooldownProgress = widget.cooldownTracker.getCooldownProgress(widget.spell);
 
     return GestureDetector(
       onTap: canCast ? widget.onTap : null,
@@ -156,25 +155,26 @@ class _SpellButtonState extends State<_SpellButton>
                 end: Alignment.bottomRight,
                 colors: canCast
                     ? [
-                        widget.spell.color.withOpacity(0.4),
-                        widget.spell.color.withOpacity(0.2),
+                        widget.spell.color.withValues(alpha: 0.4),
+                        widget.spell.color.withValues(alpha: 0.2),
                       ]
                     : [
-                        Colors.grey.withOpacity(0.3),
-                        Colors.grey.withOpacity(0.1),
+                        Colors.grey.withValues(alpha: 0.3),
+                        Colors.grey.withValues(alpha: 0.1),
                       ],
               ),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: canCast
-                    ? widget.spell.color.withOpacity(_glowAnimation.value)
-                    : Colors.grey.withOpacity(0.3),
+                    ? widget.spell.color.withValues(alpha: _glowAnimation.value)
+                    : Colors.grey.withValues(alpha: 0.3),
                 width: 2,
               ),
               boxShadow: canCast
                   ? [
                       BoxShadow(
-                        color: widget.spell.color.withOpacity(_glowAnimation.value * 0.5),
+                        color: widget.spell.color
+                            .withValues(alpha: _glowAnimation.value * 0.5),
                         blurRadius: 10,
                         spreadRadius: 2,
                       ),
@@ -232,13 +232,13 @@ class _SpellButtonState extends State<_SpellButton>
                     ),
                   ],
                 ),
-                
+
                 // Cooldown overlay
                 if (isOnCooldown)
                   Positioned.fill(
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.6),
+                        color: Colors.black.withValues(alpha: 0.6),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Center(
@@ -274,7 +274,7 @@ class _SpellButtonState extends State<_SpellButton>
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: widget.spell.color.withOpacity(0.2),
+                color: widget.spell.color.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
@@ -297,7 +297,7 @@ class _SpellButtonState extends State<_SpellButton>
             Text(
               widget.spell.description,
               style: TextStyle(
-                color: Colors.white.withOpacity(0.8),
+                color: Colors.white.withValues(alpha: 0.8),
               ),
             ),
             const SizedBox(height: 16),
@@ -342,7 +342,7 @@ class _SpellButtonState extends State<_SpellButton>
           Text(
             '$label: ',
             style: TextStyle(
-              color: Colors.white.withOpacity(0.6),
+              color: Colors.white.withValues(alpha: 0.6),
               fontSize: 13,
             ),
           ),

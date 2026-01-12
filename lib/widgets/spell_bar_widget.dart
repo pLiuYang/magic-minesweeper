@@ -21,7 +21,7 @@ class SpellBarWidget extends StatelessWidget {
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.5),
+                color: Colors.black.withValues(alpha: 0.5),
                 blurRadius: 0,
                 offset: const Offset(0, 4),
               ),
@@ -66,12 +66,12 @@ class SpellBarWidget extends StatelessWidget {
           color: spell.color,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: Colors.white.withOpacity(0.5),
+            color: Colors.white.withValues(alpha: 0.5),
             width: 2,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withValues(alpha: 0.3),
               offset: const Offset(0, 2),
             ),
           ],
@@ -100,7 +100,7 @@ class SpellBarWidget extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(2),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withValues(alpha: 0.2),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
@@ -123,12 +123,12 @@ class SpellBarWidget extends StatelessWidget {
           color: const Color(0xFF8B5CF6), // Purple
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: Colors.white.withOpacity(0.5),
+            color: Colors.white.withValues(alpha: 0.5),
             width: 2,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withValues(alpha: 0.3),
               offset: const Offset(0, 2),
             ),
           ],
@@ -163,7 +163,7 @@ class SpellBarWidget extends StatelessWidget {
         style: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
-          color: Colors.white.withOpacity(0.5),
+          color: Colors.white.withValues(alpha: 0.5),
           letterSpacing: 1,
         ),
       ),
@@ -200,14 +200,14 @@ class _SpellButton extends StatelessWidget {
           color: isSelected ? Colors.white : buttonColor,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? buttonColor : Colors.black.withOpacity(0.3),
+            color: isSelected ? buttonColor : Colors.black.withValues(alpha: 0.3),
             width: 3,
           ),
           boxShadow: [
             BoxShadow(
               color: isSelected
-                  ? buttonColor.withOpacity(0.6)
-                  : Colors.black.withOpacity(0.4),
+                  ? buttonColor.withValues(alpha: 0.6)
+                  : Colors.black.withValues(alpha: 0.4),
               offset: isSelected ? const Offset(0, 0) : const Offset(0, 4),
               blurRadius: isSelected ? 12 : 0,
             ),
@@ -305,7 +305,7 @@ class _SpellBookDialogState extends State<SpellBookDialog> {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.5),
+              color: Colors.black.withValues(alpha: 0.5),
               blurRadius: 0,
               offset: const Offset(0, 8),
             ),
@@ -335,10 +335,10 @@ class _SpellBookDialogState extends State<SpellBookDialog> {
                       color: const Color(0xFFEF4444), // Red
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                          color: Colors.black.withOpacity(0.3), width: 2),
+                          color: Colors.black.withValues(alpha: 0.3), width: 2),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.4),
+                          color: Colors.black.withValues(alpha: 0.4),
                           offset: const Offset(0, 2),
                           blurRadius: 0,
                         ),
@@ -403,12 +403,12 @@ class _SpellBookDialogState extends State<SpellBookDialog> {
                       border: Border.all(
                         color: isSelected
                             ? Colors.white
-                            : Colors.black.withOpacity(0.3),
+                            : Colors.black.withValues(alpha: 0.3),
                         width: 3,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.4),
+                          color: Colors.black.withValues(alpha: 0.4),
                           offset: isSelected
                               ? const Offset(0, 0)
                               : const Offset(0, 4),
@@ -490,12 +490,12 @@ class _SpellBookDialogState extends State<SpellBookDialog> {
                         : const Color(0xFF374151),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: Colors.black.withOpacity(0.2),
+                      color: Colors.black.withValues(alpha: 0.2),
                       width: 3,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.4),
+                        color: Colors.black.withValues(alpha: 0.4),
                         offset: const Offset(0, 4),
                         blurRadius: 0,
                       ),

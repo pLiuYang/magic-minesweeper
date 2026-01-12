@@ -11,15 +11,14 @@ class GameProvider extends ChangeNotifier {
   Timer? _timer;
   Timer? _scanTimer;
   Timer? _purifyTimer;
-  Set<String> _purifiedCells = {};
+  final Set<String> _purifiedCells = {};
   int _elapsedSeconds = 0;
-  bool _isFirstGame = true;
 
   // Mana system
   int _mana = 0;
   int _maxMana = 100;
   int _manaPerTile = 2; // Mana gained per tile revealed
-  
+
   // Spell system
   List<SpellType> _equippedSpells = Spell.defaultEquippedSpells;
   SpellType? _selectedSpell;
@@ -48,7 +47,8 @@ class GameProvider extends ChangeNotifier {
   int get width => _board.width;
   int get height => _board.height;
   bool get isPlaying => _board.status == GameStatus.playing;
-  bool get isGameOver => _board.status == GameStatus.won || _board.status == GameStatus.lost;
+  bool get isGameOver =>
+      _board.status == GameStatus.won || _board.status == GameStatus.lost;
   bool get isWon => _board.status == GameStatus.won;
   bool get isLost => _board.status == GameStatus.lost;
 
@@ -56,7 +56,7 @@ class GameProvider extends ChangeNotifier {
   int get mana => _mana;
   int get maxMana => _maxMana;
   double get manaPercentage => _mana / _maxMana;
-  
+
   // Spell getters
   List<SpellType> get equippedSpells => _equippedSpells;
   SpellType? get selectedSpell => _selectedSpell;
@@ -97,7 +97,6 @@ class GameProvider extends ChangeNotifier {
     _selectedSpell = null;
     _isSpellMode = false;
     _spellHistory = [];
-    _isFirstGame = false;
     notifyListeners();
   }
 
@@ -112,7 +111,7 @@ class GameProvider extends ChangeNotifier {
 
     final cell = _board.getCell(row, col);
     final prevRevealed = _board.revealedCount;
-    
+
     // If cell is revealed and has adjacent mines, try chord
     if (cell.isRevealed && cell.adjacentMines > 0) {
       _board.chordCell(row, col);
@@ -159,9 +158,9 @@ class GameProvider extends ChangeNotifier {
   // Spell methods
   void selectSpell(SpellType type) {
     if (isGameOver) return;
-    
+
     final spell = Spell.getSpell(type);
-    
+
     if (_mana < spell.manaCost) {
       // Not enough mana
       return;
@@ -175,7 +174,7 @@ class GameProvider extends ChangeNotifier {
       // Cast immediately (e.g., Shield)
       _castNonTargetedSpell(type);
     }
-    
+
     notifyListeners();
   }
 
@@ -187,7 +186,7 @@ class GameProvider extends ChangeNotifier {
 
   void _castSpellOnCell(int row, int col) {
     if (_selectedSpell == null) return;
-    
+
     final spell = Spell.getSpell(_selectedSpell!);
     if (_mana < spell.manaCost) {
       cancelSpellMode();
@@ -195,7 +194,7 @@ class GameProvider extends ChangeNotifier {
     }
 
     bool success = false;
-    
+
     switch (_selectedSpell!) {
       case SpellType.reveal:
         success = _board.castReveal(row, col);
@@ -247,7 +246,7 @@ class GameProvider extends ChangeNotifier {
 
   void _castNonTargetedSpell(SpellType type) {
     final spell = Spell.getSpell(type);
-    
+
     if (type == SpellType.shield) {
       _board.castShield();
       _mana -= spell.manaCost;
@@ -258,7 +257,7 @@ class GameProvider extends ChangeNotifier {
         timestamp: _elapsedSeconds,
       ));
     }
-    
+
     notifyListeners();
   }
 
@@ -300,7 +299,7 @@ class GameProvider extends ChangeNotifier {
         }
       }
     }
-    
+
     // Cancel any existing timer
     _purifyTimer?.cancel();
     // Purify effect lasts for 2 seconds
@@ -312,12 +311,6 @@ class GameProvider extends ChangeNotifier {
 
   bool isCellPurified(int row, int col) {
     return _purifiedCells.contains('$row,$col');
-  }
-
-  void _stopScanTimer() {
-    _scanTimer?.cancel();
-    _scanTimer = null;
-    // Don't clear scanned cells here - only clear when timer expires naturally
   }
 
   // Check if a cell is currently highlighted by scan
@@ -344,8 +337,9 @@ class GameProvider extends ChangeNotifier {
     final baseScore = _difficulty.mines * 100;
     final timeBonus = (_difficulty.totalCells * 10) ~/ (_elapsedSeconds + 1);
     final manaBonus = _mana * 2; // Bonus for remaining mana
-    final spellPenalty = _spellHistory.length * 10; // Small penalty for using spells
-    
+    final spellPenalty =
+        _spellHistory.length * 10; // Small penalty for using spells
+
     return (baseScore + timeBonus + manaBonus - spellPenalty).clamp(0, 999999);
   }
 
@@ -354,7 +348,8 @@ class GameProvider extends ChangeNotifier {
     if (!isWon) return 0;
 
     // Base time expectations per difficulty
-    final expectedTime = _difficulty.totalCells * 2; // 2 seconds per cell as baseline
+    final expectedTime =
+        _difficulty.totalCells * 2; // 2 seconds per cell as baseline
 
     if (_elapsedSeconds <= expectedTime * 0.5) {
       return 3; // Under 50% of expected time

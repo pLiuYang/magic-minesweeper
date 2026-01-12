@@ -129,7 +129,7 @@ class VictoryScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(2),
             boxShadow: [
               BoxShadow(
-                color: color.withOpacity(0.5),
+                color: color.withValues(alpha: 0.5),
                 blurRadius: 4,
                 spreadRadius: 2,
               ),
@@ -150,12 +150,12 @@ class VictoryScreen extends StatelessWidget {
         color: color,
         shape: BoxShape.circle,
         border: Border.all(
-          color: Colors.black.withOpacity(0.3),
+          color: Colors.black.withValues(alpha: 0.3),
           width: 4,
         ),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.4),
+            color: color.withValues(alpha: 0.4),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -245,7 +245,7 @@ class VictoryScreen extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.5),
+            color: Colors.black.withValues(alpha: 0.5),
             offset: const Offset(0, 8),
             blurRadius: 0,
           ),
@@ -275,7 +275,7 @@ class VictoryScreen extends StatelessWidget {
           style: TextStyle(
             fontSize: 10,
             fontWeight: FontWeight.bold,
-            color: color.withOpacity(0.7),
+            color: color.withValues(alpha: 0.7),
             letterSpacing: 1,
           ),
         ),
@@ -288,7 +288,7 @@ class VictoryScreen extends StatelessWidget {
             color: color,
             shadows: [
               Shadow(
-                color: color.withOpacity(0.3),
+                color: color.withValues(alpha: 0.3),
                 blurRadius: 8,
               ),
             ],
@@ -385,12 +385,12 @@ class VictoryScreen extends StatelessWidget {
           color: color,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
             width: 3,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withValues(alpha: 0.3),
               offset: const Offset(0, 4),
               blurRadius: 0,
             ),

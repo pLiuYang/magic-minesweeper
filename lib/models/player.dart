@@ -72,7 +72,7 @@ class Player {
       'id': id,
       'name': name,
       'avatarAsset': avatarAsset,
-      'primaryColor': primaryColor.value,
+      'primaryColor': primaryColor.toARGB32(),
       'score': score,
       'mana': mana,
       'maxMana': maxMana,
@@ -88,13 +88,15 @@ class Player {
     // Handle backend format (uses 'id' as int and 'openId' as string)
     final idValue = json['openId'] ?? json['id'];
     final id = idValue is int ? idValue.toString() : idValue as String;
-    
+
     return Player(
       id: id,
-      name: json['name'] as String? ?? json['displayName'] as String? ?? 'Player',
-      avatarAsset: json['avatarAsset'] as String? ?? 'assets/images/avatar_default.png',
-      primaryColor: json['primaryColor'] != null 
-          ? Color(json['primaryColor'] as int) 
+      name:
+          json['name'] as String? ?? json['displayName'] as String? ?? 'Player',
+      avatarAsset:
+          json['avatarAsset'] as String? ?? 'assets/images/avatar_default.png',
+      primaryColor: json['primaryColor'] != null
+          ? Color(json['primaryColor'] as int)
           : Colors.blue,
       score: json['score'] as int? ?? 0,
       mana: json['mana'] as int? ?? 0,
@@ -102,8 +104,8 @@ class Player {
       gamesPlayed: json['gamesPlayed'] as int? ?? 0,
       gamesWon: json['gamesWon'] as int? ?? 0,
       totalScore: json['totalScore'] as int? ?? 0,
-      lastPlayed: json['lastPlayed'] != null 
-          ? DateTime.parse(json['lastPlayed'] as String) 
+      lastPlayed: json['lastPlayed'] != null
+          ? DateTime.parse(json['lastPlayed'] as String)
           : json['lastSignedIn'] != null
               ? DateTime.parse(json['lastSignedIn'] as String)
               : null,

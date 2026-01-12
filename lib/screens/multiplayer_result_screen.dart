@@ -146,8 +146,8 @@ class _MultiplayerResultScreenState extends State<MultiplayerResultScreen>
                   boxShadow: [
                     BoxShadow(
                       color: isWinner
-                          ? const Color(0xFFFFD700).withOpacity(0.5)
-                          : Colors.grey.withOpacity(0.3),
+                          ? const Color(0xFFFFD700).withValues(alpha: 0.5)
+                          : Colors.grey.withValues(alpha: 0.3),
                       blurRadius: 30,
                       spreadRadius: 10,
                     ),
@@ -172,8 +172,8 @@ class _MultiplayerResultScreenState extends State<MultiplayerResultScreen>
                   shadows: [
                     Shadow(
                       color: isWinner
-                          ? const Color(0xFFFFD700).withOpacity(0.5)
-                          : Colors.grey.withOpacity(0.3),
+                          ? const Color(0xFFFFD700).withValues(alpha: 0.5)
+                          : Colors.grey.withValues(alpha: 0.3),
                       blurRadius: 20,
                     ),
                   ],
@@ -206,10 +206,10 @@ class _MultiplayerResultScreenState extends State<MultiplayerResultScreen>
             margin: const EdgeInsets.symmetric(horizontal: 20),
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.05),
+              color: Colors.white.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: Colors.white.withOpacity(0.1),
+                color: Colors.white.withValues(alpha: 0.1),
               ),
             ),
             child: Row(
@@ -274,7 +274,7 @@ class _MultiplayerResultScreenState extends State<MultiplayerResultScreen>
               height: 60,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [color, color.withOpacity(0.7)],
+                  colors: [color, color.withValues(alpha: 0.7)],
                 ),
                 borderRadius: BorderRadius.circular(16),
                 border: isWinner
@@ -282,7 +282,7 @@ class _MultiplayerResultScreenState extends State<MultiplayerResultScreen>
                     : null,
                 boxShadow: [
                   BoxShadow(
-                    color: color.withOpacity(0.4),
+                    color: color.withValues(alpha: 0.4),
                     blurRadius: 10,
                   ),
                 ],
@@ -323,7 +323,7 @@ class _MultiplayerResultScreenState extends State<MultiplayerResultScreen>
                 margin: const EdgeInsets.only(left: 4),
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: Colors.blue.withOpacity(0.3),
+                  color: Colors.blue.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Text(
@@ -352,7 +352,7 @@ class _MultiplayerResultScreenState extends State<MultiplayerResultScreen>
           'points',
           style: TextStyle(
             fontSize: 12,
-            color: Colors.white.withOpacity(0.6),
+            color: Colors.white.withValues(alpha: 0.6),
           ),
         ),
       ],
@@ -369,7 +369,7 @@ class _MultiplayerResultScreenState extends State<MultiplayerResultScreen>
             margin: const EdgeInsets.symmetric(horizontal: 20),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.05),
+              color: Colors.white.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Row(
@@ -401,7 +401,7 @@ class _MultiplayerResultScreenState extends State<MultiplayerResultScreen>
   Widget _buildStatItem(IconData icon, String label, String value) {
     return Column(
       children: [
-        Icon(icon, color: Colors.white.withOpacity(0.6), size: 24),
+        Icon(icon, color: Colors.white.withValues(alpha: 0.6), size: 24),
         const SizedBox(height: 8),
         Text(
           value,
@@ -414,7 +414,7 @@ class _MultiplayerResultScreenState extends State<MultiplayerResultScreen>
         Text(
           label,
           style: TextStyle(
-            color: Colors.white.withOpacity(0.5),
+            color: Colors.white.withValues(alpha: 0.5),
             fontSize: 11,
           ),
         ),
@@ -466,7 +466,7 @@ class _MultiplayerResultScreenState extends State<MultiplayerResultScreen>
                     label: const Text('Back to Menu'),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.white,
-                      side: BorderSide(color: Colors.white.withOpacity(0.3)),
+                      side: BorderSide(color: Colors.white.withValues(alpha: 0.3)),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),

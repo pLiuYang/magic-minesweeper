@@ -79,7 +79,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
         children: [
           Container(
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: IconButton(
@@ -141,7 +141,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: TabBar(
@@ -211,16 +211,16 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withOpacity(0.2)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
           value: value,
           isExpanded: true,
           dropdownColor: const Color(0xFF2d2d44),
-          icon: Icon(Icons.arrow_drop_down, color: Colors.white.withOpacity(0.7)),
+          icon: Icon(Icons.arrow_drop_down, color: Colors.white.withValues(alpha: 0.7)),
           style: const TextStyle(color: Colors.white),
           items: items.map((item) {
             return DropdownMenuItem(
@@ -260,13 +260,13 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
                 Icon(
                   Icons.leaderboard,
                   size: 64,
-                  color: Colors.white.withOpacity(0.3),
+                  color: Colors.white.withValues(alpha: 0.3),
                 ),
                 const SizedBox(height: 16),
                 Text(
                   'No entries yet',
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.5),
+                    color: Colors.white.withValues(alpha: 0.5),
                     fontSize: 18,
                   ),
                 ),
@@ -274,7 +274,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
                 Text(
                   'Be the first to make the leaderboard!',
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.3),
+                    color: Colors.white.withValues(alpha: 0.3),
                     fontSize: 14,
                   ),
                 ),
@@ -303,17 +303,17 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
         gradient: isCurrentPlayer
             ? LinearGradient(
                 colors: [
-                  Colors.blue.withOpacity(0.3),
-                  Colors.blue.withOpacity(0.1),
+                  Colors.blue.withValues(alpha: 0.3),
+                  Colors.blue.withValues(alpha: 0.1),
                 ],
               )
             : null,
-        color: isCurrentPlayer ? null : Colors.white.withOpacity(0.05),
+        color: isCurrentPlayer ? null : Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isCurrentPlayer
-              ? Colors.blue.withOpacity(0.5)
-              : Colors.white.withOpacity(0.1),
+              ? Colors.blue.withValues(alpha: 0.5)
+              : Colors.white.withValues(alpha: 0.1),
           width: isCurrentPlayer ? 2 : 1,
         ),
       ),
@@ -334,7 +334,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
                 margin: const EdgeInsets.only(left: 8),
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: Colors.blue.withOpacity(0.3),
+                  color: Colors.blue.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Text(
@@ -370,7 +370,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
             Text(
               'points',
               style: TextStyle(
-                color: Colors.white.withOpacity(0.5),
+                color: Colors.white.withValues(alpha: 0.5),
                 fontSize: 11,
               ),
             ),
@@ -398,7 +398,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
         icon = Icons.military_tech;
         break;
       default:
-        badgeColor = Colors.white.withOpacity(0.3);
+        badgeColor = Colors.white.withValues(alpha: 0.3);
         icon = null;
     }
 
@@ -412,7 +412,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
                 end: Alignment.bottomRight,
                 colors: [
                   badgeColor,
-                  badgeColor.withOpacity(0.7),
+                  badgeColor.withValues(alpha: 0.7),
                 ],
               )
             : null,
@@ -421,7 +421,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
         boxShadow: rank <= 3
             ? [
                 BoxShadow(
-                  color: badgeColor.withOpacity(0.4),
+                  color: badgeColor.withValues(alpha: 0.4),
                   blurRadius: 8,
                 ),
               ]
@@ -446,7 +446,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Row(

@@ -209,7 +209,7 @@ class MainMenuScreen extends StatelessWidget {
             color: color,
             boxShadow: [
               BoxShadow(
-                color: color.withOpacity(0.5),
+                color: color.withValues(alpha: 0.5),
                 blurRadius: 4,
                 spreadRadius: 2,
               ),
@@ -286,10 +286,10 @@ class MainMenuScreen extends StatelessWidget {
       style: TextStyle(
         fontSize: 24,
         fontWeight: FontWeight.bold,
-        color: const Color(0xFFC084FC).withOpacity(0.5),
+        color: const Color(0xFFC084FC).withValues(alpha: 0.5),
         shadows: [
           Shadow(
-            color: const Color(0xFFC084FC).withOpacity(0.3),
+            color: const Color(0xFFC084FC).withValues(alpha: 0.3),
             blurRadius: 8,
           ),
         ],

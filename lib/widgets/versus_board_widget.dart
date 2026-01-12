@@ -35,7 +35,7 @@ class _VersusBoardWidgetState extends State<VersusBoardWidget>
   Timer? _aiTimer;
   int _boardWidth = 8;
   int _boardHeight = 8;
-  
+
   // Effect states
   bool _isBlinded = false;
   bool _isFrozen = false;
@@ -47,7 +47,7 @@ class _VersusBoardWidgetState extends State<VersusBoardWidget>
   void initState() {
     super.initState();
     _initializeBoard();
-    
+
     if (!widget.isInteractive) {
       _startAIPlay();
     }
@@ -72,8 +72,9 @@ class _VersusBoardWidgetState extends State<VersusBoardWidget>
         _boardHeight = 10;
         mines = 20;
     }
-    
-    _board = GameBoard(width: _boardWidth, height: _boardHeight, totalMines: mines);
+
+    _board =
+        GameBoard(width: _boardWidth, height: _boardHeight, totalMines: mines);
   }
 
   void _startAIPlay() {
@@ -92,7 +93,7 @@ class _VersusBoardWidgetState extends State<VersusBoardWidget>
     // Find a safe cell to reveal
     final random = Random();
     final hiddenCells = <List<int>>[];
-    
+
     for (int r = 0; r < _boardHeight; r++) {
       for (int c = 0; c < _boardWidth; c++) {
         if (!_board.cells[r][c].isRevealed && !_board.cells[r][c].isFlagged) {
@@ -129,7 +130,8 @@ class _VersusBoardWidgetState extends State<VersusBoardWidget>
       }
     }
 
-    final cellToReveal = bestCell ?? hiddenCells[random.nextInt(hiddenCells.length)];
+    final cellToReveal =
+        bestCell ?? hiddenCells[random.nextInt(hiddenCells.length)];
     _revealCell(cellToReveal[0], cellToReveal[1]);
   }
 
@@ -150,7 +152,7 @@ class _VersusBoardWidgetState extends State<VersusBoardWidget>
       _isCursed = widget.activeEffects.any(
         (e) => e.spellType == CompetitiveSpellType.curse,
       );
-      
+
       final scrambleEffect = widget.activeEffects.firstWhere(
         (e) => e.spellType == CompetitiveSpellType.scramble && e.isActive,
         orElse: () => ActiveSpellEffect(
@@ -161,10 +163,10 @@ class _VersusBoardWidgetState extends State<VersusBoardWidget>
           duration: 0,
         ),
       );
-      _scrambleMap = scrambleEffect.duration > 0 
+      _scrambleMap = scrambleEffect.duration > 0
           ? scrambleEffect.effectData['numberMap'] as Map<String, int>?
           : null;
-      
+
       final minefieldEffect = widget.activeEffects.firstWhere(
         (e) => e.spellType == CompetitiveSpellType.minefield && e.isActive,
         orElse: () => ActiveSpellEffect(
@@ -201,7 +203,7 @@ class _VersusBoardWidgetState extends State<VersusBoardWidget>
                 constraints.maxWidth / _boardWidth,
                 constraints.maxHeight / _boardHeight,
               );
-              
+
               return Center(
                 child: SizedBox(
                   width: cellSize * _boardWidth,
@@ -223,11 +225,11 @@ class _VersusBoardWidgetState extends State<VersusBoardWidget>
             },
           ),
         ),
-        
+
         // Frozen overlay
         if (_isFrozen)
           Container(
-            color: Colors.cyan.withOpacity(0.3),
+            color: Colors.cyan.withValues(alpha: 0.3),
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -256,7 +258,7 @@ class _VersusBoardWidgetState extends State<VersusBoardWidget>
               ),
             ),
           ),
-        
+
         // Score indicator
         Positioned(
           top: 8,
@@ -264,7 +266,7 @@ class _VersusBoardWidgetState extends State<VersusBoardWidget>
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.5),
+              color: Colors.black.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
@@ -277,7 +279,7 @@ class _VersusBoardWidgetState extends State<VersusBoardWidget>
             ),
           ),
         ),
-        
+
         // Active effects indicator
         if (widget.activeEffects.isNotEmpty)
           Positioned(
@@ -298,8 +300,9 @@ class _VersusBoardWidgetState extends State<VersusBoardWidget>
   Widget _buildCell(int row, int col, double size) {
     final cell = _board.cells[row][col];
     final isFakeMine = _fakeMines?.any(
-      (m) => m['row'] == row && m['col'] == col,
-    ) ?? false;
+          (m) => m['row'] == row && m['col'] == col,
+        ) ??
+        false;
 
     return GestureDetector(
       onTap: widget.isInteractive && !_isFrozen && !_isGameOver
@@ -331,15 +334,15 @@ class _VersusBoardWidgetState extends State<VersusBoardWidget>
           borderRadius: BorderRadius.circular(4),
           border: Border.all(
             color: cell.isRevealed
-                ? Colors.white.withOpacity(0.1)
-                : Colors.white.withOpacity(0.2),
+                ? Colors.white.withValues(alpha: 0.1)
+                : Colors.white.withValues(alpha: 0.2),
             width: 1,
           ),
           boxShadow: cell.isRevealed
               ? null
               : [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.3),
+                    color: Colors.black.withValues(alpha: 0.3),
                     offset: const Offset(1, 1),
                     blurRadius: 2,
                   ),
@@ -352,7 +355,7 @@ class _VersusBoardWidgetState extends State<VersusBoardWidget>
     );
   }
 
-  Widget _buildCellContent(cell, bool isFakeMine) {
+  Widget _buildCellContent(dynamic cell, bool isFakeMine) {
     if (cell.isFlagged) {
       return Icon(
         Icons.flag,
@@ -365,7 +368,7 @@ class _VersusBoardWidgetState extends State<VersusBoardWidget>
       // Show fake mine warning
       return Icon(
         Icons.warning,
-        color: Colors.orange.withOpacity(0.7),
+        color: Colors.orange.withValues(alpha: 0.7),
         size: 14,
       );
     }
@@ -387,7 +390,7 @@ class _VersusBoardWidgetState extends State<VersusBoardWidget>
         return Text(
           '?',
           style: TextStyle(
-            color: Colors.grey.withOpacity(0.5),
+            color: Colors.grey.withValues(alpha: 0.5),
             fontWeight: FontWeight.bold,
             fontSize: 14,
           ),
@@ -396,7 +399,8 @@ class _VersusBoardWidgetState extends State<VersusBoardWidget>
 
       int displayNumber = cell.adjacentMines;
       if (_scrambleMap != null) {
-        displayNumber = _scrambleMap![cell.adjacentMines.toString()] ?? displayNumber;
+        displayNumber =
+            _scrambleMap![cell.adjacentMines.toString()] ?? displayNumber;
       }
 
       return Text(
@@ -418,9 +422,9 @@ class _VersusBoardWidgetState extends State<VersusBoardWidget>
       margin: const EdgeInsets.only(bottom: 4),
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: spell.color.withOpacity(0.3),
+        color: spell.color.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: spell.color.withOpacity(0.5)),
+        border: Border.all(color: spell.color.withValues(alpha: 0.5)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -465,7 +469,9 @@ class _VersusBoardWidgetState extends State<VersusBoardWidget>
 
   void _revealCell(int row, int col) {
     if (_isGameOver || _isVictory) return;
-    if (_board.cells[row][col].isRevealed || _board.cells[row][col].isFlagged) return;
+    if (_board.cells[row][col].isRevealed || _board.cells[row][col].isFlagged) {
+      return;
+    }
 
     // Handle curse effect
     if (_isCursed && widget.isInteractive) {

@@ -99,7 +99,7 @@ class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
         children: [
           Container(
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: IconButton(
@@ -124,7 +124,7 @@ class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
                   'Find opponents worldwide',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.white.withOpacity(0.7),
+                    color: Colors.white.withValues(alpha: 0.7),
                   ),
                 ),
               ],
@@ -146,13 +146,13 @@ class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            widget.modeConfig.color.withOpacity(0.3),
-            widget.modeConfig.color.withOpacity(0.1),
+            widget.modeConfig.color.withValues(alpha: 0.3),
+            widget.modeConfig.color.withValues(alpha: 0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: widget.modeConfig.color.withOpacity(0.5),
+          color: widget.modeConfig.color.withValues(alpha: 0.5),
           width: 2,
         ),
       ),
@@ -181,7 +181,7 @@ class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
           Text(
             'Automatically find an opponent with similar skill level',
             style: TextStyle(
-              color: Colors.white.withOpacity(0.7),
+              color: Colors.white.withValues(alpha: 0.7),
             ),
           ),
           const SizedBox(height: 16),
@@ -213,7 +213,7 @@ class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
                     fontWeight: FontWeight.bold,
                     fontSize: 12,
                   ),
-                  backgroundColor: Colors.white.withOpacity(0.1),
+                  backgroundColor: Colors.white.withValues(alpha: 0.1),
                 ),
               )),
             ],
@@ -272,10 +272,10 @@ class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withValues(alpha: 0.1),
         ),
       ),
       child: Column(
@@ -303,7 +303,7 @@ class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
           Text(
             'Host a game and wait for others to join',
             style: TextStyle(
-              color: Colors.white.withOpacity(0.7),
+              color: Colors.white.withValues(alpha: 0.7),
             ),
           ),
           const SizedBox(height: 16),
@@ -407,7 +407,7 @@ class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
           Container(
             padding: const EdgeInsets.all(32),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.05),
+              color: Colors.white.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Center(
@@ -416,20 +416,20 @@ class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
                   Icon(
                     Icons.search_off,
                     size: 48,
-                    color: Colors.white.withOpacity(0.3),
+                    color: Colors.white.withValues(alpha: 0.3),
                   ),
                   const SizedBox(height: 12),
                   Text(
                     'No matches available',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.5),
+                      color: Colors.white.withValues(alpha: 0.5),
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Create one or use Quick Match',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.3),
+                      color: Colors.white.withValues(alpha: 0.3),
                       fontSize: 12,
                     ),
                   ),
@@ -448,10 +448,10 @@ class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withValues(alpha: 0.1),
         ),
       ),
       child: Row(
@@ -459,7 +459,7 @@ class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
           // Host avatar
           CircleAvatar(
             radius: 24,
-            backgroundColor: widget.modeConfig.color.withOpacity(0.3),
+            backgroundColor: widget.modeConfig.color.withValues(alpha: 0.3),
             child: Text(
               match.hostName.isNotEmpty ? match.hostName[0].toUpperCase() : '?',
               style: const TextStyle(
@@ -527,7 +527,7 @@ class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -689,7 +689,7 @@ class _WaitingRoomSheetState extends State<_WaitingRoomSheet> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.3),
+                  color: Colors.white.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -730,12 +730,12 @@ class _WaitingRoomSheetState extends State<_WaitingRoomSheet> {
                       margin: const EdgeInsets.only(bottom: 12),
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.05),
+                        color: Colors.white.withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
                           color: isCurrentUser
-                              ? widget.modeConfig.color.withOpacity(0.5)
-                              : Colors.white.withOpacity(0.1),
+                              ? widget.modeConfig.color.withValues(alpha: 0.5)
+                              : Colors.white.withValues(alpha: 0.1),
                           width: isCurrentUser ? 2 : 1,
                         ),
                       ),
@@ -743,7 +743,7 @@ class _WaitingRoomSheetState extends State<_WaitingRoomSheet> {
                         children: [
                           CircleAvatar(
                             radius: 24,
-                            backgroundColor: widget.modeConfig.color.withOpacity(0.3),
+                            backgroundColor: widget.modeConfig.color.withValues(alpha: 0.3),
                             child: Text(
                               participant.displayName.isNotEmpty
                                   ? participant.displayName[0].toUpperCase()
@@ -777,7 +777,7 @@ class _WaitingRoomSheetState extends State<_WaitingRoomSheet> {
                                           vertical: 2,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: widget.modeConfig.color.withOpacity(0.2),
+                                          color: widget.modeConfig.color.withValues(alpha: 0.2),
                                           borderRadius: BorderRadius.circular(4),
                                         ),
                                         child: const Text(
@@ -795,7 +795,7 @@ class _WaitingRoomSheetState extends State<_WaitingRoomSheet> {
                                 Text(
                                   'Rank: ${participant.rankPoints}',
                                   style: TextStyle(
-                                    color: Colors.white.withOpacity(0.6),
+                                    color: Colors.white.withValues(alpha: 0.6),
                                     fontSize: 12,
                                   ),
                                 ),
@@ -809,8 +809,8 @@ class _WaitingRoomSheetState extends State<_WaitingRoomSheet> {
                             ),
                             decoration: BoxDecoration(
                               color: participant.isReady
-                                  ? Colors.green.withOpacity(0.2)
-                                  : Colors.orange.withOpacity(0.2),
+                                  ? Colors.green.withValues(alpha: 0.2)
+                                  : Colors.orange.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
@@ -841,7 +841,7 @@ class _WaitingRoomSheetState extends State<_WaitingRoomSheet> {
                         padding: const EdgeInsets.all(12),
                         margin: const EdgeInsets.only(bottom: 12),
                         decoration: BoxDecoration(
-                          color: Colors.green.withOpacity(0.2),
+                          color: Colors.green.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: const Row(

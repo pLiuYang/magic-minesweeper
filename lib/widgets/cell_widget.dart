@@ -158,8 +158,8 @@ class _CellWidgetState extends State<CellWidget> with TickerProviderStateMixin {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        Colors.white.withOpacity(0.4),
-                        Colors.white.withOpacity(0.0),
+                        Colors.white.withValues(alpha: 0.4),
+                        Colors.white.withValues(alpha: 0.0),
                       ],
                     ),
                   ),
@@ -181,8 +181,10 @@ class _CellWidgetState extends State<CellWidget> with TickerProviderStateMixin {
                         borderRadius: BorderRadius.circular(borderRadius),
                         gradient: RadialGradient(
                           colors: [
-                            AppColors.scanGlow.withOpacity(0.7 * glowValue),
-                            AppColors.scanPulse.withOpacity(0.4 * glowValue),
+                            AppColors.scanGlow
+                                .withValues(alpha: 0.7 * glowValue),
+                            AppColors.scanPulse
+                                .withValues(alpha: 0.4 * glowValue),
                           ],
                         ),
                         border: Border.all(
@@ -195,14 +197,14 @@ class _CellWidgetState extends State<CellWidget> with TickerProviderStateMixin {
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color:
-                                AppColors.scanGlow.withOpacity(0.7 * glowValue),
+                            color: AppColors.scanGlow
+                                .withValues(alpha: 0.7 * glowValue),
                             blurRadius: 10 + (8 * glowValue),
                             spreadRadius: 2 * glowValue,
                           ),
                           BoxShadow(
                             color: AppColors.scanPulse
-                                .withOpacity(0.5 * glowValue),
+                                .withValues(alpha: 0.5 * glowValue),
                             blurRadius: 15,
                             spreadRadius: 1,
                           ),
@@ -238,15 +240,16 @@ class _CellWidgetState extends State<CellWidget> with TickerProviderStateMixin {
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(borderRadius),
-                        color: AppColors.magicPurple.withOpacity(0.15),
+                        color: AppColors.magicPurple.withValues(alpha: 0.15),
                         border: Border.all(
-                          color: AppColors.magicPurple.withOpacity(
-                              0.6 + 0.4 * (_pulseAnimation.value - 1) * 12.5),
+                          color: AppColors.magicPurple.withValues(
+                              alpha: 0.6 +
+                                  0.4 * (_pulseAnimation.value - 1) * 12.5),
                           width: 2,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.magicPurple.withOpacity(0.3),
+                            color: AppColors.magicPurple.withValues(alpha: 0.3),
                             blurRadius: 6 * _pulseAnimation.value,
                             spreadRadius: 1,
                           ),
@@ -255,7 +258,7 @@ class _CellWidgetState extends State<CellWidget> with TickerProviderStateMixin {
                       child: Center(
                         child: Icon(
                           Icons.auto_awesome,
-                          color: AppColors.magicPurple.withOpacity(0.6),
+                          color: AppColors.magicPurple.withValues(alpha: 0.6),
                           size: iconSize * 0.7 * _pulseAnimation.value,
                         ),
                       ),
@@ -276,20 +279,20 @@ class _CellWidgetState extends State<CellWidget> with TickerProviderStateMixin {
                         gradient: RadialGradient(
                           colors: [
                             AppColors.purifyGlow
-                                .withOpacity(0.5 * sparkleValue),
+                                .withValues(alpha: 0.5 * sparkleValue),
                             AppColors.purifySparkle
-                                .withOpacity(0.2 * sparkleValue),
+                                .withValues(alpha: 0.2 * sparkleValue),
                           ],
                         ),
                         border: Border.all(
                           color: AppColors.purifyGlow
-                              .withOpacity(0.6 * sparkleValue),
+                              .withValues(alpha: 0.6 * sparkleValue),
                           width: 2,
                         ),
                         boxShadow: [
                           BoxShadow(
                             color: AppColors.purifyGlow
-                                .withOpacity(0.5 * sparkleValue),
+                                .withValues(alpha: 0.5 * sparkleValue),
                             blurRadius: 8 + (6 * sparkleValue),
                             spreadRadius: sparkleValue,
                           ),
@@ -298,7 +301,8 @@ class _CellWidgetState extends State<CellWidget> with TickerProviderStateMixin {
                       child: Center(
                         child: Icon(
                           Icons.auto_awesome,
-                          color: Colors.white.withOpacity(0.8 * sparkleValue),
+                          color: Colors.white
+                              .withValues(alpha: 0.8 * sparkleValue),
                           size: iconSize * 0.6 * (0.8 + 0.2 * sparkleValue),
                           shadows: [
                             Shadow(
@@ -399,7 +403,7 @@ class _CellWidgetState extends State<CellWidget> with TickerProviderStateMixin {
     if (widget.isScanned) {
       return [
         BoxShadow(
-          color: AppColors.scanGlow.withOpacity(0.6),
+          color: AppColors.scanGlow.withValues(alpha: 0.6),
           blurRadius: 12,
           spreadRadius: 2,
         ),
@@ -411,7 +415,7 @@ class _CellWidgetState extends State<CellWidget> with TickerProviderStateMixin {
       return [
         // Solid drop shadow for 3D effect
         BoxShadow(
-          color: Colors.black.withOpacity(0.5),
+          color: Colors.black.withValues(alpha: 0.5),
           blurRadius: 0,
           offset: const Offset(2, 3),
         ),
@@ -421,7 +425,7 @@ class _CellWidgetState extends State<CellWidget> with TickerProviderStateMixin {
     // Revealed cell - subtle inset look
     return [
       BoxShadow(
-        color: Colors.black.withOpacity(0.2),
+        color: Colors.black.withValues(alpha: 0.2),
         blurRadius: 2,
         offset: const Offset(1, 1),
       ),

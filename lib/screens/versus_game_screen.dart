@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/multiplayer_match.dart';
 import '../models/competitive_spell.dart';
-import '../models/game_board.dart';
 import '../providers/multiplayer_provider.dart';
-import '../providers/game_provider.dart';
-import '../utils/constants.dart';
 import '../widgets/versus_board_widget.dart';
 import '../widgets/competitive_spell_bar.dart';
 import 'multiplayer_result_screen.dart';
@@ -37,12 +34,12 @@ class _VersusGameScreenState extends State<VersusGameScreen>
   @override
   void initState() {
     super.initState();
-    
+
     _vsAnimationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1000),
     );
-    
+
     _vsScaleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _vsAnimationController,
@@ -136,12 +133,12 @@ class _VersusGameScreenState extends State<VersusGameScreen>
                     gradient: RadialGradient(
                       colors: [
                         widget.modeConfig.color,
-                        widget.modeConfig.color.withOpacity(0.3),
+                        widget.modeConfig.color.withValues(alpha: 0.3),
                       ],
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: widget.modeConfig.color.withOpacity(0.5),
+                        color: widget.modeConfig.color.withValues(alpha: 0.5),
                         blurRadius: 30,
                         spreadRadius: 10,
                       ),
@@ -166,7 +163,7 @@ class _VersusGameScreenState extends State<VersusGameScreen>
             'Get Ready!',
             style: TextStyle(
               fontSize: 24,
-              color: Colors.white.withOpacity(0.8),
+              color: Colors.white.withValues(alpha: 0.8),
             ),
           ),
         ],
@@ -184,21 +181,21 @@ class _VersusGameScreenState extends State<VersusGameScreen>
           children: [
             // Top bar with timer and scores
             _buildTopBar(match, provider),
-            
+
             // VS indicator
             _buildVSIndicator(),
-            
+
             // Game boards
             Expanded(
               child: _buildGameBoards(match, provider),
             ),
-            
+
             // Spell bar (for versus mode)
             if (widget.modeConfig.mode == MultiplayerMode.versus)
               CompetitiveSpellBar(
                 onSpellCast: (spell) => _castSpell(provider, spell),
               ),
-            
+
             // Bottom controls
             _buildBottomControls(match),
           ],
@@ -215,10 +212,10 @@ class _VersusGameScreenState extends State<VersusGameScreen>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.3),
+        color: Colors.black.withValues(alpha: 0.3),
         border: Border(
           bottom: BorderSide(
-            color: Colors.white.withOpacity(0.1),
+            color: Colors.white.withValues(alpha: 0.1),
           ),
         ),
       ),
@@ -235,7 +232,7 @@ class _VersusGameScreenState extends State<VersusGameScreen>
               isLeft: true,
             ),
           ),
-          
+
           // Timer
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -247,13 +244,13 @@ class _VersusGameScreenState extends State<VersusGameScreen>
               ),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: isLowTime ? Colors.red : Colors.white.withOpacity(0.2),
+                color: isLowTime ? Colors.red : Colors.white.withValues(alpha: 0.2),
                 width: 2,
               ),
               boxShadow: isLowTime
                   ? [
                       BoxShadow(
-                        color: Colors.red.withOpacity(0.5),
+                        color: Colors.red.withValues(alpha: 0.5),
                         blurRadius: 10,
                       ),
                     ]
@@ -269,7 +266,7 @@ class _VersusGameScreenState extends State<VersusGameScreen>
               ),
             ),
           ),
-          
+
           // Player 2 info
           Expanded(
             child: _buildPlayerInfo(
@@ -301,12 +298,12 @@ class _VersusGameScreenState extends State<VersusGameScreen>
         height: 45,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [color, color.withOpacity(0.7)],
+            colors: [color, color.withValues(alpha: 0.7)],
           ),
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.4),
+              color: color.withValues(alpha: 0.4),
               blurRadius: 8,
             ),
           ],
@@ -317,7 +314,8 @@ class _VersusGameScreenState extends State<VersusGameScreen>
       // Info
       Expanded(
         child: Column(
-          crossAxisAlignment: isLeft ? CrossAxisAlignment.start : CrossAxisAlignment.end,
+          crossAxisAlignment:
+              isLeft ? CrossAxisAlignment.start : CrossAxisAlignment.end,
           children: [
             Text(
               name,
@@ -351,7 +349,7 @@ class _VersusGameScreenState extends State<VersusGameScreen>
                     borderRadius: BorderRadius.circular(4),
                     child: LinearProgressIndicator(
                       value: mana / maxMana,
-                      backgroundColor: Colors.white.withOpacity(0.2),
+                      backgroundColor: Colors.white.withValues(alpha: 0.2),
                       valueColor: AlwaysStoppedAnimation(Colors.blue.shade400),
                       minHeight: 6,
                     ),
@@ -387,23 +385,24 @@ class _VersusGameScreenState extends State<VersusGameScreen>
                     gradient: LinearGradient(
                       colors: [
                         Colors.transparent,
-                        Colors.blue.withOpacity(0.5),
+                        Colors.blue.withValues(alpha: 0.5),
                       ],
                     ),
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        widget.modeConfig.color.withOpacity(0.3),
-                        widget.modeConfig.color.withOpacity(0.1),
+                        widget.modeConfig.color.withValues(alpha: 0.3),
+                        widget.modeConfig.color.withValues(alpha: 0.1),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: widget.modeConfig.color.withOpacity(0.5),
+                      color: widget.modeConfig.color.withValues(alpha: 0.5),
                     ),
                   ),
                   child: Text(
@@ -414,7 +413,7 @@ class _VersusGameScreenState extends State<VersusGameScreen>
                       color: widget.modeConfig.color,
                       shadows: [
                         Shadow(
-                          color: widget.modeConfig.color.withOpacity(0.5),
+                          color: widget.modeConfig.color.withValues(alpha: 0.5),
                           blurRadius: 10,
                         ),
                       ],
@@ -427,7 +426,7 @@ class _VersusGameScreenState extends State<VersusGameScreen>
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        Colors.red.withOpacity(0.5),
+                        Colors.red.withValues(alpha: 0.5),
                         Colors.transparent,
                       ],
                     ),
@@ -441,7 +440,8 @@ class _VersusGameScreenState extends State<VersusGameScreen>
     );
   }
 
-  Widget _buildGameBoards(MultiplayerMatch match, MultiplayerProvider provider) {
+  Widget _buildGameBoards(
+      MultiplayerMatch match, MultiplayerProvider provider) {
     return Row(
       children: [
         // Player 1 board (interactive)
@@ -451,12 +451,12 @@ class _VersusGameScreenState extends State<VersusGameScreen>
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: Colors.blue.withOpacity(0.5),
+                color: Colors.blue.withValues(alpha: 0.5),
                 width: 2,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.blue.withOpacity(0.2),
+                  color: Colors.blue.withValues(alpha: 0.2),
                   blurRadius: 10,
                 ),
               ],
@@ -471,7 +471,8 @@ class _VersusGameScreenState extends State<VersusGameScreen>
                   provider.updatePlayerScore(match.players[0].id, score);
                   _checkWinCondition(provider);
                 },
-                onGameComplete: () => _handleGameComplete(provider, match.players[0].id),
+                onGameComplete: () =>
+                    _handleGameComplete(provider, match.players[0].id),
                 activeEffects: provider.activeEffects
                     .where((e) => e.targetId == match.players[0].id)
                     .toList(),
@@ -479,7 +480,7 @@ class _VersusGameScreenState extends State<VersusGameScreen>
             ),
           ),
         ),
-        
+
         // Player 2 board (AI controlled, view only)
         Expanded(
           child: Container(
@@ -487,12 +488,12 @@ class _VersusGameScreenState extends State<VersusGameScreen>
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: Colors.red.withOpacity(0.5),
+                color: Colors.red.withValues(alpha: 0.5),
                 width: 2,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.red.withOpacity(0.2),
+                  color: Colors.red.withValues(alpha: 0.2),
                   blurRadius: 10,
                 ),
               ],
@@ -506,7 +507,8 @@ class _VersusGameScreenState extends State<VersusGameScreen>
                 onScoreUpdate: (score) {
                   provider.updatePlayerScore(match.players[1].id, score);
                 },
-                onGameComplete: () => _handleGameComplete(provider, match.players[1].id),
+                onGameComplete: () =>
+                    _handleGameComplete(provider, match.players[1].id),
                 activeEffects: provider.activeEffects
                     .where((e) => e.targetId == match.players[1].id)
                     .toList(),
@@ -527,7 +529,7 @@ class _VersusGameScreenState extends State<VersusGameScreen>
           // Pause/Menu button
           Container(
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: IconButton(
@@ -543,7 +545,7 @@ class _VersusGameScreenState extends State<VersusGameScreen>
             label: const Text('Surrender'),
             style: OutlinedButton.styleFrom(
               foregroundColor: Colors.red.shade300,
-              side: BorderSide(color: Colors.red.shade300.withOpacity(0.5)),
+              side: BorderSide(color: Colors.red.shade300.withValues(alpha: 0.5)),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -581,7 +583,8 @@ class _VersusGameScreenState extends State<VersusGameScreen>
       // Show error
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Cannot cast spell - not enough mana or on cooldown'),
+          content:
+              const Text('Cannot cast spell - not enough mana or on cooldown'),
           backgroundColor: Colors.red.shade700,
           duration: const Duration(seconds: 1),
         ),
@@ -695,7 +698,8 @@ class _VersusGameScreenState extends State<VersusGameScreen>
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
-              final provider = Provider.of<MultiplayerProvider>(context, listen: false);
+              final provider =
+                  Provider.of<MultiplayerProvider>(context, listen: false);
               final match = provider.currentMatch;
               if (match != null) {
                 // Opponent wins

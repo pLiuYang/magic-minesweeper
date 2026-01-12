@@ -182,7 +182,7 @@ class SettingsScreen extends StatelessWidget {
         decoration: BoxDecoration(
           color: const Color(0xFF4C1D95), // Dark purple button
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.white.withOpacity(0.2), width: 2),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: 2),
           boxShadow: const [
             BoxShadow(
               color: Colors.black26,
@@ -222,7 +222,7 @@ class SettingsScreen extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha: 0.3),
             blurRadius: 0,
             offset: const Offset(0, 4),
           ),
@@ -265,10 +265,10 @@ class SettingsScreen extends StatelessWidget {
       trailing: Switch(
         value: value,
         onChanged: onChanged,
-        activeColor: const Color(0xFFFBBF24), // Gold
-        trackColor: MaterialStateProperty.resolveWith((states) {
-          if (states.contains(MaterialState.selected)) {
-            return const Color(0xFFFBBF24).withOpacity(0.5);
+        activeThumbColor: const Color(0xFFFBBF24), // Gold
+        trackColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return const Color(0xFFFBBF24).withValues(alpha: 0.5);
           }
           return Colors.grey.shade600;
         }),
@@ -303,7 +303,7 @@ class SettingsScreen extends StatelessWidget {
         decoration: BoxDecoration(
           color: const Color(0xFF374151),
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: difficultyColor.withOpacity(0.5)),
+          border: Border.all(color: difficultyColor.withValues(alpha: 0.5)),
         ),
         child: Center(
           child: Text(

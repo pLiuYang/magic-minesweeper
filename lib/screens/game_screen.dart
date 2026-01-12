@@ -191,7 +191,7 @@ class _GameScreenState extends State<GameScreen> {
             borderRadius: BorderRadius.circular(2),
             boxShadow: [
               BoxShadow(
-                color: color.withOpacity(0.5),
+                color: color.withValues(alpha: 0.5),
                 blurRadius: 4,
                 spreadRadius: 2,
               ),
@@ -233,9 +233,9 @@ class _GameScreenState extends State<GameScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
+                  color: Colors.white.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(4),
-                  border: Border.all(color: Colors.white.withOpacity(0.2)),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
                 ),
                 child: Text(
                   widget.difficulty.name.toUpperCase(),
@@ -275,12 +275,12 @@ class _GameScreenState extends State<GameScreen> {
           color: color,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
             width: 3,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withValues(alpha: 0.3),
               offset: const Offset(0, 4),
               blurRadius: 0,
             ),
@@ -321,7 +321,7 @@ class _GameScreenState extends State<GameScreen> {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.5),
+              color: Colors.black.withValues(alpha: 0.5),
               blurRadius: 20,
               offset: const Offset(0, -5),
             ),
@@ -412,12 +412,12 @@ class _GameScreenState extends State<GameScreen> {
               color: itemColor,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: Colors.black.withOpacity(0.2),
+                color: Colors.black.withValues(alpha: 0.2),
                 width: 3,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withValues(alpha: 0.3),
                   offset: const Offset(0, 4),
                   blurRadius: 0,
                 ),

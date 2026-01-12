@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/game_provider.dart';
-import '../utils/constants.dart';
 import 'cell_widget.dart';
 
 class GameBoardWidget extends StatelessWidget {
@@ -23,7 +22,7 @@ class GameBoardWidget extends StatelessWidget {
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.5),
+                color: Colors.black.withValues(alpha: 0.5),
                 blurRadius: 0,
                 offset: const Offset(0, 8),
               ),

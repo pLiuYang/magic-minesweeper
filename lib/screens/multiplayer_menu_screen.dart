@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../models/multiplayer_match.dart';
 import '../providers/multiplayer_provider.dart';
 import '../services/auth_service.dart';
-import '../utils/constants.dart';
 import 'multiplayer_lobby_screen.dart';
 import 'leaderboard_screen.dart';
 import 'online_lobby_screen.dart';
@@ -39,7 +38,7 @@ class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
             children: [
               // Header
               _buildHeader(context),
-              
+
               // Game modes
               Expanded(
                 child: SingleChildScrollView(
@@ -48,21 +47,21 @@ class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
                     children: [
                       // Online/Offline toggle
                       _buildConnectionStatus(context),
-                      
+
                       const SizedBox(height: 20),
-                      
+
                       // Mode cards
                       ...MultiplayerModeConfig.modes.map(
                         (config) => _buildModeCard(context, config),
                       ),
-                      
+
                       const SizedBox(height: 20),
-                      
+
                       // Leaderboard button
                       _buildLeaderboardButton(context),
-                      
+
                       const SizedBox(height: 20),
-                      
+
                       // Player stats
                       _buildPlayerStats(context),
                     ],
@@ -87,7 +86,7 @@ class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
               // Back button
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
+                  color: Colors.white.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: IconButton(
@@ -96,7 +95,7 @@ class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
                 ),
               ),
               const SizedBox(width: 16),
-              
+
               // Title
               Expanded(
                 child: Column(
@@ -117,26 +116,29 @@ class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
                       ),
                     ),
                     Text(
-                      isOnline 
-                          ? 'Connected - Play online!' 
+                      isOnline
+                          ? 'Connected - Play online!'
                           : 'Challenge friends or compete globally',
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.white.withOpacity(0.7),
+                        color: Colors.white.withValues(alpha: 0.7),
                       ),
                     ),
                   ],
                 ),
               ),
-              
+
               // Online indicator
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: (isOnline ? Colors.green : Colors.orange).withOpacity(0.2),
+                  color: (isOnline ? Colors.green : Colors.orange)
+                      .withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: (isOnline ? Colors.green : Colors.orange).withOpacity(0.5),
+                    color: (isOnline ? Colors.green : Colors.orange)
+                        .withValues(alpha: 0.5),
                   ),
                 ),
                 child: Row(
@@ -182,13 +184,14 @@ class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                (isConnected ? Colors.green : Colors.blue).withOpacity(0.2),
-                (isConnected ? Colors.green : Colors.blue).withOpacity(0.1),
+                (isConnected ? Colors.green : Colors.blue).withValues(alpha: 0.2),
+                (isConnected ? Colors.green : Colors.blue).withValues(alpha: 0.1),
               ],
             ),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: (isConnected ? Colors.green : Colors.blue).withOpacity(0.3),
+              color:
+                  (isConnected ? Colors.green : Colors.blue).withValues(alpha: 0.3),
             ),
           ),
           child: Column(
@@ -216,12 +219,12 @@ class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
                         Text(
                           isConnected
                               ? 'Playing against real players'
-                              : isAuthenticated 
+                              : isAuthenticated
                                   ? 'Tap to connect online'
                                   : 'Sign in to play online',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.white.withOpacity(0.7),
+                            color: Colors.white.withValues(alpha: 0.7),
                           ),
                         ),
                       ],
@@ -276,7 +279,7 @@ class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.05),
+                    color: Colors.white.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -309,7 +312,7 @@ class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
                             Text(
                               'Signed in',
                               style: TextStyle(
-                                color: Colors.white.withOpacity(0.6),
+                                color: Colors.white.withValues(alpha: 0.6),
                                 fontSize: 12,
                               ),
                             ),
@@ -339,20 +342,20 @@ class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
 
   Future<void> _connectToBackend() async {
     setState(() => _isConnecting = true);
-    
+
     final provider = context.read<MultiplayerProvider>();
     await provider.connectToBackend();
-    
+
     setState(() => _isConnecting = false);
   }
 
   void _showLoginDialog(BuildContext context) {
     // Capture the parent screen's navigator and state update callback
     final parentNavigator = Navigator.of(context);
-    final refreshUI = () {
+    void refreshUI() {
       if (mounted) setState(() {});
-    };
-    
+    }
+
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -370,7 +373,7 @@ class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
             Text(
               'Sign in with your Manus account to play online multiplayer games.',
               style: TextStyle(
-                color: Colors.white.withOpacity(0.7),
+                color: Colors.white.withValues(alpha: 0.7),
               ),
             ),
             const SizedBox(height: 20),
@@ -378,14 +381,14 @@ class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
               onPressed: () async {
                 // Close the dialog first
                 Navigator.pop(dialogContext);
-                
+
                 // Open WebView login screen using parent navigator
                 final result = await parentNavigator.push<bool>(
                   MaterialPageRoute(
                     builder: (context) => const LoginWebViewScreen(),
                   ),
                 );
-                
+
                 if (result == true) {
                   // Refresh the UI after successful login
                   refreshUI();
@@ -417,7 +420,7 @@ class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
     return Consumer<MultiplayerProvider>(
       builder: (context, provider, child) {
         final isOnline = provider.isConnected;
-        
+
         return Container(
           margin: const EdgeInsets.only(bottom: 16),
           child: Material(
@@ -432,18 +435,18 @@ class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      config.color.withOpacity(0.3),
-                      config.color.withOpacity(0.1),
+                      config.color.withValues(alpha: 0.3),
+                      config.color.withValues(alpha: 0.1),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: config.color.withOpacity(0.5),
+                    color: config.color.withValues(alpha: 0.5),
                     width: 2,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: config.color.withOpacity(0.2),
+                      color: config.color.withValues(alpha: 0.2),
                       blurRadius: 15,
                       offset: const Offset(0, 5),
                     ),
@@ -461,13 +464,13 @@ class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
                           end: Alignment.bottomRight,
                           colors: [
                             config.color,
-                            config.color.withOpacity(0.7),
+                            config.color.withValues(alpha: 0.7),
                           ],
                         ),
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: config.color.withOpacity(0.4),
+                            color: config.color.withValues(alpha: 0.4),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           ),
@@ -480,7 +483,7 @@ class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
                       ),
                     ),
                     const SizedBox(width: 16),
-                    
+
                     // Info
                     Expanded(
                       child: Column(
@@ -504,7 +507,7 @@ class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
                                     vertical: 2,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Colors.green.withOpacity(0.2),
+                                    color: Colors.green.withValues(alpha: 0.2),
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: const Text(
@@ -524,7 +527,7 @@ class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
                             config.description,
                             style: TextStyle(
                               fontSize: 13,
-                              color: Colors.white.withOpacity(0.7),
+                              color: Colors.white.withValues(alpha: 0.7),
                             ),
                           ),
                           const SizedBox(height: 8),
@@ -544,11 +547,11 @@ class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
                         ],
                       ),
                     ),
-                    
+
                     // Arrow
                     Icon(
                       Icons.arrow_forward_ios,
-                      color: Colors.white.withOpacity(0.5),
+                      color: Colors.white.withValues(alpha: 0.5),
                       size: 20,
                     ),
                   ],
@@ -565,7 +568,7 @@ class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -598,13 +601,13 @@ class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                const Color(0xFFFFD700).withOpacity(0.3),
-                const Color(0xFFFFD700).withOpacity(0.1),
+                const Color(0xFFFFD700).withValues(alpha: 0.3),
+                const Color(0xFFFFD700).withValues(alpha: 0.1),
               ],
             ),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: const Color(0xFFFFD700).withOpacity(0.5),
+              color: const Color(0xFFFFD700).withValues(alpha: 0.5),
               width: 2,
             ),
           ),
@@ -655,7 +658,7 @@ class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
               ),
               Icon(
                 Icons.arrow_forward_ios,
-                color: Colors.white.withOpacity(0.5),
+                color: Colors.white.withValues(alpha: 0.5),
                 size: 20,
               ),
             ],
@@ -672,10 +675,10 @@ class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
         return Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.05),
+            color: Colors.white.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withValues(alpha: 0.1),
             ),
           ),
           child: Column(
@@ -691,7 +694,7 @@ class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
                       gradient: LinearGradient(
                         colors: [
                           player.primaryColor,
-                          player.primaryColor.withOpacity(0.7),
+                          player.primaryColor.withValues(alpha: 0.7),
                         ],
                       ),
                       borderRadius: BorderRadius.circular(12),
@@ -719,7 +722,7 @@ class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
                           'Your Stats',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.white.withOpacity(0.6),
+                            color: Colors.white.withValues(alpha: 0.6),
                           ),
                         ),
                       ],
@@ -729,7 +732,7 @@ class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
                   IconButton(
                     icon: Icon(
                       Icons.edit,
-                      color: Colors.white.withOpacity(0.5),
+                      color: Colors.white.withValues(alpha: 0.5),
                     ),
                     onPressed: () => _editProfile(context),
                   ),
@@ -740,7 +743,8 @@ class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
                 children: [
                   _buildStatItem('Games', player.gamesPlayed.toString()),
                   _buildStatItem('Wins', player.gamesWon.toString()),
-                  _buildStatItem('Win Rate', '${player.winRate.toStringAsFixed(1)}%'),
+                  _buildStatItem(
+                      'Win Rate', '${player.winRate.toStringAsFixed(1)}%'),
                   _buildStatItem('Score', player.totalScore.toString()),
                 ],
               ),
@@ -767,7 +771,7 @@ class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
             label,
             style: TextStyle(
               fontSize: 11,
-              color: Colors.white.withOpacity(0.6),
+              color: Colors.white.withValues(alpha: 0.6),
             ),
           ),
         ],
@@ -775,7 +779,8 @@ class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
     );
   }
 
-  void _selectMode(BuildContext context, MultiplayerModeConfig config, bool isOnline) {
+  void _selectMode(
+      BuildContext context, MultiplayerModeConfig config, bool isOnline) {
     if (isOnline) {
       // Navigate to online lobby
       Navigator.push(
@@ -824,10 +829,10 @@ class _MultiplayerMenuScreenState extends State<MultiplayerMenuScreen> {
           style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
             labelText: 'Player Name',
-            labelStyle: TextStyle(color: Colors.white.withOpacity(0.7)),
+            labelStyle: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.white.withOpacity(0.3)),
+              borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.3)),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),

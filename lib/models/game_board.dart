@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'cell.dart';
-import 'spell.dart';
 import '../utils/constants.dart';
 
 enum GameStatus {
@@ -20,7 +19,7 @@ class GameBoard {
   int revealedCount;
   bool minesPlaced;
   int _currentMineCount;
-  
+
   // Spell-related state
   bool hasShield;
   Set<String> scannedCells; // Cells currently showing mine hints from Scan
@@ -144,7 +143,7 @@ class GameBoard {
         flagsPlaced++;
         return true;
       }
-      
+
       cell.reveal();
       status = GameStatus.lost;
       _revealAllMines();
@@ -270,7 +269,7 @@ class GameBoard {
   /// Reveal spell - safely reveal one tile
   bool castReveal(int row, int col) {
     if (row < 0 || row >= height || col < 0 || col >= width) return false;
-    
+
     final cell = cells[row][col];
     if (cell.isRevealed || cell.isFlagged) return false;
 
@@ -304,9 +303,9 @@ class GameBoard {
       placeMines(row, col);
       status = GameStatus.playing;
     }
-    
+
     final scanned = <String>[];
-    
+
     // Scan a 3x3 area centered on the target cell
     for (int dr = -1; dr <= 1; dr++) {
       for (int dc = -1; dc <= 1; dc++) {
@@ -322,7 +321,7 @@ class GameBoard {
         }
       }
     }
-    
+
     return scanned;
   }
 
@@ -339,7 +338,7 @@ class GameBoard {
   /// Disarm spell - remove a flagged mine
   bool castDisarm(int row, int col) {
     if (row < 0 || row >= height || col < 0 || col >= width) return false;
-    
+
     final cell = cells[row][col];
     if (!cell.isFlagged || !cell.isMine) return false;
 
@@ -369,7 +368,7 @@ class GameBoard {
   /// Teleport spell - move a mine to a random safe location
   bool castTeleport(int row, int col) {
     if (row < 0 || row >= height || col < 0 || col >= width) return false;
-    
+
     final cell = cells[row][col];
     if (!cell.isMine || cell.isRevealed) return false;
 
@@ -378,7 +377,9 @@ class GameBoard {
     for (int r = 0; r < height; r++) {
       for (int c = 0; c < width; c++) {
         final targetCell = cells[r][c];
-        if (!targetCell.isMine && !targetCell.isRevealed && !targetCell.isFlagged) {
+        if (!targetCell.isMine &&
+            !targetCell.isRevealed &&
+            !targetCell.isFlagged) {
           safeCellsList.add(targetCell);
         }
       }
@@ -389,13 +390,13 @@ class GameBoard {
     // Move the mine
     final random = Random();
     final targetCell = safeCellsList[random.nextInt(safeCellsList.length)];
-    
+
     cell.isMine = false;
     if (cell.isFlagged) {
       cell.state = CellState.covered;
       flagsPlaced--;
     }
-    
+
     targetCell.isMine = true;
 
     // Recalculate adjacent mines
@@ -423,7 +424,7 @@ class GameBoard {
           final cell = cells[r][c];
           // Skip already revealed cells
           if (cell.isRevealed) continue;
-          
+
           if (cell.isMine) {
             // Flag mines instead of revealing (safe handling)
             if (!cell.isFlagged) {
