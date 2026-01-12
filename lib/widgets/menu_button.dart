@@ -101,7 +101,7 @@ class _MenuButtonState extends State<MenuButton>
                     decoration: BoxDecoration(
                       color: const Color(0xFF111827)
                           .withOpacity(0.6), // Dark shadow
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(4),
                     ),
                   ),
                 ),
@@ -112,7 +112,7 @@ class _MenuButtonState extends State<MenuButton>
                   height: 68,
                   decoration: BoxDecoration(
                     color: baseColor,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(4),
                     // Hard border
                     border: Border.all(
                       color: shadowColor,
@@ -141,7 +141,7 @@ class _MenuButtonState extends State<MenuButton>
                         child: Container(
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.4),
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(2),
                           ),
                         ),
                       ),

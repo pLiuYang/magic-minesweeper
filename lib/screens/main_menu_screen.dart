@@ -112,7 +112,8 @@ class MainMenuScreen extends StatelessWidget {
                                 MenuButton(
                                   text: 'Settings',
                                   icon: Icons.settings,
-                                  color: const Color(0xFF2DD4BF), // Teal/Blue
+                                  color: const Color(
+                                      0xFFD4A574), // Tan/Olive retro
                                   onPressed: () {
                                     Navigator.push(
                                       context,
