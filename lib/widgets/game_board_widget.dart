@@ -36,8 +36,8 @@ class GameBoardWidget extends StatelessWidget {
               final maxHeight = constraints.maxHeight;
 
               // Determine minimum cell size for playability
-              const double minCellSize = 32.0;
-              const double maxCellSize = 44.0;
+              const double minCellSize = 40.0;
+              const double maxCellSize = 56.0;
 
               // Calculate cell size that fits within constraints
               final cellWidthFit = maxWidth / board.width;

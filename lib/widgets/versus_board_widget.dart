@@ -199,10 +199,16 @@ class _VersusBoardWidgetState extends State<VersusBoardWidget>
           color: const Color(0xFF1a1a2e),
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final cellSize = min(
+              // Calculate cell size to fit available space
+              const double minCellSize = 40.0;
+              var cellSize = min(
                 constraints.maxWidth / _boardWidth,
                 constraints.maxHeight / _boardHeight,
               );
+              // Apply minimum size when space permits (split-screen may constrain further)
+              if (constraints.maxWidth >= minCellSize * _boardWidth) {
+                cellSize = max(cellSize, minCellSize);
+              }
 
               return Center(
                 child: SizedBox(

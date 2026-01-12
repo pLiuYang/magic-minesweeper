@@ -2,7 +2,7 @@
 
 Defines how the Minesweeper game board cells are rendered and sized.
 
-## MODIFIED Requirements
+## ADDED Requirements
 
 ### Requirement: Cell Size Bounds
 
